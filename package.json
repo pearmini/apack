@@ -5,10 +5,25 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "test": "npm run test:js && npm run test:lint && npm run test:format",
+    "test:js": "vitest",
+    "test:lint": "eslint src test",
+    "test:format": "prettier --check src test",
+     "prepublishOnly": "rm -rf dist && rollup -c"
   },
   "devDependencies": {
-    "vite": "^6.3.1"
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-terser": "^0.4.4",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.2",
+    "js-beautify": "^1.15.4",
+    "jsdom": "^26.1.0",
+    "prettier": "^3.5.3",
+    "rollup": "^4.40.0",
+    "vite": "^6.3.2",
+    "vitest": "^3.1.1"
+  },
+  "dependencies": {
+    "charmingjs": "^0.0.16"
   }
 }
