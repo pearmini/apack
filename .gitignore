@@ -22,3 +22,20 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.pyw
+*.pyz
+*.egg-info
+*.egg
+*.dist-info
+*.whl
+*.so
+*.dylib
+*.dll
+venv
+.ipynb_checkpoints
