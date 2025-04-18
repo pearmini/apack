@@ -1,7 +1,6 @@
 {
   "name": "apackjs",
-  "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,7 +8,7 @@
     "test:js": "vitest",
     "test:lint": "eslint src test",
     "test:format": "prettier --check src test",
-     "prepublishOnly": "rm -rf dist && rollup -c"
+    "prepublishOnly": "rm -rf dist && rollup -c"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^16.0.1",
