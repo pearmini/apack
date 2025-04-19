@@ -1,10 +1,10 @@
 import {defineConfig} from "vitest/config";
+import path from "path";
 
 export default defineConfig({
   test: {
     environment: "jsdom",
   },
-  root: "./test",
   server: {
     watch: {
       usePolling: true,
@@ -12,5 +12,10 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ["charmingjs"],
+  },
+  resolve: {
+    alias: {
+      apackjs: path.resolve(__dirname, "./src/index.js"),
+    },
   },
 });
