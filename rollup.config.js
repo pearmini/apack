@@ -1,5 +1,6 @@
 import node from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
+import json from "@rollup/plugin-json";
 
 const umd = {
   input: "src/index.js",
@@ -7,7 +8,7 @@ const umd = {
     format: "umd",
     name: "ap",
   },
-  plugins: [node()],
+  plugins: [node(), json()],
   onwarn(message, warn) {
     if (message.code === "CIRCULAR_DEPENDENCY") return;
     warn(message);
