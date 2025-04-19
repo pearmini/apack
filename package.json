@@ -11,6 +11,7 @@
     "prepublishOnly": "rm -rf dist && rollup -c"
   },
   "devDependencies": {
+    "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-terser": "^0.4.4",
     "eslint": "^8.57.1",
@@ -23,6 +24,10 @@
     "vitest": "^3.1.1"
   },
   "dependencies": {
-    "charmingjs": "^0.0.16"
+    "charmingjs": "^0.0.16",
+    "d3-array": "^3.2.4",
+    "d3-random": "^3.0.1",
+    "d3-scale": "^4.0.2",
+    "d3-shape": "^3.2.0"
   }
 }
