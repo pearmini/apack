@@ -1,5 +1,5 @@
 import {cm} from "./namespaces.js";
-import fonts from "./hersheytext.json" assert {type: "json"};
+import fonts from "./hersheytext.json";
 import {d3} from "./namespaces.js";
 
 function flex(string, x, y, x1, y1, padding = 0, options = {}) {

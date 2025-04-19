@@ -5,14 +5,14 @@
   }
 </style>
 <script type="module">
-  import * as apps from "./apps";
+  import * as examples from "./examples";
 
   const select = createSelect(() => {
     const {value} = select;
     history.pushState({value}, "", `?name=${value}`);
     render();
   });
-  const options = Object.keys(apps).map(createOption);
+  const options = Object.keys(examples).map(createOption);
   select.append(...options);
   document.body.append(select);
 
@@ -20,7 +20,7 @@
   document.body.append(root);
 
   const initialValue = new URL(location).searchParams.get("name");
-  if (apps[initialValue]) select.value = initialValue;
+  if (examples[initialValue]) select.value = initialValue;
 
   let preClear = null;
   let preNode = null;
@@ -65,7 +65,7 @@
   async function render() {
     if (typeof preClear === "function") preClear();
     root.innerHTML = "";
-    preNode = await apps[select.value]();
+    preNode = await examples[select.value]();
     root.appendChild(preNode);
     preClear = preNode.clear;
   }
