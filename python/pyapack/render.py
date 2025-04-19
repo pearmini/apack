@@ -32,7 +32,9 @@ def render(text, options=None):
             Example: {"word": {"fill": "red"}}
     """
     is_dev, js_content_or_url = get_apack_js()
-    root_id = f"root-{uuid.uuid4()}"
+    temp_id = f"temp-{uuid.uuid4()}"
+    script_id = f"script-{uuid.uuid4()}"
+    script_id_2 = f"script-2-{uuid.uuid4()}"
     
     # Convert options to JSON string if provided
     options_json = json.dumps(options) if options is not None else '{}'
@@ -40,21 +42,34 @@ def render(text, options=None):
     if is_dev:
         # Development mode - inject JS directly
         html_content = f"""
-        <div id="{root_id}"></div>
-        <script>
+        <div id="{temp_id}"></div>
+        <script id="{script_id}">
         {js_content_or_url}
-        document.getElementById('{root_id}').appendChild(ap.render({repr(text)}, {options_json}));
+        
+        // First render to get the SVG
+        {{const node = ap.render({repr(text)}, {options_json});
+        document.getElementById('{temp_id}').appendChild(node);
+        
+        // Remove script from DOM       
+        document.getElementById('{script_id}').remove();}}
         </script>
         """
+        # Production mode - use unpkg
     else:
         # Production mode - load from CDN
         html_content = f"""
-        <div id="{root_id}"></div>
-        <script src="{js_content_or_url}"></script>
-        <script>
+        <div id="{temp_id}"></div>
+        <script src="{js_content_or_url}" id="{script_id}"></script>
+        <script id="{script_id_2}">
         // Wait for script to load
         window.onload = () => {{
-            document.getElementById('{root_id}').appendChild(ap.render({repr(text)}, {options_json}));
+            // First render to get the SVG
+            const node = ap.render({repr(text)}, {options_json});
+            document.getElementById('{temp_id}').appendChild(node);
+            
+            // Remove script from DOM
+            document.getElementById('{script_id}').remove();
+            document.getElementById('{script_id_2}').remove();
         }};
         </script>
         """
