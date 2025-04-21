@@ -39,3 +39,6 @@ __pycache__
 *.dll
 venv
 .ipynb_checkpoints
+
+# Snapshot
+*-actual.svg
