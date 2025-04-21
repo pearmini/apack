@@ -28,15 +28,33 @@ ap.render("hello world");
 
 ![example-render-content](./output/renderContent.svg)
 
-<a href="#options-size" id="options-size">#</a> options.**size**
+<a href="#options-cellsize" id="options-cellsize">#</a> options.**cellSize**
 
-Sets the size of the rendered output.
+Sets the size of each cell.
 
 ```js
-ap.render("hello world", {size: 200});
+ap.render("hello world", {cellSize: 200});
 ```
 
-![example-options-size](./output/optionSize.svg)
+![example-options-cellsize](./output/optionCellSize.svg)
+
+<a href="#options-cellwidth" id="options-cellwidth">#</a> options.**cellWidth**
+
+<a href="#options-cellheight" id="options-cellheight">#</a> options.**cellHeight**
+
+Sets the dimensions of each cell, defaults to [options.cellSize](#options-cellsize).
+
+```js
+ap.render("hello world", {
+  cellWidth: 320,
+  cellHeight: 320,
+  style: {styleBackground: "#F1BB4D"},
+  word: {stroke: "#492577", strokeWidth: 10},
+  font: "astrology",
+});
+```
+
+![example-options-dimension](./output/optionDimensions.svg)
 
 <a href="#options-font" id="options-font">#</a> options.**font**
 
@@ -47,6 +65,18 @@ ap.render("hello world", {font: "astrology"});
 ```
 
 ![example-options-font](./output/optionFont.svg)
+
+<a href="#options-layout" id="options-layout">#</a> options.**layout**
+
+Set the layout for packing.
+
+```js
+ap.render("hello world", {
+  layout: {type: "treemap", grid: true},
+});
+```
+
+![example-options-layout](./output/optionLayout.svg)
 
 <a href="#options-word" id="options-word">#</a> options.**word**
 

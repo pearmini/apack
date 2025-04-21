@@ -1,41 +1,12 @@
-import {cm} from "./namespaces.js";
+import {cm, d3} from "./namespaces.js";
 import fonts from "./hersheytext.json";
-import {d3} from "./namespaces.js";
+import {flex} from "./flex.js";
+import {treemap} from "./treemap.js";
 
-function flex(string, x, y, x1, y1, padding = 0, options = {}) {
-  const {shuffle = false} = options;
-  const cells = [{x, y, x1, y1, ch: string[0]}];
-  const n = string.length;
-  const p = padding / 2;
-  const seed = d3.sum(string.split(""), (d) => d.charCodeAt(0));
-  const random = d3.randomUniform.source(d3.randomLcg(seed))();
-  const next = shuffle ? () => random() > 0.5 : (code) => code % 2;
-  let i = 1;
-
-  while (cells.length < n && i < n) {
-    const char = string[i];
-    const code = string.charCodeAt(i);
-    const {x, y, x1, y1, ch} = cells[i - 1];
-    const w = x1 - x;
-    const h = y1 - y;
-    const remain = n - i;
-    const t = remain <= 1 ? 0.5 : 0.33;
-    if (next(code)) {
-      const cell0 = {x, y, x1: x + w * t - p, y1, ch};
-      const cell1 = {x: x + w * t + p, y, x1, y1, ch: char};
-      cells.pop();
-      cells.push(cell0, cell1);
-    } else {
-      const cell0 = {x, y, x1, y1: y + h * t - p, ch};
-      const cell1 = {x, y: y + h * t + p, x1, y1, ch: char};
-      cells.pop();
-      cells.push(cell0, cell1);
-    }
-    i++;
-  }
-
-  return cells;
-}
+const LAYOUTS = {
+  flex: flex,
+  treemap: treemap,
+};
 
 function points(key, ch) {
   const idx = (ch) => ch.charCodeAt(0) - 33;
@@ -57,9 +28,13 @@ function points(key, ch) {
   return plines;
 }
 
-function packWord({string, x, y, width, height, layout, padding, font = "futural"}) {
+function packWord({string, x, y, width, height, layout, font = "futural"}) {
   const {type, ...options} = layout;
-  const cells = type(string, x, y, width, height, padding, options);
+  const pack = LAYOUTS[type];
+
+  if (!pack) throw new Error(`Unknown layout: ${type}`);
+
+  const cells = pack(string, x, y, width, height, options);
   const pointsof = (ch) => points(font, ch);
 
   const scaled = cells.map((d) => {
@@ -87,12 +62,12 @@ function packWord({string, x, y, width, height, layout, padding, font = "futural
 export function render(
   content,
   {
-    size = 80,
-    cellWidth = size,
-    cellHeight = size,
-    padding = 0.1,
+    cellSize = 80,
+    cellWidth = cellSize,
+    cellHeight = cellSize,
     curve = d3.curveCatmullRom,
-    layout = {type: flex},
+    padding = 0.1,
+    layout = {},
     font = "futural",
     word = {},
     grid = false,
@@ -103,6 +78,7 @@ export function render(
   if (word) word = Object.assign({fill: "transparent", stroke: "black", strokeWidth: 2}, word);
   if (grid) grid = Object.assign({stroke: "#eee", fill: "none"}, grid);
   if (background) background = Object.assign({fill: "transparent"}, background);
+  layout = Object.assign({type: "flex"}, layout);
 
   const words = content.split(" ");
 
