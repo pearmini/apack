@@ -1,6 +1,20 @@
-# APack: Alphabet Packing Writing
+# APack: Alphabet Packing Writing System
 
 **APack** is a writing system that explores writing alphabets in a Chinese character style. Instead of placing letters sequentially, APack packs letters for one word into a single grid.
+
+## Get started
+
+```bash
+$ npm install apackjs -S
+```
+
+```js
+import * as ap from "apackjs";
+
+const node = ap.render("hello world");
+
+document.body.append(node);
+```
 
 ## API Reference
 
