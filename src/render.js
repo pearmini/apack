@@ -88,14 +88,14 @@ export function render(
   content,
   {
     size = 80,
-    width = size,
-    height = size,
+    cellWidth = size,
+    cellHeight = size,
     padding = 0.1,
     curve = d3.curveCatmullRom,
     layout = {type: flex},
     font = "futural",
     word = {},
-    grid = {},
+    grid = false,
     background = {},
     style = {},
   } = {},
@@ -112,37 +112,33 @@ export function render(
     .x((d) => d[0])
     .y((d) => d[1]);
 
-  const min = Math.min(height, width);
+  const min = Math.min(cellHeight, cellWidth);
 
   const data = words.map((d) =>
     packWord({
       string: d,
       x: min * padding,
       y: min * padding,
-      width: width * (1 - padding),
-      height: height * (1 - padding),
+      width: cellWidth * (1 - padding),
+      height: cellHeight * (1 - padding),
       padding: min * padding * 0.5,
       layout,
       font,
     }),
   );
 
+  const width = words.length * cellWidth;
+  const height = cellHeight;
+
   const root = cm.svg("svg", {
-    width: words.length * width,
-    height: height,
+    width,
+    height,
+    styleBackground: "white",
     ...style,
     children: [
-      background &&
-        cm.svg("rect", {
-          x: 0,
-          y: 0,
-          width,
-          height,
-          ...background,
-        }),
       grid &&
         cm.svg("g", data, {
-          transform: (_, i) => `translate(${width * i},0)`,
+          transform: (_, i) => `translate(${cellWidth * i},0)`,
           children: ({cells}) => [
             cm.svg("rect", cells, {
               x: (d) => d.x,
@@ -155,7 +151,7 @@ export function render(
         }),
       word &&
         cm.svg("g", data, {
-          transform: (_, i) => `translate(${width * i},0)`,
+          transform: (_, i) => `translate(${cellWidth * i},0)`,
           children: ({paths}) => [
             cm.svg("g", paths, {
               transform: (d) => `translate(${d.x},${d.y})`,
@@ -163,7 +159,7 @@ export function render(
             }),
           ],
         }),
-    ],
+    ].filter(Boolean),
   });
 
   return root.render();
