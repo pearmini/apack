@@ -28,21 +28,21 @@ ap.render("hello world");
 
 ![example-render-content](./output/renderContent.svg)
 
-<a href="#options-size" id="options-size">#</a> options.**size**
+<a href="#options-cellsize" id="options-cellsize">#</a> options.**cellSize**
 
 Sets the size of each cell.
 
 ```js
-ap.render("hello world", {size: 200});
+ap.render("hello world", {cellSize: 200});
 ```
 
-![example-options-size](./output/optionSize.svg)
+![example-options-cellsize](./output/optionCellSize.svg)
 
 <a href="#options-cellwidth" id="options-cellwidth">#</a> options.**cellWidth**
 
-<a href="#options-cellheight" id="options-cellheight">#</a> options.**cellheight**
+<a href="#options-cellheight" id="options-cellheight">#</a> options.**cellHeight**
 
-Sets the dimensions of each cell, defaults to [options.size](#options-size).
+Sets the dimensions of each cell, defaults to [options.cellSize](#options-cellsize).
 
 ```js
 ap.render("hello world", {

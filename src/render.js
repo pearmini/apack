@@ -62,9 +62,9 @@ function packWord({string, x, y, width, height, layout, font = "futural"}) {
 export function render(
   content,
   {
-    size = 80,
-    cellWidth = size,
-    cellHeight = size,
+    cellSize = 80,
+    cellWidth = cellSize,
+    cellHeight = cellSize,
     curve = d3.curveCatmullRom,
     padding = 0.1,
     layout = {},

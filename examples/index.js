@@ -1,5 +1,5 @@
 export {renderContent, renderContentWithOptions} from "./render-content.js";
-export {optionSize} from "./option-size.js";
+export {optionCellSize} from "./option-cellsize.js";
 export {optionWord} from "./option-word.js";
 export {optionGrid} from "./option-grid.js";
 export {optionPadding} from "./option-padding.js";
