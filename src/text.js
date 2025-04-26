@@ -59,7 +59,7 @@ function packWord({string, x, y, width, height, layout, font = "futural"}) {
   return {cells, paths: scaled};
 }
 
-export function render(
+export function text(
   content,
   {
     cellSize = 80,
@@ -80,7 +80,7 @@ export function render(
   if (background) background = Object.assign({fill: "transparent"}, background);
   layout = Object.assign({type: "flex"}, layout);
 
-  const words = content.split(" ");
+  const words = content.split(" ").filter(Boolean);
 
   const line = d3
     .line()
@@ -138,5 +138,5 @@ export function render(
     ].filter(Boolean),
   });
 
-  return root.render();
+  return root;
 }

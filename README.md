@@ -11,19 +11,19 @@ $ npm install apackjs -S
 ```js
 import * as ap from "apackjs";
 
-const node = ap.render("hello world");
+const node = ap.text("hello world").render();
 
 document.body.append(node);
 ```
 
 ## API Reference
 
-<a href="#ap-render" id="ap-render">#</a> ap.**render**(_content[, options]_)
+<a href="#ap-text" id="ap-text">#</a> ap.**text**(_content[, options]_)
 
 Renders the given content with optional styling and layout options.
 
 ```js
-ap.render("hello world");
+ap.text("hello world");
 ```
 
 ![example-render-content](./output/renderContent.svg)
@@ -33,7 +33,7 @@ ap.render("hello world");
 Sets the size of each cell.
 
 ```js
-ap.render("hello world", {cellSize: 200});
+ap.text("hello world", {cellSize: 200});
 ```
 
 ![example-options-cellsize](./output/optionCellSize.svg)
@@ -45,7 +45,7 @@ ap.render("hello world", {cellSize: 200});
 Sets the dimensions of each cell, defaults to [options.cellSize](#options-cellsize).
 
 ```js
-ap.render("hello world", {
+ap.text("hello world", {
   cellWidth: 320,
   cellHeight: 320,
   style: {styleBackground: "#F1BB4D"},
@@ -61,7 +61,7 @@ ap.render("hello world", {
 Specifies the font to use for rendering.
 
 ```js
-ap.render("hello world", {font: "astrology"});
+ap.text("hello world", {font: "astrology"});
 ```
 
 ![example-options-font](./output/optionFont.svg)
@@ -71,7 +71,7 @@ ap.render("hello world", {font: "astrology"});
 Set the layout for packing.
 
 ```js
-ap.render("hello world", {
+ap.text("hello world", {
   layout: {type: "treemap", grid: true},
 });
 ```
@@ -83,7 +83,7 @@ ap.render("hello world", {
 Customizes the word styling.
 
 ```js
-ap.render("hello world", {
+ap.text("hello world", {
   word: {
     stroke: "red",
     strokeWidth: 3,
@@ -99,7 +99,7 @@ ap.render("hello world", {
 Configures the overall style of the output.
 
 ```js
-ap.render("hello world", {
+ap.text("hello world", {
   style: {
     styleBackground: "red",
   },
@@ -113,7 +113,7 @@ ap.render("hello world", {
 Adds and customizes a grid overlay.
 
 ```js
-ap.render("hello world", {
+ap.text("hello world", {
   grid: {
     stroke: "#ccc",
     fill: "none",
@@ -128,7 +128,7 @@ ap.render("hello world", {
 Sets the padding around the content.
 
 ```js
-ap.render("hello world", {padding: 0.2, grid: true});
+ap.text("hello world", {padding: 0.2, grid: true});
 ```
 
 ![example-options-padding](./output/optionPadding.svg)

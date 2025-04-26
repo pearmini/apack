@@ -1,1 +1,1 @@
-export {render} from "./render.js";
+export {text} from "./text.js";

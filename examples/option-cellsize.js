@@ -1,5 +1,5 @@
 import * as ap from "apackjs";
 
 export function optionCellSize() {
-  return ap.render("Hello World", {cellSize: 200});
+  return ap.text("Hello World", {cellSize: 200}).render();
 }
