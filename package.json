@@ -2,6 +2,10 @@
   "name": "apackjs",
   "version": "0.0.1",
   "type": "module",
+  "main": "src/index.js",
+  "module": "src/index.js",
+  "jsdelivr": "dist/apack.umd.min.js",
+  "unpkg": "dist/apack.umd.min.js",
   "scripts": {
     "dev": "vite",
     "test": "npm run test:js && npm run test:lint && npm run test:format",
