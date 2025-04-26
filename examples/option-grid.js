@@ -1,10 +1,12 @@
 import * as ap from "apackjs";
 
 export function optionGrid() {
-  return ap.render("Hello World", {
-    grid: {
-      stroke: "#ccc",
-      fill: "none"
-    }
-  });
-} 
+  return ap
+    .text("Hello World", {
+      grid: {
+        stroke: "#ccc",
+        fill: "none",
+      },
+    })
+    .render();
+}

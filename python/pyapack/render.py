@@ -43,7 +43,7 @@ def render(text, options=None):
         <div id="{root_id}"></div>
         <script>
         {js_content_or_url}
-        document.getElementById('{root_id}').appendChild(ap.render({repr(text)}, {options_json}));
+        document.getElementById('{root_id}').appendChild(ap.text({repr(text)}, {options_json}).render());
         </script>
         """
     else:
@@ -54,7 +54,7 @@ def render(text, options=None):
         <script>
         // Wait for script to load
         window.onload = () => {{
-            document.getElementById('{root_id}').appendChild(ap.render({repr(text)}, {options_json}));
+            document.getElementById('{root_id}').appendChild(ap.text({repr(text)}, {options_json}).render());
         }};
         </script>
         """

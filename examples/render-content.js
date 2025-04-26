@@ -1,13 +1,15 @@
 import * as ap from "apackjs";
 
 export function renderContent() {
-  return ap.render("Hello World");
+  return ap.text("Hello World").render();
 }
 
 export function renderContentWithOptions() {
-  return ap.render("Hello World", {
-    word: {
-      stroke: "red",
-    },
-  });
+  return ap
+    .text("Hello World", {
+      word: {
+        stroke: "red",
+      },
+    })
+    .render();
 }

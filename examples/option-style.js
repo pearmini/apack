@@ -1,9 +1,11 @@
 import * as ap from "apackjs";
 
 export function optionStyle() {
-  return ap.render("Hello World", {
-    style: {
-      styleBackground: "red",
-    },
-  });
+  return ap
+    .text("Hello World", {
+      style: {
+        styleBackground: "red",
+      },
+    })
+    .render();
 }
