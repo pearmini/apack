@@ -1,11 +1,15 @@
 {
   "name": "apackjs",
-  "version": "0.0.1",
+  "version": "0.0.1-beta.1",
   "type": "module",
   "main": "src/index.js",
   "module": "src/index.js",
   "jsdelivr": "dist/apack.umd.min.js",
   "unpkg": "dist/apack.umd.min.js",
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
     "dev": "vite",
     "test": "npm run test:js && npm run test:lint && npm run test:format",
@@ -34,5 +38,8 @@
     "d3-random": "^3.0.1",
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
