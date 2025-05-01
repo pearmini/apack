@@ -9,7 +9,7 @@ import {FiMenu} from "react-icons/fi";
 import "./App.css";
 
 function paragraph(W, {cellWidth = 80, cellHeight = cellWidth, ...config} = {}) {
-  let {font, word, grid, background, canvas, padding} = config;
+  let {font, word, grid, background, canvas, padding, cursive} = config;
   padding = +padding;
 
   // Ignore empty words, such as \n.
@@ -29,7 +29,7 @@ function paragraph(W, {cellWidth = 80, cellHeight = cellWidth, ...config} = {}) 
         children: (d) => {
           const realWidth = cellWidth - padding * 2;
           const realHeight = cellHeight - padding * 2;
-          const options = {cellWidth: realWidth, cellHeight: realHeight, font, word, grid, background};
+          const options = {cellWidth: realWidth, cellHeight: realHeight, font, word, grid, background, cursive};
           try {
             return ap.text(d.ch, options);
           } catch (e) {
@@ -97,6 +97,7 @@ function createDefaultConfig() {
     font: "futural",
     padding: 0,
     canvas: "transparent",
+    cursive: false,
     word: {
       fill: "transparent",
       strokeWidth: 1.5,

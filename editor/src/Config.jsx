@@ -20,6 +20,7 @@ const schemas = [
     options: FONT_FAMILIES,
   },
   {key: "fontSize", name: "Font Size", type: "number"},
+  {key: "cursive", name: "Cursive", type: "boolean"},
   {key: "padding", name: "Padding", type: "number"},
   {key: "word.strokeWidth", name: "Text Stroke Width", type: "number"},
   {key: "word.stroke", name: "Text Stroke", type: "color"},
@@ -98,6 +99,10 @@ function Input({type, value, onChange, options}) {
 
   if (type === "color") {
     return <ColorInput value={value} onChange={onChange} />;
+  }
+
+  if (type === "boolean") {
+    return <input type="checkbox" checked={value} onChange={(e) => onChange(e.target.checked)} style={{width: 20, height: 20}} />;
   }
 
   return <input type={type} value={value} onChange={(e) => onChange(e.target.value)} />;
