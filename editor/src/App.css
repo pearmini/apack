@@ -13,6 +13,20 @@
   display: inline-block;
 }
 
+.editor-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.config-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 .canvas {
   position: absolute;
   top: 0;

@@ -1,0 +1,43 @@
+.config-panel {
+  background: rgb(248, 248, 247);
+  box-shadow: rgba(0, 0, 0, 0.024) -1px 0px 0px 0px inset;
+  padding: 10px;
+}
+
+.config-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.config-panel-body {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.config-panel-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.color-input {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.config-panel-item input {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 80px;
+}
+
+.config-panel-item select {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}

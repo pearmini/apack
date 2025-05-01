@@ -1,0 +1,155 @@
+import "./Config.css";
+import {FONT_FAMILIES} from "apackjs";
+import {SketchPicker} from "react-color";
+import {useState, useRef, useEffect} from "react";
+import {templates} from "./templates";
+
+const templateSchema = {
+  key: "template",
+  name: "Template",
+  type: "select",
+  options: ["None", ...Object.keys(templates)],
+};
+
+const schemas = [
+  {
+    key: "font",
+    name: "Font",
+    type: "select",
+    options: FONT_FAMILIES,
+  },
+  {key: "fontSize", name: "Font Size", type: "number"},
+  {key: "padding", name: "Padding", type: "number"},
+  {key: "word.stroke", name: "Text Stroke", type: "color"},
+  {key: "word.fill", name: "Text Fill", type: "color"},
+  {key: "word.strokeWidth", name: "Text Stroke Width", type: "number"},
+  {key: "background.fill", name: "Grid Fill", type: "color"},
+  {key: "canvas", name: "Background Fill", type: "color"},
+];
+
+function ColorInput({value, onChange}) {
+  const [showPicker, setShowPicker] = useState(false);
+  const [position, setPosition] = useState({x: 0, y: 0});
+  const pickerRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (pickerRef.current && !pickerRef.current.contains(event.target)) {
+        setShowPicker(false);
+      }
+    };
+
+    if (showPicker) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showPicker]);
+
+  const handleClick = (e) => {
+    const rect = e.target.getBoundingClientRect();
+    setPosition({
+      x: rect.left,
+      y: rect.bottom,
+    });
+    setShowPicker(true);
+  };
+
+  return (
+    <div style={{position: "relative"}}>
+      <div style={{backgroundColor: value}} onClick={handleClick} className="color-input" />
+      {showPicker && (
+        <div
+          ref={pickerRef}
+          style={{
+            position: "fixed",
+            left: position.x,
+            top: position.y,
+            zIndex: 1000,
+          }}
+        >
+          <SketchPicker
+            color={value}
+            onChangeComplete={(color) => {
+              onChange(color.hex);
+            }}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Input({type, value, onChange, options}) {
+  if (type === "select") {
+    return (
+      <select value={value} onChange={(e) => onChange(e.target.value)}>
+        {options.map((option) => (
+          <option value={option} key={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    );
+  }
+
+  if (type === "color") {
+    return <ColorInput value={value} onChange={onChange} />;
+  }
+
+  return <input type={type} value={value} onChange={(e) => onChange(e.target.value)} />;
+}
+
+export function Config({
+  style,
+  onClose,
+  updateValue,
+  getValue,
+  updateTemplate,
+  getTemplate,
+  onSave,
+  onNew,
+  onUpload,
+  onDownload,
+}) {
+  return (
+    <div style={style} className="config-panel">
+      <div className="config-panel-header">
+        <h1>APack Editor</h1>
+        <button onClick={onClose}>Close</button>
+      </div>
+      <div className="config-panel-footer">
+        <button onClick={onSave}>Save</button>
+        <button onClick={onNew}>New</button>
+        <button onClick={onUpload}>Upload</button>
+        <button onClick={onDownload}>Download</button>
+      </div>
+      <div className="config-panel-body">
+        <div className="config-panel-item">
+          <span>{templateSchema.name}</span>
+          <Input
+            type={templateSchema.type}
+            key={templateSchema.key}
+            options={templateSchema.options}
+            value={getTemplate()}
+            onChange={(value) => updateTemplate(value)}
+          />
+        </div>
+        {schemas.map((schema) => (
+          <div key={schema.key} className="config-panel-item">
+            <span>{schema.name}</span>
+            <Input
+              type={schema.type}
+              key={schema.key}
+              value={getValue(schema.key)}
+              onChange={(value) => updateValue(schema.key, value)}
+              options={schema.options}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

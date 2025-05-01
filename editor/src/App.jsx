@@ -1,28 +1,43 @@
 import {useRef, useEffect, useState, useMemo} from "react";
 import * as cm from "charmingjs";
 import {measureText} from "./text";
+import {Config} from "./Config";
+import {logEditor} from "./log";
 import * as ap from "apackjs";
+import {templates} from "./templates";
 import "./App.css";
 
-function paragraph(W, {cellWidth = 80, cellHeight = cellWidth} = {}) {
+function paragraph(W, {cellWidth = 80, cellHeight = cellWidth, ...config} = {}) {
+  let {font, word, grid, background, canvas, padding} = config;
+  padding = +padding;
+
   // Ignore empty words, such as \n.
   const words = W.filter((d) => d.ch.trim() !== "");
   const maxX = Math.max(...words.map((d) => d.x));
   const maxY = Math.max(...words.map((d) => d.y));
+  const width = (maxX + 1) * cellWidth;
+  const height = (maxY + 1) * cellHeight;
+
   const svg = cm.svg("svg", {
-    width: (maxX + 1) * cellWidth,
-    height: (maxY + 1) * cellHeight,
-    children: cm.svg("g", words, {
-      transform: (d) => `translate(${d.x * cellWidth}, ${d.y * cellHeight})`,
-      children: (d) => {
-        try {
-          return ap.text(d.ch, {cellWidth, cellHeight});
-        } catch (e) {
-          console.error("Error rendering text", e);
-          return ap.text("?", {cellWidth, cellHeight});
-        }
-      },
-    }),
+    width,
+    height,
+    children: [
+      canvas && cm.svg("rect", {x: 0, y: 0, width, height, fill: canvas}),
+      cm.svg("g", words, {
+        transform: (d) => `translate(${d.x * cellWidth + padding}, ${d.y * cellHeight + padding})`,
+        children: (d) => {
+          const realWidth = cellWidth - padding * 2;
+          const realHeight = cellHeight - padding * 2;
+          const options = {cellWidth: realWidth, cellHeight: realHeight, font, word, grid, background};
+          try {
+            return ap.text(d.ch, options);
+          } catch (e) {
+            console.error("Error rendering text", e);
+            return ap.text("?", options);
+          }
+        },
+      }),
+    ].filter(Boolean),
   });
   return svg.render();
 }
@@ -62,20 +77,53 @@ function uid() {
   return Math.random().toString(36).substring(2, 15);
 }
 
+function createDefaultConfig() {
+  return {
+    text: "Hello World",
+    fontSize: "80",
+    font: "futural",
+    padding: 0,
+    canvas: "transparent",
+    word: {
+      fill: "transparent",
+      strokeWidth: 1.5,
+    },
+    grid: {
+      stroke: "transparent",
+    },
+    background: {
+      fill: "transparent",
+    },
+  };
+}
+
+function getConfig() {
+  const apack = localStorage.getItem("apack");
+  return apack ? JSON.parse(apack) : createDefaultConfig();
+}
+
 function App() {
   const gridInputHeight = 20;
   const ch = "中";
+  const panelWidth = 300;
 
   const gridRef = useRef(null);
   const editorRef = useRef(null);
   const canvasRef = useRef(null);
   const textareaRef = useRef(null);
 
-  const [text, setText] = useState("hello world EFG\nAB CD");
-  const [style, setStyle] = useState({
-    fontSize: "80px",
-    fontFamily: "monospace",
-  });
+  const [showConfig, setShowConfig] = useState(true);
+  const [template, setTemplate] = useState("None");
+  const [config, setConfig] = useState(getConfig());
+
+  const text = config.text;
+
+  const style = useMemo(() => {
+    return {
+      fontSize: `${config.fontSize}px`,
+      fontFamily: "monospace",
+    };
+  }, [config.fontSize]);
 
   const {width: cellWidth, height: cellHeight} = useMemo(() => measureText(ch, style), [ch, style]);
 
@@ -96,9 +144,18 @@ function App() {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
       canvas.innerHTML = "";
-      canvas.appendChild(paragraph(words, {cellWidth}));
+      canvas.appendChild(paragraph(words, {...config, cellWidth}));
     }
-  }, [words, cellWidth]);
+  }, [words, cellWidth, config]);
+
+  // When enter the page, focus on the textarea.
+  useEffect(() => {
+    if (textareaRef.current) {
+      // Move the cursor to the end of the textarea.
+      textareaRef.current.focus();
+      textareaRef.current.setSelectionRange(textareaValue.length, textareaValue.length);
+    }
+  }, []);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -123,21 +180,119 @@ function App() {
 
   const fire = (callback) => setTimeout(callback, 10);
 
+  // word.fill => {word: {fill: value}}
+  const updateConfig = (key, value) => {
+    const keys = key.split(".");
+    const obj = {};
+    let current = obj;
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      current[key] = i === keys.length - 1 ? value : {};
+      current = current[key];
+    }
+    setConfig({...config, ...obj});
+  };
+
+  // word.fill => {word: {fill: value}}
+  const getValue = (key) => {
+    try {
+      const keys = key.split(".");
+      const value = keys.reduce((acc, key) => acc[key], config);
+      return value;
+    } catch (e) {
+      return undefined;
+    }
+  };
+
+  const getTemplate = () => {
+    return template;
+  };
+
+  const updateTemplate = (value) => {
+    setTemplate(value);
+    if (value !== "None") {
+      const template = templates[value];
+      loadConfig(template);
+    }
+  };
+
+  const joinWords = (W) => {
+    const words = W.filter((d) => d.ch !== "").map((d) => (d.ch !== "\n" && d.ch !== " " ? d.ch.trim() : d.ch));
+    let text = "";
+    for (let i = 0; i < words.length; i++) {
+      const word = words[i];
+      const prev = words[i - 1];
+      if (i === 0 || word === "\n" || (prev && prev === "\n")) text += word;
+      else text += " " + word;
+    }
+    return text;
+  };
+
+  const loadConfig = (config) => {
+    setConfig(config);
+    setWords(splitWordsWithNewlines(config.text));
+  };
+
+  // Save the current config to the local storage.
+  const onSave = () => {
+    const text = joinWords(words);
+    const configString = JSON.stringify({...config, text});
+    localStorage.setItem("apack", configString);
+  };
+
+  const onNew = () => {
+    const config = createDefaultConfig();
+    loadConfig(config);
+  };
+
+  const onUpload = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      file.text().then((text) => {
+        const config = JSON.parse(text);
+        loadConfig(config);
+      });
+    };
+    input.click();
+  };
+
+  const onDownload = () => {
+    const text = joinWords(words);
+    const configString = JSON.stringify({...config, text});
+    const blob = new Blob([configString], {type: "application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const time = new Date().toISOString().replace(/[-:Z]/g, "");
+    a.href = url;
+    a.download = `apack-${time}.json`;
+    a.click();
+  };
+
+  // If the target is not the editor, focus on the textarea.
+  const onClickEditorContainer = (e) => {
+    if (editorRef.current && !editorRef.current.contains(e.target)) {
+      textareaRef.current.focus();
+    }
+  };
+
   const onTextareaKeyDown = (e) => {
     const index = e.target.selectionStart;
 
-    console.log("Textarea keydown", {index, value: e.target.value, key: e.key});
+    logEditor("Textarea keydown", {index, value: e.target.value, key: e.key});
 
     // Do nothing if the user holds down the meta key.
     if (e.metaKey) return;
 
     if (e.key === "Backspace") {
-      console.log("Textarea keydown backspace");
+      logEditor("Textarea keydown backspace");
 
       // If the previous word is a newline, remove it.
       const prev = words[index - 1];
       if (prev && prev.ch === "\n") {
-        console.log("Remove the previous newline");
+        logEditor("Remove the previous newline");
 
         const newWords = [...words];
         newWords.splice(index - 1, 1);
@@ -148,7 +303,7 @@ function App() {
           textareaRef.current.setSelectionRange(index - 1, index - 1);
         });
       } else {
-        console.log("Move the cursor to the previous word");
+        logEditor("Move the cursor to the previous word");
 
         // Prevent add the cursor to the end of the textarea.
         textareaRef.current.blur();
@@ -159,7 +314,7 @@ function App() {
         });
       }
     } else if (isPrintable(e.key) || e.key === " ") {
-      console.log("Textarea keydown printable", "Insert a empty grid input after the current word");
+      logEditor("Textarea keydown printable", "Insert a empty grid input after the current word");
 
       const newWords = [...words];
       const key = e.key === " " ? "" : e.key; // For space, insert an empty grid input.
@@ -171,7 +326,7 @@ function App() {
         gridInputs[index].focus();
       });
     } else if (e.key === "Enter") {
-      console.log("Textarea keydown enter", "Add a newline after the current word");
+      logEditor("Textarea keydown enter", "Add a newline after the current word");
 
       const newWords = [...words];
       newWords.splice(index, 0, {ch: "\n", id: uid()});
@@ -189,10 +344,10 @@ function App() {
   const onTextareaChange = (e) => {};
 
   const onGridInputKeyDown = (e, d, i) => {
-    console.log("Grid input keydown", {index: i, value: e.target.value, key: e.key});
+    logEditor("Grid input keydown", {index: i, value: e.target.value, key: e.key});
 
     if (e.key === "Backspace" && e.target.value === "") {
-      console.log("Grid input backspace", "Remove the current word");
+      logEditor("Grid input backspace", "Remove the current word");
 
       const newWords = [...words];
       newWords.splice(i, 1);
@@ -203,7 +358,7 @@ function App() {
         textareaRef.current.setSelectionRange(i, i);
       });
     } else if (e.key === " ") {
-      console.log("Grid input space", "Move the cursor to the next word");
+      logEditor("Grid input space", "Move the cursor to the next word");
 
       // If is a space, move the cursor to the next word.
       fire(() => {
@@ -211,7 +366,7 @@ function App() {
         textareaRef.current.setSelectionRange(i + 1, i + 1);
       });
     } else if (e.key === "Enter") {
-      console.log("Grid input enter", "Add a newline after the current word");
+      logEditor("Grid input enter", "Add a newline after the current word");
 
       // Add a newline after the current word.
       const newWords = [...words];
@@ -227,7 +382,7 @@ function App() {
   };
 
   const onGridInputChange = (e, d, i) => {
-    console.log("Grid input change", "Update current word", {value: e.target.value, index: i});
+    logEditor("Grid input change", "Update current word", {value: e.target.value, index: i});
 
     const newWords = [...words];
     const newValue = e.target.value;
@@ -236,7 +391,7 @@ function App() {
   };
 
   const onGridInputBlur = (e, d, i) => {
-    console.log("Grid input blur", "Remove current empty word", {value: e.target.value, index: i});
+    logEditor("Grid input blur", "Remove current empty word", {value: e.target.value, index: i});
 
     // Remove current empty word when blur.
     const newWords = [...words];
@@ -246,37 +401,61 @@ function App() {
     }
   };
 
-  console.log("\n\n================= Rerendering Editor ==================\n\n", {text, words, textareaValue});
+  logEditor("\n\n================= Rerendering Editor ==================\n\n", {text, words, textareaValue});
 
   return (
     <div className="container">
-      <div className="editor" ref={editorRef}>
-        <div className="canvas" ref={canvasRef}></div>
-        <textarea
-          className="input"
-          style={{...style, transform: `scale(1, ${scale})`}}
-          value={textareaValue}
-          ref={textareaRef}
-          onChange={onTextareaChange}
-          onKeyDown={onTextareaKeyDown}
-        ></textarea>
-        {words.map((d, i) => (
-          <input
-            key={d.id}
-            className="grid-input"
-            style={{
-              width: cellWidth,
-              height: gridInputHeight,
-              top: d.y * cellWidth + cellWidth,
-              left: d.x * cellWidth,
-            }}
-            ref={gridRef}
-            value={d.ch}
-            onKeyDown={(e) => onGridInputKeyDown(e, d, i)}
-            onChange={(e) => onGridInputChange(e, d, i)}
-            onBlur={(e) => onGridInputBlur(e, d, i)}
-          ></input>
-        ))}
+      {showConfig ? (
+        <Config
+          style={{width: panelWidth, height: "100vh"}}
+          onClose={() => setShowConfig(false)}
+          updateValue={updateConfig}
+          getValue={getValue}
+          onSave={onSave}
+          onNew={onNew}
+          onUpload={onUpload}
+          onDownload={onDownload}
+          updateTemplate={updateTemplate}
+          getTemplate={getTemplate}
+        />
+      ) : (
+        <button onClick={() => setShowConfig(true)} className="config-button">
+          Show Config
+        </button>
+      )}
+      <div
+        className="editor-container"
+        style={{width: `calc(100% - ${showConfig ? panelWidth : 0}px)`}}
+        onClick={onClickEditorContainer}
+      >
+        <div className="editor" ref={editorRef}>
+          <div className="canvas" ref={canvasRef}></div>
+          <textarea
+            className="input"
+            style={{...style, transform: `scale(1, ${scale})`}}
+            value={textareaValue}
+            ref={textareaRef}
+            onChange={onTextareaChange}
+            onKeyDown={onTextareaKeyDown}
+          ></textarea>
+          {words.map((d, i) => (
+            <input
+              key={d.id}
+              className="grid-input"
+              style={{
+                width: cellWidth,
+                height: gridInputHeight,
+                top: d.y * cellWidth + cellWidth,
+                left: d.x * cellWidth,
+              }}
+              ref={gridRef}
+              value={d.ch}
+              onKeyDown={(e) => onGridInputKeyDown(e, d, i)}
+              onChange={(e) => onGridInputChange(e, d, i)}
+              onBlur={(e) => onGridInputBlur(e, d, i)}
+            ></input>
+          ))}
+        </div>
       </div>
     </div>
   );
