@@ -104,6 +104,29 @@ function getConfig() {
   return apack ? JSON.parse(apack) : createDefaultConfig();
 }
 
+function isDarkColor(color) {
+  // Handle transparent and named colors
+  if (color === "transparent" || !color) return false;
+
+  // Convert hex to RGB
+  let r, g, b;
+  if (color.startsWith("#")) {
+    const hex = color.substring(1);
+    r = parseInt(hex.substring(0, 2), 16);
+    g = parseInt(hex.substring(2, 4), 16);
+    b = parseInt(hex.substring(4, 6), 16);
+  } else if (color.startsWith("rgb")) {
+    const rgb = color.match(/\d+/g);
+    [r, g, b] = rgb.map(Number);
+  } else {
+    return false; // For other color formats, default to light
+  }
+
+  // Calculate relative luminance
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance < 0.5;
+}
+
 function App() {
   const gridInputHeight = 20;
   const ch = "中";
@@ -113,6 +136,7 @@ function App() {
   const editorRef = useRef(null);
   const canvasRef = useRef(null);
   const textareaRef = useRef(null);
+  const editorContainerRef = useRef(null);
 
   const [showConfig, setShowConfig] = useState(false);
   const [template, setTemplate] = useState("None");
@@ -121,11 +145,13 @@ function App() {
   const text = config.text;
 
   const style = useMemo(() => {
+    const isDark = isDarkColor(config.canvas);
     return {
       fontSize: `${config.fontSize}px`,
       fontFamily: "monospace",
+      caretColor: isDark ? "white" : "black",
     };
-  }, [config.fontSize]);
+  }, [config.fontSize, config.canvas]);
 
   const {width: cellWidth, height: cellHeight} = useMemo(() => measureText(ch, style), [ch, style]);
 
@@ -141,6 +167,23 @@ function App() {
   const scale = useMemo(() => {
     return cellWidth / cellHeight;
   }, [cellWidth, cellHeight]);
+
+  const computeEditorPosition = (textareaValue, style) => {
+    // Center the textarea based on the size of the output,
+    // not the size of the textarea, because the textarea is not visible.
+    if (textareaRef.current && editorContainerRef.current) {
+      const {width, height} = measureText(textareaValue, style);
+      const container = editorContainerRef.current;
+      const containerWidth = container.clientWidth;
+      const containerHeight = container.clientHeight;
+
+      if (width < containerWidth) editorRef.current.style.left = (containerWidth - width) / 2 + "px";
+      else editorRef.current.style.left = "0px";
+
+      if (height < containerHeight) editorRef.current.style.top = (containerHeight - height) / 2 + "px";
+      else editorRef.current.style.top = "0px";
+    }
+  };
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -160,13 +203,17 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (textareaRef.current) {
-      // Center the textarea based on the size of the output,
-      // not the size of the textarea, because the textarea is not visible.
-      const {width, height} = measureText(textareaValue, style);
-      editorRef.current.style.left = -width / 2 + "px";
-      editorRef.current.style.top = -height / 2 + "px";
-    }
+    computeEditorPosition(textareaValue, style);
+  }, [textareaValue, style]);
+
+  // Add resize observer for editor container
+  useEffect(() => {
+    if (!editorContainerRef.current) return;
+    const resizeObserver = new ResizeObserver(() => {
+      computeEditorPosition(textareaValue, style);
+    });
+    resizeObserver.observe(editorContainerRef.current);
+    return () => resizeObserver.disconnect();
   }, [textareaValue, style]);
 
   useEffect(() => {
@@ -421,12 +468,13 @@ function App() {
           getTemplate={getTemplate}
         />
       ) : (
-        <button onClick={() => setShowConfig(true)} className="config-button">
+        <button onClick={() => setShowConfig(true)} className="config-button" style={{backgroundColor: "white"}}>
           <FiMenu size={24} />
         </button>
       )}
       <div
         className="editor-container"
+        ref={editorContainerRef}
         style={{width: `calc(100% - ${showConfig ? panelWidth : 0}px)`}}
         onClick={onClickEditorContainer}
       >
