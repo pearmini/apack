@@ -5,6 +5,7 @@ import {Config} from "./Config";
 import {logEditor} from "./log";
 import * as ap from "apackjs";
 import {templates} from "./templates";
+import {FiMenu} from "react-icons/fi";
 import "./App.css";
 
 function paragraph(W, {cellWidth = 80, cellHeight = cellWidth, ...config} = {}) {
@@ -79,7 +80,7 @@ function uid() {
 
 function createDefaultConfig() {
   return {
-    text: "Hello World",
+    text: "APack : Words in Chinese Grid Style",
     fontSize: "80",
     font: "futural",
     padding: 0,
@@ -87,6 +88,7 @@ function createDefaultConfig() {
     word: {
       fill: "transparent",
       strokeWidth: 1.5,
+      stroke: "#000000",
     },
     grid: {
       stroke: "transparent",
@@ -112,7 +114,7 @@ function App() {
   const canvasRef = useRef(null);
   const textareaRef = useRef(null);
 
-  const [showConfig, setShowConfig] = useState(true);
+  const [showConfig, setShowConfig] = useState(false);
   const [template, setTemplate] = useState("None");
   const [config, setConfig] = useState(getConfig());
 
@@ -420,7 +422,7 @@ function App() {
         />
       ) : (
         <button onClick={() => setShowConfig(true)} className="config-button">
-          Show Config
+          <FiMenu size={24} />
         </button>
       )}
       <div
