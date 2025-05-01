@@ -28,7 +28,7 @@ function points(key, ch) {
   return plines;
 }
 
-function packWord({string, x, y, width, height, layout, font = "futural"}) {
+function packWord({string, x, y, width, height, layout, cursive = false, font = "futural"}) {
   const {type, ...options} = layout;
   const pack = LAYOUTS[type];
 
@@ -56,7 +56,23 @@ function packWord({string, x, y, width, height, layout, font = "futural"}) {
     return {...d, points};
   });
 
-  return {cells, paths: scaled};
+  let paths = scaled;
+  if (cursive) {
+    const P = scaled.flatMap((d) => {
+      const {x, y, points} = d;
+      for (const list of points) {
+        for (const point of list) {
+          point[0] += x;
+          point[1] += y;
+        }
+      }
+      return points;
+    });
+
+    paths = [{...scaled[0], points: [P.flat()], x: 0, y: 0}];
+  }
+
+  return {cells, paths};
 }
 
 export const FONT_FAMILIES = Object.keys(fonts);
@@ -69,6 +85,7 @@ export function text(
     cellHeight = cellSize,
     curve = d3.curveCatmullRom,
     padding = 0.1,
+    cursive = false,
     layout = {},
     font = "futural",
     word = {},
@@ -102,6 +119,7 @@ export function text(
       padding: min * padding * 0.5,
       layout,
       font,
+      cursive,
     }),
   );
 
