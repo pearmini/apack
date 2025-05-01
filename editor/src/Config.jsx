@@ -3,6 +3,7 @@ import {FONT_FAMILIES} from "apackjs";
 import {SketchPicker} from "react-color";
 import {useState, useRef, useEffect} from "react";
 import {templates} from "./templates";
+import {FiX, FiSave, FiFile, FiUpload, FiDownload, FiSettings} from "react-icons/fi";
 
 const templateSchema = {
   key: "template",
@@ -117,14 +118,24 @@ export function Config({
   return (
     <div style={style} className="config-panel">
       <div className="config-panel-header">
-        <h1>APack Editor</h1>
-        <button onClick={onClose}>Close</button>
+        <h1>APack</h1>
+        <button onClick={onClose} className="icon-button">
+          <FiX size={22} />
+        </button>
       </div>
-      <div className="config-panel-footer">
-        <button onClick={onSave}>Save</button>
-        <button onClick={onNew}>New</button>
-        <button onClick={onUpload}>Upload</button>
-        <button onClick={onDownload}>Download</button>
+      <div className="config-panel-toolbar">
+        <button onClick={onSave} className="icon-button">
+          <FiSave size={22} />
+        </button>
+        <button onClick={onNew} className="icon-button">
+          <FiFile size={22} />
+        </button>
+        <button onClick={onUpload} className="icon-button">
+          <FiUpload size={22} />
+        </button>
+        <button onClick={onDownload} className="icon-button">
+          <FiDownload size={22} />
+        </button>
       </div>
       <div className="config-panel-body">
         <div className="config-panel-item">
