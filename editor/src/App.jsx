@@ -194,10 +194,10 @@ function App() {
       const containerHeight = container.clientHeight;
 
       if (width < containerWidth) editorRef.current.style.left = (containerWidth - width) / 2 + "px";
-      else editorRef.current.style.left = "0px";
+      else editorRef.current.style.left = "10px";
 
       if (height < containerHeight) editorRef.current.style.top = (containerHeight - height) / 2 + "px";
-      else editorRef.current.style.top = "0px";
+      else editorRef.current.style.top = "10px";
     }
   };
 

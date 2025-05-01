@@ -3,7 +3,7 @@ import poem from "./poem.json";
 import wallpaper from "./wallpaper.json";
 
 export const templates = {
-  stamp,
-  poem,
-  wallpaper,
+  Stamp: stamp,
+  Poem: poem,
+  Wallpaper: wallpaper,
 };

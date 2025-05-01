@@ -21,9 +21,9 @@ const schemas = [
   },
   {key: "fontSize", name: "Font Size", type: "number"},
   {key: "padding", name: "Padding", type: "number"},
+  {key: "word.strokeWidth", name: "Text Stroke Width", type: "number"},
   {key: "word.stroke", name: "Text Stroke", type: "color"},
   {key: "word.fill", name: "Text Fill", type: "color"},
-  {key: "word.strokeWidth", name: "Text Stroke Width", type: "number"},
   {key: "background.fill", name: "Grid Fill", type: "color"},
   {key: "canvas", name: "Background Fill", type: "color"},
 ];
