@@ -14,23 +14,27 @@
 .config-panel-toolbar {
   display: flex;
   align-items: center;
+  gap: 8px;
+  height: 20px;
+  margin-bottom: 30px;
 }
 
 .config-panel-body {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 8px;
 }
 
 .config-panel-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 30px;
 }
 
 .color-input {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border-radius: 4px;
   border: 1px solid #ccc;
   cursor: pointer;
@@ -39,10 +43,12 @@
 .config-panel-item input {
   border: 1px solid #ccc;
   border-radius: 4px;
-  width: 80px;
+  width: 100px;
+  padding: 5px;
 }
 
 .config-panel-item select {
   border: 1px solid #ccc;
   border-radius: 4px;
+  padding: 5px;
 }
