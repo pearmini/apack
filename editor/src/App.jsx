@@ -47,6 +47,18 @@ function isPrintable(ch) {
   return ch.length === 1 && ch.match(/^[\u4e00-\u9fa5a-zA-Z0-9]+$/);
 }
 
+function deepMerge(a, b) {
+  const result = {...a};
+  for (const key in b) {
+    if (typeof b[key] === "object" && b[key] !== null) {
+      result[key] = deepMerge(a[key], b[key]);
+    } else {
+      result[key] = b[key];
+    }
+  }
+  return result;
+}
+
 // Input: "hello world EFG\nAB CD"
 // Output: ["hello", "world", "EFG", "\n", "AB", "CD"]
 function splitWordsWithNewlines(text) {
@@ -172,7 +184,11 @@ function App() {
     // Center the textarea based on the size of the output,
     // not the size of the textarea, because the textarea is not visible.
     if (textareaRef.current && editorContainerRef.current) {
-      const {width, height} = measureText(textareaValue, style);
+      const {width, height: h} = measureText(textareaValue, style);
+
+      // Apply the scale to the height.
+      const height = h * scale;
+
       const container = editorContainerRef.current;
       const containerWidth = container.clientWidth;
       const containerHeight = container.clientHeight;
@@ -220,10 +236,15 @@ function App() {
     if (textareaRef.current) {
       const maxX = Math.max(...words.map((d) => d.x));
       const maxY = Math.max(...words.map((d) => d.y));
+      const lastWord = words[words.length - 1];
+
+      // If the last word is a newline, add an offset to the height.
+      const offset = lastWord.ch === "\n" ? 1 : 0;
+
       // Make the size of the textarea a little bit larger than the canvas,
       // so the cursor can move properly.
       textareaRef.current.style.width = `${(maxX + 1) * cellWidth}px`;
-      textareaRef.current.style.height = `${(maxY + 2) * cellHeight}px`;
+      textareaRef.current.style.height = `${(maxY + 1 + offset) * cellHeight}px`;
     }
   }, [words, cellWidth, cellHeight]);
 
@@ -239,7 +260,7 @@ function App() {
       current[key] = i === keys.length - 1 ? value : {};
       current = current[key];
     }
-    setConfig({...config, ...obj});
+    setConfig(deepMerge(config, obj));
   };
 
   // word.fill => {word: {fill: value}}
