@@ -1,1 +1,1 @@
-export {text} from "./text.js";
+export {text, FONT_FAMILIES} from "./text.js";

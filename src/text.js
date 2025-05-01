@@ -59,6 +59,8 @@ function packWord({string, x, y, width, height, layout, font = "futural"}) {
   return {cells, paths: scaled};
 }
 
+export const FONT_FAMILIES = Object.keys(fonts);
+
 export function text(
   content,
   {
@@ -112,6 +114,7 @@ export function text(
     styleBackground: "white",
     ...style,
     children: [
+      background && cm.svg("rect", {x: 0, y: 0, width, height, ...background}),
       grid &&
         cm.svg("g", data, {
           transform: (_, i) => `translate(${cellWidth * i},0)`,
