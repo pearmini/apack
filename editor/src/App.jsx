@@ -14,7 +14,14 @@ function paragraph(W, {cellWidth = 80, cellHeight = cellWidth} = {}) {
     height: (maxY + 1) * cellHeight,
     children: cm.svg("g", words, {
       transform: (d) => `translate(${d.x * cellWidth}, ${d.y * cellHeight})`,
-      children: (d) => ap.text(d.ch, {cellWidth, cellHeight}),
+      children: (d) => {
+        try {
+          return ap.text(d.ch, {cellWidth, cellHeight});
+        } catch (e) {
+          console.error("Error rendering text", e);
+          return ap.text("?", {cellWidth, cellHeight});
+        }
+      },
     }),
   });
   return svg.render();
@@ -92,6 +99,27 @@ function App() {
       canvas.appendChild(paragraph(words, {cellWidth}));
     }
   }, [words, cellWidth]);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      // Center the textarea based on the size of the output,
+      // not the size of the textarea, because the textarea is not visible.
+      const {width, height} = measureText(textareaValue, style);
+      editorRef.current.style.left = -width / 2 + "px";
+      editorRef.current.style.top = -height / 2 + "px";
+    }
+  }, [textareaValue, style]);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      const maxX = Math.max(...words.map((d) => d.x));
+      const maxY = Math.max(...words.map((d) => d.y));
+      // Make the size of the textarea a little bit larger than the canvas,
+      // so the cursor can move properly.
+      textareaRef.current.style.width = `${(maxX + 1) * cellWidth}px`;
+      textareaRef.current.style.height = `${(maxY + 2) * cellHeight}px`;
+    }
+  }, [words, cellWidth, cellHeight]);
 
   const fire = (callback) => setTimeout(callback, 10);
 

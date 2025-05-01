@@ -1,13 +1,16 @@
 .container {
-  /* display: flex;
-  flex-direction: column;
+  min-height: 100vh;
+  overflow: auto;
+  min-height: 100vh;
+  display: flex;
   align-items: center;
-  justify-content: center; */
+  justify-content: center;
 }
 
 .editor {
   position: relative;
   background: transparent;
+  display: inline-block;
 }
 
 .canvas {
@@ -35,8 +38,6 @@
 }
 
 .input {
-  width: 60%;
-  height: 100vh;
   position: absolute;
   top: 0;
   left: 0;
@@ -44,4 +45,8 @@
   color: transparent;
   transform-origin: left top;
   caret-color: black;
+  resize: none;
+  overflow: hidden;
+  outline: none;
+  border: none;
 }
