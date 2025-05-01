@@ -4,13 +4,17 @@ import {measureText} from "./text";
 import * as ap from "apackjs";
 import "./App.css";
 
-function paragraph(text) {
-  const words = text.split(" ");
+function paragraph(W, {cellWidth = 80, cellHeight = cellWidth} = {}) {
+  // Ignore empty words, such as \n.
+  const words = W.filter((d) => d.ch.trim() !== "");
+  const maxX = Math.max(...words.map((d) => d.x));
+  const maxY = Math.max(...words.map((d) => d.y));
   const svg = cm.svg("svg", {
-    width: words.length * 80,
+    width: (maxX + 1) * cellWidth,
+    height: (maxY + 1) * cellHeight,
     children: cm.svg("g", words, {
-      transform: (d, i) => `translate(${i * 80}, 0)`,
-      children: (d) => ap.text(d),
+      transform: (d) => `translate(${d.x * cellWidth}, ${d.y * cellHeight})`,
+      children: (d) => ap.text(d.ch, {cellWidth, cellHeight}),
     }),
   });
   return svg.render();
@@ -18,6 +22,37 @@ function paragraph(text) {
 
 function isPrintable(ch) {
   return ch.length === 1 && ch.match(/^[\u4e00-\u9fa5a-zA-Z0-9]+$/);
+}
+
+// Input: "hello world EFG\nAB CD"
+// Output: ["hello", "world", "EFG", "\n", "AB", "CD"]
+function splitWordsWithNewlines(text) {
+  return text.split("\n").flatMap((d, j, lines) => {
+    const words = d.split(" ").map((d) => ({ch: d, id: uid()}));
+    // Add a newline after each line except the last one.
+    if (j < lines.length - 1) {
+      words.push({ch: "\n", id: uid()});
+    }
+    return words;
+  });
+}
+
+function positionWords(words) {
+  let x = 0;
+  let y = 0;
+  for (const word of words) {
+    word.x = x;
+    word.y = y;
+    x += 1;
+    if (word.ch === "\n") {
+      y += 1;
+      x = 0;
+    }
+  }
+}
+
+function uid() {
+  return Math.random().toString(36).substring(2, 15);
 }
 
 function App() {
@@ -29,7 +64,7 @@ function App() {
   const canvasRef = useRef(null);
   const textareaRef = useRef(null);
 
-  const [text, setText] = useState("hello world AB CD");
+  const [text, setText] = useState("hello world EFG\nAB CD");
   const [style, setStyle] = useState({
     fontSize: "80px",
     fontFamily: "monospace",
@@ -37,15 +72,13 @@ function App() {
 
   const {width: cellWidth, height: cellHeight} = useMemo(() => measureText(ch, style), [ch, style]);
 
-  const words = useMemo(() => {
-    return text.split(" ").map((d, i) => ({ch: d, x: i, y: 0}));
-  }, [text]);
+  const [words, setWords] = useState(splitWordsWithNewlines(text));
+
+  positionWords(words);
 
   const textareaValue = useMemo(() => {
-    return words
-      .map(() => ch)
-      .join("")
-      .trim(); // Remove the trailing space.
+    // Show \n as is. There is no need to show it as a Chinese character.
+    return words.map((d) => (d.ch === "\n" ? "\n" : ch)).join("");
   }, [words]);
 
   const scale = useMemo(() => {
@@ -56,13 +89,136 @@ function App() {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
       canvas.innerHTML = "";
-      canvas.appendChild(paragraph(text));
+      canvas.appendChild(paragraph(words, {cellWidth}));
     }
-  }, [text]);
+  }, [words, cellWidth]);
 
-  const join = (words) => words.map((d) => d.ch).join(" ");
+  const fire = (callback) => setTimeout(callback, 10);
 
-  console.log({words, text});
+  const onTextareaKeyDown = (e) => {
+    const index = e.target.selectionStart;
+
+    console.log("Textarea keydown", {index, value: e.target.value, key: e.key});
+
+    // Do nothing if the user holds down the meta key.
+    if (e.metaKey) return;
+
+    if (e.key === "Backspace") {
+      console.log("Textarea keydown backspace");
+
+      // If the previous word is a newline, remove it.
+      const prev = words[index - 1];
+      if (prev && prev.ch === "\n") {
+        console.log("Remove the previous newline");
+
+        const newWords = [...words];
+        newWords.splice(index - 1, 1);
+        setWords(newWords);
+
+        fire(() => {
+          textareaRef.current.focus();
+          textareaRef.current.setSelectionRange(index - 1, index - 1);
+        });
+      } else {
+        console.log("Move the cursor to the previous word");
+
+        // Prevent add the cursor to the end of the textarea.
+        textareaRef.current.blur();
+
+        fire(() => {
+          const gridInputs = editorRef.current.querySelectorAll(".grid-input");
+          gridInputs[index - 1].focus();
+        });
+      }
+    } else if (isPrintable(e.key) || e.key === " ") {
+      console.log("Textarea keydown printable", "Insert a empty grid input after the current word");
+
+      const newWords = [...words];
+      const key = e.key === " " ? "" : e.key; // For space, insert an empty grid input.
+      newWords.splice(index, 0, {ch: key, id: uid()});
+      setWords(newWords);
+
+      fire(() => {
+        const gridInputs = editorRef.current.querySelectorAll(".grid-input");
+        gridInputs[index].focus();
+      });
+    } else if (e.key === "Enter") {
+      console.log("Textarea keydown enter", "Add a newline after the current word");
+
+      const newWords = [...words];
+      newWords.splice(index, 0, {ch: "\n", id: uid()});
+      setWords(newWords);
+
+      fire(() => {
+        textareaRef.current.focus();
+        // Move the cursor to the next newline.
+        textareaRef.current.setSelectionRange(index + 1, index + 1);
+      });
+    }
+  };
+
+  // Do nothing. Dismiss warning from React.
+  const onTextareaChange = (e) => {};
+
+  const onGridInputKeyDown = (e, d, i) => {
+    console.log("Grid input keydown", {index: i, value: e.target.value, key: e.key});
+
+    if (e.key === "Backspace" && e.target.value === "") {
+      console.log("Grid input backspace", "Remove the current word");
+
+      const newWords = [...words];
+      newWords.splice(i, 1);
+      setWords(newWords);
+
+      fire(() => {
+        textareaRef.current.focus();
+        textareaRef.current.setSelectionRange(i, i);
+      });
+    } else if (e.key === " ") {
+      console.log("Grid input space", "Move the cursor to the next word");
+
+      // If is a space, move the cursor to the next word.
+      fire(() => {
+        textareaRef.current.focus();
+        textareaRef.current.setSelectionRange(i + 1, i + 1);
+      });
+    } else if (e.key === "Enter") {
+      console.log("Grid input enter", "Add a newline after the current word");
+
+      // Add a newline after the current word.
+      const newWords = [...words];
+      newWords.splice(i + 1, 0, {ch: "\n", id: uid()});
+      setWords(newWords);
+
+      fire(() => {
+        // Move the cursor to the next word.
+        textareaRef.current.focus();
+        textareaRef.current.setSelectionRange(i + 2, i + 2);
+      });
+    }
+  };
+
+  const onGridInputChange = (e, d, i) => {
+    console.log("Grid input change", "Update current word", {value: e.target.value, index: i});
+
+    const newWords = [...words];
+    const newValue = e.target.value;
+    newWords[i] = {...newWords[i], ch: newValue};
+    setWords(newWords);
+  };
+
+  const onGridInputBlur = (e, d, i) => {
+    console.log("Grid input blur", "Remove current empty word", {value: e.target.value, index: i});
+
+    // Remove current empty word when blur.
+    const newWords = [...words];
+    if (newWords[i].ch === "") {
+      newWords.splice(i, 1);
+      setWords(newWords);
+    }
+  };
+
+  console.log("\n\n================= Rerendering Editor ==================\n\n", {text, words, textareaValue});
 
   return (
     <div className="container">
@@ -73,41 +229,12 @@ function App() {
           style={{...style, transform: `scale(1, ${scale})`}}
           value={textareaValue}
           ref={textareaRef}
-          onChange={() => {}} /* Dismiss warning from React. */
-          onKeyDown={(e) => {
-            const index = e.target.selectionStart;
-            if (e.metaKey) return;
-            if (e.key === "Backspace") {
-              setTimeout(() => {
-                const gridInputs = editorRef.current.querySelectorAll(".grid-input");
-                gridInputs[index - 1].focus();
-              }, 10);
-            } else if (isPrintable(e.key)) {
-              const newWords = [...words];
-              const old = words[index];
-              const deleteCount = old && old.ch === "" ? 1 : 0;
-              newWords.splice(index, deleteCount, {ch: e.key, x: index, y: 0});
-              const newText = join(newWords);
-              setText(newText);
-              setTimeout(() => {
-                const gridInputs = editorRef.current.querySelectorAll(".grid-input");
-                gridInputs[index].focus();
-              }, 10);
-            } else if (e.key === " ") {
-              const newWords = [...words];
-              newWords.splice(index, 0, {ch: "", x: index, y: 0});
-              const newText = join(newWords);
-              setText(newText);
-              setTimeout(() => {
-                const gridInputs = editorRef.current.querySelectorAll(".grid-input");
-                gridInputs[index].focus();
-              }, 10);
-            }
-          }}
+          onChange={onTextareaChange}
+          onKeyDown={onTextareaKeyDown}
         ></textarea>
         {words.map((d, i) => (
           <input
-            key={i}
+            key={d.id}
             className="grid-input"
             style={{
               width: cellWidth,
@@ -117,31 +244,9 @@ function App() {
             }}
             ref={gridRef}
             value={d.ch}
-            onKeyDown={(e) => {
-              if (e.key === "Backspace" && e.target.value === "") {
-                const newWords = [...words];
-                newWords.splice(i, 1);
-                const newText = join(newWords);
-                setText(newText);
-                setTimeout(() => {
-                  textareaRef.current.focus();
-                  textareaRef.current.setSelectionRange(i, i);
-                }, 10);
-              } else if (e.key === " ") {
-                // If is a space, move the cursor to the next word.
-                setTimeout(() => {
-                  textareaRef.current.focus();
-                  textareaRef.current.setSelectionRange(i + 1, i + 1);
-                }, 10);
-              }
-            }}
-            onChange={(e) => {
-              const newWords = [...words];
-              const newValue = e.target.value.trim();
-              newWords[i] = {...newWords[i], ch: newValue};
-              const newText = join(newWords);
-              setText(newText);
-            }}
+            onKeyDown={(e) => onGridInputKeyDown(e, d, i)}
+            onChange={(e) => onGridInputChange(e, d, i)}
+            onBlur={(e) => onGridInputBlur(e, d, i)}
           ></input>
         ))}
       </div>

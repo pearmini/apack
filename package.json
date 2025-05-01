@@ -12,6 +12,7 @@
   ],
   "scripts": {
     "dev": "vite",
+    "editor:dev": "pnpm --filter editor dev",
     "test": "npm run test:js && npm run test:lint && npm run test:format",
     "test:js": "vitest",
     "test:lint": "eslint src test",
