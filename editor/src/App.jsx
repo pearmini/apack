@@ -87,14 +87,12 @@ function positionWords(words) {
 }
 
 function uid() {
-  return Math.random().toString(36).substring(2, 15);``}
+  return Math.random().toString(36).substring(2, 15);
+}
 
 function createDefaultConfig() {
   return {
-    text: `I go see blue
-birds flying swiftly beyond
-mountains, contemplating philosophy, synthesizing
-realities, and transcending thought.`,
+    text: "APack : Words in Chinese Grid Style",
     fontSize: "80",
     font: "futural",
     padding: 0,
