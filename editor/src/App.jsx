@@ -16,16 +16,17 @@ function paragraph(W, {cellWidth = 80, cellHeight = cellWidth, ...config} = {}) 
   const words = W.filter((d) => d.ch.trim() !== "");
   const maxX = Math.max(...words.map((d) => d.x));
   const maxY = Math.max(...words.map((d) => d.y));
-  const width = (maxX + 1) * cellWidth;
-  const height = (maxY + 1) * cellHeight;
+  const width = (maxX + 1) * cellWidth + padding * 2;
+  const height = (maxY + 1) * cellHeight + padding * 2;
 
   const svg = cm.svg("svg", {
     width,
     height,
+    transform: `translate(${-padding}, ${-padding})`,
     children: [
       canvas && cm.svg("rect", {x: 0, y: 0, width, height, fill: canvas}),
       cm.svg("g", words, {
-        transform: (d) => `translate(${d.x * cellWidth + padding}, ${d.y * cellHeight + padding})`,
+        transform: (d) => `translate(${d.x * cellWidth + padding * 2}, ${d.y * cellHeight + padding * 2})`,
         children: (d) => {
           const realWidth = cellWidth - padding * 2;
           const realHeight = cellHeight - padding * 2;
@@ -40,6 +41,7 @@ function paragraph(W, {cellWidth = 80, cellHeight = cellWidth, ...config} = {}) 
       }),
     ].filter(Boolean),
   });
+
   return svg.render();
 }
 
