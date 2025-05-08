@@ -150,7 +150,7 @@ function App() {
   const gridInputHeight = 20;
   const ch = "中";
   const panelWidth = 300;
-  const placeHolder = "Writing Words";
+  const placeHolder = "Write Some Words";
 
   const gridRef = useRef(null);
   const editorRef = useRef(null);
