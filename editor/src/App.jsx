@@ -1,10 +1,10 @@
 import {useRef, useEffect, useState, useMemo} from "react";
 import * as cm from "charmingjs";
-import {measureText} from "./text";
-import {Config} from "./Config";
-import {logEditor} from "./log";
 import * as ap from "apackjs";
+import {measureText} from "./text";
+import {logEditor} from "./log";
 import {templates} from "./templates";
+import {Config} from "./Config";
 import {FiMenu} from "react-icons/fi";
 import "./App.css";
 
@@ -70,6 +70,7 @@ function splitWordsWithNewlines(text) {
     if (j < lines.length - 1) {
       words.push({ch: "\n", id: uid()});
     }
+    if (words.length === 1 && words[0].ch === "") return [];
     return words;
   });
 }
@@ -86,6 +87,7 @@ function positionWords(words) {
       x = 0;
     }
   }
+  return words;
 }
 
 function uid() {
@@ -94,7 +96,7 @@ function uid() {
 
 function createDefaultConfig() {
   return {
-    text: "APack : Words in Chinese Grid Style",
+    text: "",
     fontSize: "80",
     font: "futural",
     padding: 0,
@@ -143,9 +145,12 @@ function isDarkColor(color) {
 }
 
 function App() {
+  const hideConfig = new URLSearchParams(window.location.search).get("hide") === "true";
+
   const gridInputHeight = 20;
   const ch = "中";
   const panelWidth = 300;
+  const placeHolder = "Writing Words";
 
   const gridRef = useRef(null);
   const editorRef = useRef(null);
@@ -170,6 +175,8 @@ function App() {
 
   const {width: cellWidth, height: cellHeight} = useMemo(() => measureText(ch, style), [ch, style]);
 
+  const placeholderWords = useMemo(() => positionWords(splitWordsWithNewlines(placeHolder)), [placeHolder]);
+
   const [words, setWords] = useState(splitWordsWithNewlines(text));
 
   positionWords(words);
@@ -184,10 +191,15 @@ function App() {
   }, [cellWidth, cellHeight]);
 
   const computeEditorPosition = (textareaValue, style) => {
+    const placeholderText = placeHolder
+      .split(" ")
+      .map(() => ch)
+      .join("");
+
     // Center the textarea based on the size of the output,
     // not the size of the textarea, because the textarea is not visible.
     if (textareaRef.current && editorContainerRef.current) {
-      const {width, height: h} = measureText(textareaValue, style);
+      const {width, height: h} = measureText(textareaValue || placeholderText, style);
 
       // Apply the scale to the height.
       const height = h * scale;
@@ -208,7 +220,14 @@ function App() {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
       canvas.innerHTML = "";
-      canvas.appendChild(paragraph(words, {...config, cellWidth}));
+      const isEmpty = words.length === 0;
+      canvas.appendChild(
+        paragraph(isEmpty ? placeholderWords : words, {
+          ...config,
+          cellWidth,
+          ...(isEmpty ? {word: {stroke: "#757575", strokeWidth: 1.5}} : {}),
+        }),
+      );
     }
   }, [words, cellWidth, config]);
 
@@ -237,12 +256,14 @@ function App() {
 
   useEffect(() => {
     if (textareaRef.current) {
-      const maxX = Math.max(...words.map((d) => d.x));
-      const maxY = Math.max(...words.map((d) => d.y));
-      const lastWord = words[words.length - 1];
+      const isEmpty = words.length === 0;
+      const W = isEmpty ? placeholderWords : words;
+      const maxX = Math.max(...W.map((d) => d.x));
+      const maxY = Math.max(...W.map((d) => d.y));
+      const lastWord = W[W.length - 1];
 
       // If the last word is a newline, add an offset to the height.
-      const offset = lastWord.ch === "\n" ? 1 : 0;
+      const offset = lastWord && lastWord.ch === "\n" ? 1 : 0;
 
       // Make the size of the textarea a little bit larger than the canvas,
       // so the cursor can move properly.
@@ -383,7 +404,9 @@ function App() {
 
         fire(() => {
           const gridInputs = editorRef.current.querySelectorAll(".grid-input");
-          gridInputs[index - 1].focus();
+          const prev = gridInputs[index - 1];
+          if (prev) prev.focus();
+          else textareaRef.current.focus();
         });
       }
     } else if (isPrintable(e.key) || e.key === " ") {
@@ -478,24 +501,25 @@ function App() {
 
   return (
     <div className="container">
-      {showConfig ? (
-        <Config
-          style={{width: panelWidth, height: "100vh"}}
-          onClose={() => setShowConfig(false)}
-          updateValue={updateConfig}
-          getValue={getValue}
-          onSave={onSave}
-          onNew={onNew}
-          onUpload={onUpload}
-          onDownload={onDownload}
-          updateTemplate={updateTemplate}
-          getTemplate={getTemplate}
-        />
-      ) : (
-        <button onClick={() => setShowConfig(true)} className="config-button" style={{backgroundColor: "white"}}>
-          <FiMenu size={24} />
-        </button>
-      )}
+      {!hideConfig &&
+        (showConfig ? (
+          <Config
+            style={{width: panelWidth, height: "100vh"}}
+            onClose={() => setShowConfig(false)}
+            updateValue={updateConfig}
+            getValue={getValue}
+            onSave={onSave}
+            onNew={onNew}
+            onUpload={onUpload}
+            onDownload={onDownload}
+            updateTemplate={updateTemplate}
+            getTemplate={getTemplate}
+          />
+        ) : (
+          <button onClick={() => setShowConfig(true)} className="config-button" style={{backgroundColor: "#fefaf1"}}>
+            <FiMenu size={24} />
+          </button>
+        ))}
       <div
         className="editor-container"
         ref={editorContainerRef}
@@ -507,7 +531,7 @@ function App() {
           <textarea
             className="input"
             style={{...style, transform: `scale(1, ${scale})`}}
-            value={textareaValue}
+            value={textareaValue || ch} // If the textarea is empty, show a placeholder.
             ref={textareaRef}
             onChange={onTextareaChange}
             onKeyDown={onTextareaKeyDown}
