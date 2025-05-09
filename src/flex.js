@@ -23,6 +23,13 @@ export function flex(string, x, y, x1, y1, {padding = 0.05} = {}) {
   const next = (code) => code % r === d;
   let i = 1;
 
+  const constrain = (cell) => {
+    cell.x = Math.min(Math.max(x, cell.x), x1);
+    cell.y = Math.min(Math.max(y, cell.y), y1);
+    cell.x1 = Math.min(Math.max(x, cell.x1), x1);
+    cell.y1 = Math.min(Math.max(y, cell.y1), y1);
+  };
+
   while (cells.length < n && i < n) {
     const char = string[i];
     const code = string.charCodeAt(i);
@@ -34,11 +41,15 @@ export function flex(string, x, y, x1, y1, {padding = 0.05} = {}) {
     if (next(code)) {
       const cell0 = {x, y, x1: x + w * t - p, y1, ch};
       const cell1 = {x: x + w * t + p, y, x1, y1, ch: char};
+      constrain(cell0);
+      constrain(cell1);
       cells.pop();
       cells.push(cell0, cell1);
     } else {
       const cell0 = {x, y, x1, y1: y + h * t - p, ch};
       const cell1 = {x, y: y + h * t + p, x1, y1, ch: char};
+      constrain(cell0);
+      constrain(cell1);
       cells.pop();
       cells.push(cell0, cell1);
     }
