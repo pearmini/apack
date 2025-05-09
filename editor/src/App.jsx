@@ -530,8 +530,9 @@ function App() {
           <div className="canvas" ref={canvasRef}></div>
           <textarea
             className="input"
-            style={{...style, transform: `scale(1, ${scale})`}}
-            value={textareaValue || ch} // If the textarea is empty, show a placeholder.
+            // If the textarea is empty, adjust the position of the cursor by 10px.
+            style={{...style, transform: `scale(1, ${scale}) ${textareaValue ? "" : "translate(0, 10px)"}`}}
+            value={textareaValue}
             ref={textareaRef}
             onChange={onTextareaChange}
             onKeyDown={onTextareaKeyDown}
