@@ -1,4 +1,5 @@
 <svg width="640" height="320" style="background: rgb(241, 187, 77);" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="640" height="320" fill="transparent"></rect>
   <g transform="translate(0,0)">
     <g transform="translate(32,32)">
       <path d="M22.636,0C22.636,0,-11.428,243.517,0,256C1.958,258.139,7.545,256,7.545,256" fill="transparent" stroke="#492577" stroke-width="10"></path>

@@ -1,4 +1,5 @@
 <svg width="160" height="80" style="background: white;" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="160" height="80" fill="transparent"></rect>
   <g transform="translate(0,0)">
     <rect x="8" y="8" width="17.92" height="64" stroke="#ccc" fill="none"></rect>
     <rect x="32.32" y="8" width="39.68" height="17.92" stroke="#ccc" fill="none"></rect>
