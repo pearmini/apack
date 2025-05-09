@@ -374,11 +374,30 @@ function App() {
 
   const onTextareaKeyDown = (e) => {
     const index = e.target.selectionStart;
+    const endSelection = e.target.selectionEnd;
 
-    logEditor("Textarea keydown", {index, value: e.target.value, key: e.key});
+    logEditor("Textarea keydown", {index, endSelection, value: e.target.value, key: e.key});
 
     // Do nothing if the user holds down the meta key.
     if (e.metaKey) return;
+
+    const newWords = [...words];
+
+    // If the user selects a part of the text, remove it.
+    if (endSelection > index) {
+      newWords.splice(index, endSelection - index);
+
+      fire(() => {
+        textareaRef.current.focus();
+        textareaRef.current.setSelectionRange(index, index);
+      });
+
+      // Only remove the current word when backspace, do not enter the delete mode.
+      if (e.key === "Backspace") {
+        setWords(newWords);
+        return;
+      }
+    }
 
     if (e.key === "Backspace") {
       logEditor("Textarea keydown backspace");
@@ -388,9 +407,7 @@ function App() {
       if (prev && prev.ch === "\n") {
         logEditor("Remove the previous newline");
 
-        const newWords = [...words];
         newWords.splice(index - 1, 1);
-        setWords(newWords);
 
         fire(() => {
           textareaRef.current.focus();
@@ -412,10 +429,8 @@ function App() {
     } else if (isPrintable(e.key) || e.key === " ") {
       logEditor("Textarea keydown printable", "Insert a empty grid input after the current word");
 
-      const newWords = [...words];
       const key = e.key === " " ? "" : e.key; // For space, insert an empty grid input.
       newWords.splice(index, 0, {ch: key, id: uid()});
-      setWords(newWords);
 
       fire(() => {
         const gridInputs = editorRef.current.querySelectorAll(".grid-input");
@@ -424,9 +439,7 @@ function App() {
     } else if (e.key === "Enter") {
       logEditor("Textarea keydown enter", "Add a newline after the current word");
 
-      const newWords = [...words];
       newWords.splice(index, 0, {ch: "\n", id: uid()});
-      setWords(newWords);
 
       fire(() => {
         textareaRef.current.focus();
@@ -434,6 +447,8 @@ function App() {
         textareaRef.current.setSelectionRange(index + 1, index + 1);
       });
     }
+
+    setWords(newWords);
   };
 
   // Do nothing. Dismiss warning from React.
