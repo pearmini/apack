@@ -1,13 +1,26 @@
-import {d3} from "./namespaces.js";
+function findReminder(string) {
+  let uniqueRemainders;
+  const substring = string.substring(1, string.length);
+  const isSame = (s, r) => {
+    const codes = s.split("").map((c) => c.charCodeAt(0));
+    const remainders = codes.map((code) => code % r);
+    uniqueRemainders = new Set(remainders);
+    return uniqueRemainders.size > 1;
+  };
+  let r = 2;
+  while (!isSame(substring, r) && r < 10) {
+    r++;
+  }
+  return [r, Array.from(uniqueRemainders)[0]];
+}
 
-export function flex(string, x, y, x1, y1, {padding = 0.05, shuffle = false} = {}) {
+export function flex(string, x, y, x1, y1, {padding = 0.05} = {}) {
   const cellSize = Math.min(x1 - x, y1 - y);
   const p = cellSize * padding;
   const cells = [{x, y, x1, y1, ch: string[0]}];
   const n = string.length;
-  const seed = d3.sum(string.split(""), (d) => d.charCodeAt(0));
-  const random = d3.randomUniform.source(d3.randomLcg(seed))();
-  const next = shuffle ? () => random() > 0.5 : (code) => code % 2;
+  const [r, d] = findReminder(string);
+  const next = (code) => code % r === d;
   let i = 1;
 
   while (cells.length < n && i < n) {

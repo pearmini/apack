@@ -1,4 +1,5 @@
 <svg width="160" height="80" style="background: white;" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="160" height="80" fill="transparent"></rect>
   <g transform="translate(0,0)">
     <g transform="translate(8,8)">
       <path d="M2.688,0L2.688,64" fill="transparent" stroke="black" stroke-width="2"></path>
