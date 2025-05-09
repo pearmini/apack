@@ -9,3 +9,4 @@ export {optionLayout} from "./option-layout.js";
 export {optionDimensions} from "./option-dimensions.js";
 export {reminder} from "./reminder.js";
 export {longWord} from "./long-word.js";
+export {reminderShort} from "./reminder-short.js";

@@ -8,7 +8,9 @@ function findReminder(string) {
     return uniqueRemainders.size > 1;
   };
   let r = 2;
-  while (!isSame(substring, r) && r < 10) {
+
+  // If the string is too short, stacking in one direction is OK.
+  while (!isSame(substring, r) && r < 10 && string.length > 3) {
     r++;
   }
   return [r, Array.from(uniqueRemainders)[0]];
