@@ -6,6 +6,7 @@ import {Config} from "./Config";
 import {Example} from "./Example";
 import {APack} from "./APack";
 import {paragraph} from "./paragraph";
+import {downloadPNG, downloadSVG} from "./download";
 import "./App.css";
 
 function isPrintable(ch) {
@@ -443,6 +444,18 @@ function App() {
     }
   };
 
+  const onDownloadPNG = () => {
+    const svg = canvasRef.current.querySelector("svg");
+    const time = new Date().toISOString().replace(/[-:Z]/g, "");
+    downloadPNG(`apack-${time}`, svg);
+  };
+
+  const onDownloadSVG = () => {
+    const svg = canvasRef.current.querySelector("svg");
+    const time = new Date().toISOString().replace(/[-:Z]/g, "");
+    downloadSVG(`apack-${time}`, svg);
+  };
+
   logEditor("\n\n================= Rerendering Editor ==================\n\n", {text, words, textareaValue});
 
   return (
@@ -466,6 +479,12 @@ function App() {
         <div className="config-button">
           {!hideConfig && <APack text="Config" cellSize={40} onClick={() => setShowConfig(true)} />}
           <APack text="Example" cellSize={40} onClick={() => setShowExample(true)} />
+          {!hideConfig && textareaValue && (
+            <>
+              <APack text="PNG" cellSize={40} onClick={onDownloadPNG} />
+              <APack text="SVG" cellSize={40} onClick={onDownloadSVG} />
+            </>
+          )}
         </div>
       )}
       <div
