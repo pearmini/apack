@@ -1,8 +1,18 @@
+<img src="./img/poem.png" />
+
 # APack: Alphabet Packing Writing System
 
 **APack** is a writing system that explores writing alphabets in a Chinese character style. Instead of placing letters sequentially, APack packs letters for one word into a single grid.
 
+English and Chinese use fundamentally different writing systems. In English or other Latin scripts, letters are pre-defined and arranged in a linear sequence. In contrast, Chinese characters are spatially composed using strokes rather than following a strict left-to-right structure.
+
+What if we could write English in a Chinese-style manner—arranging the letters of a word spatially into a single unified character? Potential applications include stamps, wallpapers, concrete poems, icons, and more.
+
+<img src="./img/stamps.png" width="600"/>
+
 ## Get started
+
+You can create your own piece using the online [APack editor](https://apack.bairui.dev/). If you’d like to use APack in your project, it’s also available as a JavaScript package, just follow the instructions below to get started.
 
 ```bash
 $ npm install apackjs -S
