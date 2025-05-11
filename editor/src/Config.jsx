@@ -3,7 +3,8 @@ import {FONT_FAMILIES} from "apackjs";
 import {SketchPicker} from "react-color";
 import {useState, useRef, useEffect} from "react";
 import {templates} from "./templates";
-import {FiX, FiSave, FiFile, FiUpload, FiDownload, FiSettings} from "react-icons/fi";
+import {APack} from "./APack";
+import {FiX, FiSave, FiFile, FiUpload, FiDownload} from "react-icons/fi";
 
 const templateSchema = {
   key: "template",
@@ -102,7 +103,14 @@ function Input({type, value, onChange, options}) {
   }
 
   if (type === "boolean") {
-    return <input type="checkbox" checked={value} onChange={(e) => onChange(e.target.checked)} style={{width: 20, height: 20}} />;
+    return (
+      <input
+        type="checkbox"
+        checked={value}
+        onChange={(e) => onChange(e.target.checked)}
+        style={{width: 20, height: 20}}
+      />
+    );
   }
 
   return <input type={type} value={value} onChange={(e) => onChange(e.target.value)} />;
@@ -120,30 +128,21 @@ export function Config({
   onUpload,
   onDownload,
 }) {
+  const onGithub = () => {
+    window.open("https://github.com/pearmini/apack", "_blank");
+  };
+
   return (
     <div style={style} className="config-panel">
       <div className="config-panel-header">
-        <h1>APack</h1>
+        <APack text="APack" cellSize={40} onClick={onGithub} />
         <button onClick={onClose} className="icon-button">
-          <FiX size={22} />
+          <FiX size={22} color="#000" />
         </button>
       </div>
-      <div className="config-panel-toolbar">
-        <button onClick={onSave} className="icon-button">
-          <FiSave size={22} />
-        </button>
-        <button onClick={onNew} className="icon-button">
-          <FiFile size={22} />
-        </button>
-        <button onClick={onUpload} className="icon-button">
-          <FiUpload size={22} />
-        </button>
-        <button onClick={onDownload} className="icon-button">
-          <FiDownload size={22} />
-        </button>
-      </div>
+
       <div className="config-panel-body">
-        <div className="config-panel-item">
+        {/* <div className="config-panel-item">
           <span>{templateSchema.name}</span>
           <Input
             type={templateSchema.type}
@@ -152,7 +151,7 @@ export function Config({
             value={getTemplate()}
             onChange={(value) => updateTemplate(value)}
           />
-        </div>
+        </div> */}
         {schemas.map((schema) => (
           <div key={schema.key} className="config-panel-item">
             <span>{schema.name}</span>
@@ -165,6 +164,21 @@ export function Config({
             />
           </div>
         ))}
+      </div>
+
+      <div className="config-panel-toolbar">
+        <button onClick={onSave} className="icon-button">
+          <FiSave size={22} color="#000" />
+        </button>
+        <button onClick={onNew} className="icon-button">
+          <FiFile size={22} color="#000" />
+        </button>
+        <button onClick={onUpload} className="icon-button">
+          <FiUpload size={22} color="#000" />
+        </button>
+        <button onClick={onDownload} className="icon-button">
+          <FiDownload size={22} color="#000" />
+        </button>
       </div>
     </div>
   );

@@ -1,49 +1,12 @@
 import {useRef, useEffect, useState, useMemo} from "react";
-import * as cm from "charmingjs";
-import * as ap from "apackjs";
-import {measureText} from "./text";
+import {measureText, splitWordsWithNewlines, uid, positionWords} from "./text";
 import {logEditor} from "./log";
 import {templates} from "./templates";
 import {Config} from "./Config";
-import {FiMenu} from "react-icons/fi";
+import {Example} from "./Example";
+import {APack} from "./APack";
+import {paragraph} from "./paragraph";
 import "./App.css";
-
-function paragraph(W, {cellWidth = 80, cellHeight = cellWidth, ...config} = {}) {
-  let {font, word, grid, background, canvas, padding, cursive} = config;
-  padding = +padding;
-
-  // Ignore empty words, such as \n.
-  const words = W.filter((d) => d.ch.trim() !== "");
-  const maxX = Math.max(...words.map((d) => d.x));
-  const maxY = Math.max(...words.map((d) => d.y));
-  const width = (maxX + 1) * cellWidth + padding * 2;
-  const height = (maxY + 1) * cellHeight + padding * 2;
-
-  const svg = cm.svg("svg", {
-    width,
-    height,
-    transform: `translate(${-padding}, ${-padding})`,
-    children: [
-      canvas && cm.svg("rect", {x: 0, y: 0, width, height, fill: canvas}),
-      cm.svg("g", words, {
-        transform: (d) => `translate(${d.x * cellWidth + padding * 2}, ${d.y * cellHeight + padding * 2})`,
-        children: (d) => {
-          const realWidth = cellWidth - padding * 2;
-          const realHeight = cellHeight - padding * 2;
-          const options = {cellWidth: realWidth, cellHeight: realHeight, font, word, grid, background, cursive};
-          try {
-            return ap.text(d.ch, options);
-          } catch (e) {
-            console.error("Error rendering text", e);
-            return ap.text("?", options);
-          }
-        },
-      }),
-    ].filter(Boolean),
-  });
-
-  return svg.render();
-}
 
 function isPrintable(ch) {
   return ch.length === 1 && ch.match(/^[\u4e00-\u9fa5a-zA-Z0-9]+$/);
@@ -59,39 +22,6 @@ function deepMerge(a, b) {
     }
   }
   return result;
-}
-
-// Input: "hello world EFG\nAB CD"
-// Output: ["hello", "world", "EFG", "\n", "AB", "CD"]
-function splitWordsWithNewlines(text) {
-  return text.split("\n").flatMap((d, j, lines) => {
-    const words = d.split(" ").map((d) => ({ch: d, id: uid()}));
-    // Add a newline after each line except the last one.
-    if (j < lines.length - 1) {
-      words.push({ch: "\n", id: uid()});
-    }
-    if (words.length === 1 && words[0].ch === "") return [];
-    return words;
-  });
-}
-
-function positionWords(words) {
-  let x = 0;
-  let y = 0;
-  for (const word of words) {
-    word.x = x;
-    word.y = y;
-    x += 1;
-    if (word.ch === "\n") {
-      y += 1;
-      x = 0;
-    }
-  }
-  return words;
-}
-
-function uid() {
-  return Math.random().toString(36).substring(2, 15);
 }
 
 function createDefaultConfig() {
@@ -146,11 +76,11 @@ function isDarkColor(color) {
 
 function App() {
   const hideConfig = new URLSearchParams(window.location.search).get("hide") === "true";
+  const placeHolder = new URLSearchParams(window.location.search).get("placeholder") || "How are you ?";
 
   const gridInputHeight = 20;
   const ch = "中";
   const panelWidth = 300;
-  const placeHolder = "How are you ?";
 
   const gridRef = useRef(null);
   const editorRef = useRef(null);
@@ -159,6 +89,7 @@ function App() {
   const editorContainerRef = useRef(null);
 
   const [showConfig, setShowConfig] = useState(false);
+  const [showExample, setShowExample] = useState(false);
   const [template, setTemplate] = useState("None");
   const [config, setConfig] = useState(getConfig());
 
@@ -516,25 +447,27 @@ function App() {
 
   return (
     <div className="container">
-      {!hideConfig &&
-        (showConfig ? (
-          <Config
-            style={{width: panelWidth, height: "100vh"}}
-            onClose={() => setShowConfig(false)}
-            updateValue={updateConfig}
-            getValue={getValue}
-            onSave={onSave}
-            onNew={onNew}
-            onUpload={onUpload}
-            onDownload={onDownload}
-            updateTemplate={updateTemplate}
-            getTemplate={getTemplate}
-          />
-        ) : (
-          <button onClick={() => setShowConfig(true)} className="config-button" style={{backgroundColor: "#fefaf1"}}>
-            <FiMenu size={24} />
-          </button>
-        ))}
+      {showConfig ? (
+        <Config
+          style={{width: panelWidth, height: "100vh"}}
+          onClose={() => setShowConfig(false)}
+          updateValue={updateConfig}
+          getValue={getValue}
+          onSave={onSave}
+          onNew={onNew}
+          onUpload={onUpload}
+          onDownload={onDownload}
+          updateTemplate={updateTemplate}
+          getTemplate={getTemplate}
+        />
+      ) : showExample ? (
+        <Example onClose={() => setShowExample(false)} updateTemplate={updateTemplate} jump={!hideConfig} />
+      ) : (
+        <div className="config-button">
+          {!hideConfig && <APack text="Config" cellSize={40} onClick={() => setShowConfig(true)} />}
+          <APack text="Example" cellSize={40} onClick={() => setShowExample(true)} />
+        </div>
+      )}
       <div
         className="editor-container"
         ref={editorContainerRef}

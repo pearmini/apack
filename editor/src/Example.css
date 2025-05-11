@@ -1,0 +1,28 @@
+.example-panel {
+  background: #fbf7eb;
+  box-shadow: rgba(0, 0, 0, 0.024) -1px 0px 0px 0px inset;
+  padding: 20px;
+  height: 100vh;
+  position: relative;
+  width: 320px;
+  overflow: auto;
+}
+
+.example-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  margin-bottom: 30px;
+}
+
+.example-panel-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.example-item {
+  margin-bottom: 20px;
+  cursor: pointer;
+}

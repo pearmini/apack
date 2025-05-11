@@ -1,14 +1,17 @@
 .config-panel {
-  background: rgb(248, 248, 247);
+  background: #fbf7eb;
   box-shadow: rgba(0, 0, 0, 0.024) -1px 0px 0px 0px inset;
-  padding: 10px;
+  padding: 20px;
+  height: 100vh;
+  position: relative;
 }
 
 .config-panel-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .config-panel-toolbar {
@@ -16,7 +19,9 @@
   align-items: center;
   gap: 8px;
   height: 20px;
-  margin-bottom: 30px;
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
 }
 
 .config-panel-body {
