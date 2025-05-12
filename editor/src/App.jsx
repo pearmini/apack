@@ -450,10 +450,18 @@ function App() {
     downloadPNG(`apack-${time}`, svg);
   };
 
+  const onOpenTree = () => {
+    window.open("https://tree.bairui.dev/", "_blank");
+  };
+
   const onDownloadSVG = () => {
     const svg = canvasRef.current.querySelector("svg");
     const time = new Date().toISOString().replace(/[-:Z]/g, "");
     downloadSVG(`apack-${time}`, svg);
+  };
+
+  const onOpenGithub = () => {
+    window.open("https://github.com/pearmini/apack", "_blank");
   };
 
   logEditor("\n\n================= Rerendering Editor ==================\n\n", {text, words, textareaValue});
@@ -479,6 +487,12 @@ function App() {
         <div className="config-button">
           {!hideConfig && <APack text="Config" cellSize={40} onClick={() => setShowConfig(true)} />}
           <APack text="Example" cellSize={40} onClick={() => setShowExample(true)} />
+          {!hideConfig && (
+            <>
+              <APack text="Github" cellSize={40} onClick={onOpenGithub} />
+              <APack text="Tree" cellSize={40} onClick={onOpenTree} />
+            </>
+          )}
           {!hideConfig && textareaValue && (
             <>
               <APack text="PNG" cellSize={40} onClick={onDownloadPNG} />
