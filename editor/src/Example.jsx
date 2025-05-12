@@ -15,7 +15,7 @@ function Item({config, onClick}) {
       ref.current.innerHTML = "";
       const words = splitWordsWithNewlines(config.text);
       positionWords(words);
-      const svg = paragraph(words, config);
+      const svg = paragraph(words, {offset: false, ...config});
       const width = svg.getAttribute("width");
       const height = svg.getAttribute("height");
       svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
@@ -25,11 +25,7 @@ function Item({config, onClick}) {
     }
   }, [config]);
 
-  return (
-    <div className="example-item" onClick={onClick}>
-      <div ref={ref}></div>
-    </div>
-  );
+  return <div className="example-item" onClick={onClick} ref={ref}></div>;
 }
 
 export function Example({style, onClose, updateTemplate, jump}) {

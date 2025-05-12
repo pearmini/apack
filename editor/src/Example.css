@@ -24,5 +24,10 @@
 
 .example-item {
   margin-bottom: 20px;
+  padding: 10px;
   cursor: pointer;
+}
+
+.example-item:hover {
+  outline: 1px solid #000;
 }

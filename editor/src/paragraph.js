@@ -1,7 +1,7 @@
 import * as cm from "charmingjs";
 import * as ap from "apackjs";
 
-export function paragraph(W, {cellWidth = 80, cellHeight = cellWidth, ...config} = {}) {
+export function paragraph(W, {cellWidth = 80, cellHeight = cellWidth, offset = true, ...config} = {}) {
   let {font, word, grid, background, canvas, padding, cursive} = config;
   padding = +padding;
 
@@ -15,7 +15,7 @@ export function paragraph(W, {cellWidth = 80, cellHeight = cellWidth, ...config}
   const svg = cm.svg("svg", {
     width,
     height,
-    transform: `translate(${-padding}, ${-padding})`,
+    transform: `translate(${offset ? -padding : 0}, ${offset ? -padding : 0})`,
     children: [
       canvas && cm.svg("rect", {x: 0, y: 0, width, height, fill: canvas}),
       cm.svg("g", words, {
