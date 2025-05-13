@@ -144,7 +144,7 @@ function App() {
       else editorRef.current.style.left = "10px";
 
       if (height < containerHeight) editorRef.current.style.top = (containerHeight - height) / 2 + "px";
-      else editorRef.current.style.top = "10px";
+      else editorRef.current.style.top = "100px";
     }
   };
 

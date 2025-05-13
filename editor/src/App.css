@@ -20,19 +20,22 @@
 
 .config-button {
   position: fixed;
-  top: 20px;
+  top: 0px;
   left: 20px;
   background: none;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   color: #666;
   transition: color 0.2s;
   z-index: 1000;
   display: flex;
   gap: 12px;
+  background-color: #fefaf1;
+  width: 100%;
+  height: 100px;
 }
 
 .config-button:hover {
