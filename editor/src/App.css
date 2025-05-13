@@ -78,6 +78,11 @@
   border: none;
 }
 
+.input::selection {
+  background-color: rgba(0, 120, 215, 0.5);
+  color: transparent;
+}
+
 .icon-button {
   background: none;
   border: none;
