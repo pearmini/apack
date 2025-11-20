@@ -3,10 +3,41 @@ import "./App.css";
 import Watch from "./Watch.jsx";
 import * as d3 from "d3";
 
+const interpolators = {
+  Greys: d3.interpolateGreys,
+  Blues: d3.interpolateBlues,
+  Reds: d3.interpolateReds,
+  Greens: d3.interpolateGreens,
+  Oranges: d3.interpolateOranges,
+  Purples: d3.interpolatePurples,
+  Turbo: d3.interpolateTurbo,
+  Viridis: d3.interpolateViridis,
+  Inferno: d3.interpolateInferno,
+  Magma: d3.interpolateMagma,
+  Plasma: d3.interpolatePlasma,
+  Cividis: d3.interpolateCividis,
+  Warm: d3.interpolateWarm,
+  Cool: d3.interpolateCool,
+  "Cubehelix Default": d3.interpolateCubehelixDefault,
+  "Blue-Green": d3.interpolateBuGn,
+  "Blue-Purple": d3.interpolateBuPu,
+  "Green-Blue": d3.interpolateGnBu,
+  "Orange-Red": d3.interpolateOrRd,
+  "Purple-Blue-Green": d3.interpolatePuBuGn,
+  "Purple-Blue": d3.interpolatePuBu,
+  "Purple-Red": d3.interpolatePuRd,
+  "Red-Purple": d3.interpolateRdPu,
+  "Yellow-Green-Blue": d3.interpolateYlGnBu,
+  "Yellow-Green": d3.interpolateYlGn,
+  "Yellow-Orange-Brown": d3.interpolateYlOrBr,
+  "Yellow-Orange-Red": d3.interpolateYlOrRd,
+};
+
 function App() {
   const [worldWatchesMode, setWorldWatchesMode] = useState(true);
   const [sortOption, setSortOption] = useState("random");
   const [searchQuery, setSearchQuery] = useState("");
+  const [interpolatorOption, setInterpolatorOption] = useState("Greys");
 
   const timeZones = useMemo(() => {
     try {
@@ -19,7 +50,7 @@ function App() {
 
   const sortedTimeZones = useMemo(() => {
     const tzArray = [...timeZones];
-    
+
     if (sortOption === "random") {
       return d3.shuffle(tzArray);
     } else if (sortOption === "alphabet-asc") {
@@ -94,15 +125,26 @@ function App() {
               <option value="time-asc">Time (Earliest First)</option>
               <option value="time-desc">Time (Latest First)</option>
             </select>
+            <select
+              value={interpolatorOption}
+              onChange={(e) => setInterpolatorOption(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {Object.keys(interpolators).map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 p-4 justify-items-center">
             {filteredTimeZones.map((tz) => (
-              <Watch key={tz} timeZone={tz} />
+              <Watch key={tz} timeZone={tz} interpolator={interpolators[interpolatorOption]} />
             ))}
           </div>
         </div>
       ) : (
-        <Watch />
+        <Watch interpolator={interpolators[interpolatorOption]} />
       )}
     </div>
   );

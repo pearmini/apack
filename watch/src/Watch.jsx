@@ -3,7 +3,7 @@ import * as apack from "apackjs";
 import * as d3 from "d3";
 import {getFlagEmoji, getCountryCodeFromTimezone} from "./flag.js";
 
-function renderWatch(parent, timeZone = null) {
+function renderWatch(parent, timeZone = null, interpolator = d3.interpolateGreys) {
   let timer;
   const size = 150;
   const strokeWidth = 3;
@@ -12,7 +12,7 @@ function renderWatch(parent, timeZone = null) {
   // Create a sequential color scale: earlier = lighter, later = darker
   // Maps 0-24 hours to light-dark colors
   // Do not use 24 hours, because it will be too dark
-  const colorScale = d3.scaleSequential(d3.interpolateGreys).domain([0, 28]); // 0 hours = light, 24 hours = dark
+  const colorScale = d3.scaleSequential(interpolator).domain([0, 28]); // 0 hours = light, 24 hours = dark
 
   // Calculate relative luminance of a color (0-1, where 0 is black and 1 is white)
   function getLuminance(color) {
@@ -107,17 +107,17 @@ function renderWatch(parent, timeZone = null) {
   };
 }
 
-export default function Watch({timeZone = null}) {
+export default function Watch({timeZone = null, interpolator = d3.interpolateGreys}) {
   const ref = useRef(null);
 
   useEffect(() => {
     if (ref.current) {
       ref.current.innerHTML = "";
-      const {start, stop} = renderWatch(ref.current, timeZone);
+      const {start, stop} = renderWatch(ref.current, timeZone, interpolator);
       start();
       return () => stop();
     }
-  }, [timeZone]);
+  }, [timeZone, interpolator]);
 
   const timeZoneLabel = timeZone ? timeZone.split("/").pop().replace(/_/g, " ") : null;
   const countryCode = timeZone ? getCountryCodeFromTimezone(timeZone) : null;
