@@ -36,12 +36,47 @@ const interpolators = {
 
 const VALID_FONTS = FONT_FAMILIES.filter((font) => font !== "markers");
 
+// Default values
+const DEFAULT_SORT = "random";
+const DEFAULT_INTERPOLATOR = "Viridis";
+const DEFAULT_FONT = "futural";
+
 function App() {
-  const [sortOption, setSortOption] = useState("random");
+  // Load from localStorage or use defaults
+  const [sortOption, setSortOption] = useState(() => {
+    return localStorage.getItem("watchSortOption") || DEFAULT_SORT;
+  });
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [interpolatorOption, setInterpolatorOption] = useState("Viridis");
-  const [fontOption, setFontOption] = useState("futural");
+  const [interpolatorOption, setInterpolatorOption] = useState(() => {
+    return localStorage.getItem("watchInterpolatorOption") || DEFAULT_INTERPOLATOR;
+  });
+  const [fontOption, setFontOption] = useState(() => {
+    return localStorage.getItem("watchFontOption") || DEFAULT_FONT;
+  });
+
+  // Save to localStorage when values change
+  useEffect(() => {
+    localStorage.setItem("watchSortOption", sortOption);
+  }, [sortOption]);
+
+  useEffect(() => {
+    localStorage.setItem("watchInterpolatorOption", interpolatorOption);
+  }, [interpolatorOption]);
+
+  useEffect(() => {
+    localStorage.setItem("watchFontOption", fontOption);
+  }, [fontOption]);
+
+  // Reset function
+  const handleReset = () => {
+    setSortOption(DEFAULT_SORT);
+    setInterpolatorOption(DEFAULT_INTERPOLATOR);
+    setFontOption(DEFAULT_FONT);
+    localStorage.setItem("watchSortOption", DEFAULT_SORT);
+    localStorage.setItem("watchInterpolatorOption", DEFAULT_INTERPOLATOR);
+    localStorage.setItem("watchFontOption", DEFAULT_FONT);
+  };
 
   // Debounce search query
   useEffect(() => {
@@ -165,7 +200,14 @@ function App() {
             <label className="text-xs text-gray-600 mb-1">Sort</label>
             <select
               value={sortOption}
-              onChange={(e) => setSortOption(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === "reset") {
+                  handleReset();
+                } else {
+                  setSortOption(value);
+                }
+              }}
               className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="random">Random</option>
@@ -173,13 +215,21 @@ function App() {
               <option value="alphabet-desc">Alphabet (Z-A)</option>
               <option value="time-asc">Time (Earliest First)</option>
               <option value="time-desc">Time (Latest First)</option>
+              <option value="reset">Reset</option>
             </select>
           </div>
           <div className="flex flex-col">
             <label className="text-xs text-gray-600 mb-1">Color</label>
             <select
               value={interpolatorOption}
-              onChange={(e) => setInterpolatorOption(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === "reset") {
+                  handleReset();
+                } else {
+                  setInterpolatorOption(value);
+                }
+              }}
               className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {Object.keys(interpolators).map((name) => (
@@ -187,13 +237,21 @@ function App() {
                   {name}
                 </option>
               ))}
+              <option value="reset">Reset</option>
             </select>
           </div>
           <div className="flex flex-col">
             <label className="text-xs text-gray-600 mb-1">Font</label>
             <select
               value={fontOption}
-              onChange={(e) => setFontOption(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === "reset") {
+                  handleReset();
+                } else {
+                  setFontOption(value);
+                }
+              }}
               className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="random">Random</option>
@@ -202,6 +260,7 @@ function App() {
                   {font}
                 </option>
               ))}
+              <option value="reset">Reset</option>
             </select>
           </div>
         </div>
