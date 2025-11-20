@@ -9,12 +9,17 @@ function renderWatch(parent, timeZone = null) {
   const strokeWidth = 3;
   const strokeRadius = strokeWidth * 0;
 
+  // Create a sequential color scale: earlier = lighter, later = darker
+  // Maps 0-24 hours to light-dark colors
+  const colorScale = d3.scaleSequential(d3.interpolateGreys).domain([0, 24]); // 0 hours = light, 24 hours = dark
+
   function formatDigit(digit) {
     return digit.toString().padStart(2, "0");
   }
 
   function update() {
     let hours, minutes, seconds;
+    let hoursNum;
     if (timeZone) {
       const formatter = new Intl.DateTimeFormat("en-US", {
         timeZone,
@@ -24,21 +29,28 @@ function renderWatch(parent, timeZone = null) {
         hour12: false,
       });
       const parts = formatter.formatToParts(new Date());
-      hours = formatDigit(parseInt(parts.find((p) => p.type === "hour").value));
+      hoursNum = parseInt(parts.find((p) => p.type === "hour").value);
+      hours = formatDigit(hoursNum);
       minutes = formatDigit(parseInt(parts.find((p) => p.type === "minute").value));
       seconds = formatDigit(parseInt(parts.find((p) => p.type === "second").value));
     } else {
       const now = new Date();
-      hours = formatDigit(now.getHours());
+      hoursNum = now.getHours();
+      hours = formatDigit(hoursNum);
       minutes = formatDigit(now.getMinutes());
       seconds = formatDigit(now.getSeconds());
     }
+
+    // Calculate time as decimal hours (including minutes and seconds for smooth transition)
+    const timeDecimal = hoursNum + parseInt(minutes) / 60 + parseInt(seconds) / 3600;
+    const fillColor = colorScale(timeDecimal);
 
     const digits = apack
       .text(`${hours}${minutes}${seconds}`, {
         cellSize: size,
         word: {
           strokeWidth,
+          // stroke: "white",
         },
       })
       .render();
@@ -51,7 +63,7 @@ function renderWatch(parent, timeZone = null) {
       .attr("y", strokeWidth)
       .attr("width", size - strokeWidth * 2)
       .attr("height", size - strokeWidth * 2)
-      .attr("fill", "transparent")
+      .attr("fill", fillColor)
       .attr("stroke", "black")
       .attr("rx", strokeRadius)
       .attr("ry", strokeRadius)

@@ -1,6 +1,7 @@
 import {useState, useMemo} from "react";
 import "./App.css";
 import Watch from "./Watch.jsx";
+import * as d3 from "d3";
 
 function App() {
   const [worldWatchesMode, setWorldWatchesMode] = useState(false);
@@ -26,7 +27,7 @@ function App() {
       {worldWatchesMode ? (
         <div className="w-full h-full overflow-auto">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 p-4 justify-items-center">
-            {timeZones.map((tz) => (
+            {d3.shuffle(timeZones).map((tz) => (
               <Watch key={tz} timeZone={tz} />
             ))}
           </div>
