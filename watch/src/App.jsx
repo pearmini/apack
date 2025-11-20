@@ -33,13 +33,24 @@ const interpolators = {
   YlGn: d3.interpolateYlGn,
   YlOrBr: d3.interpolateYlOrBr,
   YlOrRd: d3.interpolateYlOrRd,
+  BrBG: d3.interpolateBrBG,
+  PRGn: d3.interpolatePRGn,
+  PiYG: d3.interpolatePiYG,
+  PuOr: d3.interpolatePuOr,
+  RdBu: d3.interpolateRdBu,
+  RdGy: d3.interpolateRdGy,
+  RdYlBu: d3.interpolateRdYlBu,
+  RdYlGn: d3.interpolateRdYlGn,
+  Spectral: d3.interpolateSpectral,
+  Rainbow: d3.interpolateRainbow,
+  Sinebow: d3.interpolateSinebow,
 };
 
 const VALID_FONTS = FONT_FAMILIES.filter((font) => font !== "markers");
 
 // Default values
 const DEFAULT_SORT = "random";
-const DEFAULT_INTERPOLATOR = "Viridis";
+const DEFAULT_INTERPOLATOR = "BrBG";
 const DEFAULT_FONT = "futural";
 
 function App() {
@@ -235,7 +246,7 @@ function App() {
                 className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="reset">Reset</option>
-                {Object.keys(interpolators).map((name) => (
+                {Object.keys(interpolators).sort().map((name) => (
                   <option key={name} value={name}>
                     {name}
                   </option>
