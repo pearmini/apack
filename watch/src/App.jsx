@@ -4,7 +4,7 @@ import Watch from "./Watch.jsx";
 import * as d3 from "d3";
 
 function App() {
-  const [worldWatchesMode, setWorldWatchesMode] = useState(false);
+  const [worldWatchesMode, setWorldWatchesMode] = useState(true);
 
   const timeZones = useMemo(() => {
     try {
@@ -17,12 +17,12 @@ function App() {
 
   return (
     <div className="w-screen h-screen flex flex-col items-center justify-center p-4">
-      <button
+      {/* <button
         onClick={() => setWorldWatchesMode(!worldWatchesMode)}
         className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
       >
         {worldWatchesMode ? "Switch to Single Watch" : "Switch to World Watches"}
-      </button>
+      </button> */}
 
       {worldWatchesMode ? (
         <div className="w-full h-full overflow-auto">
