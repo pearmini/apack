@@ -25,7 +25,13 @@ function App() {
       </button> */}
 
       {worldWatchesMode ? (
-        <div className="w-full h-full overflow-auto">
+        <div className="w-full h-full overflow-auto flex flex-col">
+          <h1 className="text-4xl font-bold text-center mt-6 mb-4">
+            World Clocks by{" "}
+            <a href="https://apack.bairui.dev/" target="_blank" rel="noopener noreferrer" className="underline">
+              APack
+            </a>
+          </h1>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 p-4 justify-items-center">
             {d3.shuffle(timeZones).map((tz) => (
               <Watch key={tz} timeZone={tz} />
