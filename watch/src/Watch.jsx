@@ -11,8 +11,7 @@ function renderWatch(parent, timeZone = null, interpolator = d3.interpolateGreys
 
   // Create a sequential color scale: earlier = lighter, later = darker
   // Maps 0-24 hours to light-dark colors
-  // Do not use 24 hours, because it will be too dark
-  const colorScale = d3.scaleSequential(interpolator).domain([0, 28]); // 0 hours = light, 24 hours = dark
+  const colorScale = d3.scaleSequential(interpolator).domain([0, 24]); // 0 hours = light, 24 hours = dark
 
   // Calculate relative luminance of a color (0-1, where 0 is black and 1 is white)
   function getLuminance(color) {
