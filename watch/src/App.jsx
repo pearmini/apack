@@ -1,7 +1,8 @@
-import {useState, useMemo, useEffect} from "react";
+import {useState, useMemo, useEffect, useRef} from "react";
 import "./App.css";
 import Watch from "./Watch.jsx";
 import * as d3 from "d3";
+import * as Plot from "@observablehq/plot";
 import {FONT_FAMILIES} from "apackjs";
 
 const interpolators = {
@@ -19,19 +20,19 @@ const interpolators = {
   Cividis: d3.interpolateCividis,
   Warm: d3.interpolateWarm,
   Cool: d3.interpolateCool,
-  "Cubehelix Default": d3.interpolateCubehelixDefault,
-  "Blue-Green": d3.interpolateBuGn,
-  "Blue-Purple": d3.interpolateBuPu,
-  "Green-Blue": d3.interpolateGnBu,
-  "Orange-Red": d3.interpolateOrRd,
-  "Purple-Blue-Green": d3.interpolatePuBuGn,
-  "Purple-Blue": d3.interpolatePuBu,
-  "Purple-Red": d3.interpolatePuRd,
-  "Red-Purple": d3.interpolateRdPu,
-  "Yellow-Green-Blue": d3.interpolateYlGnBu,
-  "Yellow-Green": d3.interpolateYlGn,
-  "Yellow-Orange-Brown": d3.interpolateYlOrBr,
-  "Yellow-Orange-Red": d3.interpolateYlOrRd,
+  Cubehelix: d3.interpolateCubehelixDefault,
+  BuGn: d3.interpolateBuGn,
+  BuPu: d3.interpolateBuPu,
+  GnBu: d3.interpolateGnBu,
+  OrRd: d3.interpolateOrRd,
+  PuBuGn: d3.interpolatePuBuGn,
+  PuBu: d3.interpolatePuBu,
+  PuRd: d3.interpolatePuRd,
+  RdPu: d3.interpolateRdPu,
+  YlGnBu: d3.interpolateYlGnBu,
+  YlGn: d3.interpolateYlGn,
+  YlOrBr: d3.interpolateYlOrBr,
+  YlOrRd: d3.interpolateYlOrRd,
 };
 
 const VALID_FONTS = FONT_FAMILIES.filter((font) => font !== "markers");
@@ -176,6 +177,28 @@ function App() {
     return fontOption;
   }, [fontOption]);
 
+  // Legend container ref
+  const legendRef = useRef(null);
+
+  // Render legend
+  useEffect(() => {
+    if (!legendRef.current) return;
+
+    // Create legend using Observable Plot
+    const legend = Plot.legend({
+      color: {
+        type: "linear",
+        domain: [0, 24],
+        scheme: interpolatorOption,
+        label: "Time (hours)",
+      },
+    });
+
+    // Clear and render
+    legendRef.current.innerHTML = "";
+    legendRef.current.appendChild(legend);
+  }, [interpolatorOption]);
+
   return (
     <div className="w-screen h-screen flex flex-col items-center justify-center">
       <div className="w-full h-full overflow-auto flex flex-col">
@@ -185,86 +208,90 @@ function App() {
             APack
           </a>
         </h1>
-        <div className="flex justify-center gap-4 mb-8 flex-wrap items-end">
-          <div className="flex flex-col">
-            <label className="text-xs text-gray-600 mb-1">Search</label>
-            <input
-              type="text"
-              placeholder="Search timezones..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[180px]"
-            />
+        <div className="flex justify-between px-12">
+          <div className="flex justify-center gap-4 mb-8 flex-wrap items-end">
+            <div className="flex flex-col">
+              <label className="text-xs text-gray-600 mb-1">Search</label>
+              <input
+                type="text"
+                placeholder="Search timezones..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[180px]"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="text-xs text-gray-600 mb-1">Color</label>
+              <select
+                value={interpolatorOption}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === "reset") {
+                    handleReset();
+                  } else {
+                    setInterpolatorOption(value);
+                  }
+                }}
+                className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="reset">Reset</option>
+                {Object.keys(interpolators).map((name) => (
+                  <option key={name} value={name}>
+                    {name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col">
+              <label className="text-xs text-gray-600 mb-1">Font</label>
+              <select
+                value={fontOption}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === "reset") {
+                    handleReset();
+                  } else {
+                    setFontOption(value);
+                  }
+                }}
+                className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="reset">Reset</option>
+                <option value="random">Random</option>
+                {VALID_FONTS.map((font) => (
+                  <option key={font} value={font}>
+                    {font}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col">
+              <label className="text-xs text-gray-600 mb-1">Sort</label>
+              <select
+                value={sortOption}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === "reset") {
+                    handleReset();
+                  } else {
+                    setSortOption(value);
+                  }
+                }}
+                className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="random">Random</option>
+                <option value="alphabet-asc">Alphabet (A-Z)</option>
+                <option value="alphabet-desc">Alphabet (Z-A)</option>
+                <option value="time-asc">Time (Earliest First)</option>
+                <option value="time-desc">Time (Latest First)</option>
+                <option value="reset">Reset</option>
+              </select>
+            </div>
           </div>
-          <div className="flex flex-col">
-            <label className="text-xs text-gray-600 mb-1">Sort</label>
-            <select
-              value={sortOption}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value === "reset") {
-                  handleReset();
-                } else {
-                  setSortOption(value);
-                }
-              }}
-              className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="random">Random</option>
-              <option value="alphabet-asc">Alphabet (A-Z)</option>
-              <option value="alphabet-desc">Alphabet (Z-A)</option>
-              <option value="time-asc">Time (Earliest First)</option>
-              <option value="time-desc">Time (Latest First)</option>
-              <option value="reset">Reset</option>
-            </select>
-          </div>
-          <div className="flex flex-col">
-            <label className="text-xs text-gray-600 mb-1">Color</label>
-            <select
-              value={interpolatorOption}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value === "reset") {
-                  handleReset();
-                } else {
-                  setInterpolatorOption(value);
-                }
-              }}
-              className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {Object.keys(interpolators).map((name) => (
-                <option key={name} value={name}>
-                  {name}
-                </option>
-              ))}
-              <option value="reset">Reset</option>
-            </select>
-          </div>
-          <div className="flex flex-col">
-            <label className="text-xs text-gray-600 mb-1">Font</label>
-            <select
-              value={fontOption}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value === "reset") {
-                  handleReset();
-                } else {
-                  setFontOption(value);
-                }
-              }}
-              className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="random">Random</option>
-              {VALID_FONTS.map((font) => (
-                <option key={font} value={font}>
-                  {font}
-                </option>
-              ))}
-              <option value="reset">Reset</option>
-            </select>
-          </div>
+          <div ref={legendRef} className="flex justify-start"></div>
         </div>
-        <div className="flex flex-wrap gap-6 p-6 justify-center">
+
+        <div className="flex flex-wrap gap-6 p-6 px-12 justify-between">
           {filteredTimeZones.map((tz) => (
             <Watch
               key={tz}
