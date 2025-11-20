@@ -302,7 +302,7 @@ function App() {
           <div ref={legendRef} className="flex justify-start"></div>
         </div>
 
-        <div className="flex flex-wrap gap-6 p-6 px-12 justify-between">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6 p-6 px-12 justify-items-start">
           {filteredTimeZones.map((tz) => (
             <Watch
               key={tz}
