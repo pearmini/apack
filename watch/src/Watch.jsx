@@ -13,6 +13,14 @@ function renderWatch(parent, timeZone = null) {
   // Maps 0-24 hours to light-dark colors
   const colorScale = d3.scaleSequential(d3.interpolateGreys).domain([0, 24]); // 0 hours = light, 24 hours = dark
 
+  // Calculate relative luminance of a color (0-1, where 0 is black and 1 is white)
+  function getLuminance(color) {
+    // Parse RGB from color string (e.g., "rgb(128, 128, 128)" or "#808080")
+    const rgb = d3.rgb(color);
+    // Relative luminance formula
+    return 0.2126 * (rgb.r / 255) + 0.7152 * (rgb.g / 255) + 0.0722 * (rgb.b / 255);
+  }
+
   function formatDigit(digit) {
     return digit.toString().padStart(2, "0");
   }
@@ -44,13 +52,17 @@ function renderWatch(parent, timeZone = null) {
     // Calculate time as decimal hours (including minutes and seconds for smooth transition)
     const timeDecimal = hoursNum + parseInt(minutes) / 60 + parseInt(seconds) / 3600;
     const fillColor = colorScale(timeDecimal);
+    
+    // Determine stroke color based on background brightness
+    const luminance = getLuminance(fillColor);
+    const strokeColor = luminance < 0.5 ? "white" : "black";
 
     const digits = apack
       .text(`${hours}${minutes}${seconds}`, {
         cellSize: size,
         word: {
           strokeWidth,
-          // stroke: "white",
+          stroke: strokeColor,
         },
       })
       .render();
