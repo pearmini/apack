@@ -11,7 +11,8 @@ function renderWatch(parent, timeZone = null) {
 
   // Create a sequential color scale: earlier = lighter, later = darker
   // Maps 0-24 hours to light-dark colors
-  const colorScale = d3.scaleSequential(d3.interpolateGreys).domain([0, 24]); // 0 hours = light, 24 hours = dark
+  // Do not use 24 hours, because it will be too dark
+  const colorScale = d3.scaleSequential(d3.interpolateGreys).domain([0, 28]); // 0 hours = light, 24 hours = dark
 
   // Calculate relative luminance of a color (0-1, where 0 is black and 1 is white)
   function getLuminance(color) {
@@ -52,10 +53,11 @@ function renderWatch(parent, timeZone = null) {
     // Calculate time as decimal hours (including minutes and seconds for smooth transition)
     const timeDecimal = hoursNum + parseInt(minutes) / 60 + parseInt(seconds) / 3600;
     const fillColor = colorScale(timeDecimal);
-    
+
     // Determine stroke color based on background brightness
     const luminance = getLuminance(fillColor);
     const strokeColor = luminance < 0.5 ? "white" : "black";
+    const rectStrokeColor = "black";
 
     const digits = apack
       .text(`${hours}${minutes}${seconds}`, {
@@ -76,7 +78,7 @@ function renderWatch(parent, timeZone = null) {
       .attr("width", size - strokeWidth * 2)
       .attr("height", size - strokeWidth * 2)
       .attr("fill", fillColor)
-      .attr("stroke", "black")
+      .attr("stroke", rectStrokeColor)
       .attr("rx", strokeRadius)
       .attr("ry", strokeRadius)
       .attr("stroke-width", strokeWidth);
@@ -135,7 +137,8 @@ export default function Watch({timeZone = null}) {
             wordWrap: "break-word",
           }}
         >
-          {flagEmoji} {timeZoneLabel}
+          {/* {flagEmoji} */}
+          {timeZoneLabel}
         </div>
       )}
     </div>
