@@ -105,7 +105,7 @@ export default function Watch({timeZone = null}) {
           style={{
             textAlign: "center",
             marginTop: "8px",
-            fontSize: "12px",
+            fontSize: "14px",
             color: "#333",
             maxWidth: "150px",
             wordWrap: "break-word",
