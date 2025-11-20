@@ -124,19 +124,10 @@ export default function Watch({timeZone = null}) {
   const flagEmoji = countryCode ? getFlagEmoji(countryCode) : "";
 
   return (
-    <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+    <div className="flex flex-col items-center">
       <div ref={ref}></div>
       {timeZoneLabel && (
-        <div
-          style={{
-            textAlign: "center",
-            marginTop: "8px",
-            fontSize: "14px",
-            color: "#333",
-            maxWidth: "150px",
-            wordWrap: "break-word",
-          }}
-        >
+        <div className="text-center mt-2 text-sm text-gray-800 max-w-[150px] break-words">
           {/* {flagEmoji} */}
           {timeZoneLabel}
         </div>
