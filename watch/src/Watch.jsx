@@ -3,7 +3,7 @@ import * as apack from "apackjs";
 import * as d3 from "d3";
 import {getFlagEmoji, getCountryCodeFromTimezone} from "./flag.js";
 
-function renderWatch(parent, timeZone = null, interpolator = d3.interpolateGreys) {
+function renderWatch(parent, timeZone = null, interpolator = d3.interpolateGreys, font = "futural") {
   let timer;
   const size = 150;
   const strokeWidth = 3;
@@ -62,6 +62,7 @@ function renderWatch(parent, timeZone = null, interpolator = d3.interpolateGreys
     const digits = apack
       .text(`${hours}${minutes}${seconds}`, {
         cellSize: size,
+        font,
         word: {
           strokeWidth,
           stroke: strokeColor,
@@ -107,17 +108,17 @@ function renderWatch(parent, timeZone = null, interpolator = d3.interpolateGreys
   };
 }
 
-export default function Watch({timeZone = null, interpolator = d3.interpolateGreys}) {
+export default function Watch({timeZone = null, interpolator = d3.interpolateGreys, font = "futural"}) {
   const ref = useRef(null);
 
   useEffect(() => {
     if (ref.current) {
       ref.current.innerHTML = "";
-      const {start, stop} = renderWatch(ref.current, timeZone, interpolator);
+      const {start, stop} = renderWatch(ref.current, timeZone, interpolator, font);
       start();
       return () => stop();
     }
-  }, [timeZone, interpolator]);
+  }, [timeZone, interpolator, font]);
 
   const timeZoneLabel = timeZone ? timeZone.split("/").pop().replace(/_/g, " ") : null;
   const countryCode = timeZone ? getCountryCodeFromTimezone(timeZone) : null;

@@ -2,6 +2,7 @@ import {useState, useMemo} from "react";
 import "./App.css";
 import Watch from "./Watch.jsx";
 import * as d3 from "d3";
+import {FONT_FAMILIES} from "apackjs";
 
 const interpolators = {
   Greys: d3.interpolateGreys,
@@ -33,11 +34,14 @@ const interpolators = {
   "Yellow-Orange-Red": d3.interpolateYlOrRd,
 };
 
+const VALID_FONTS = FONT_FAMILIES.filter((font) => font !== "markers");
+
 function App() {
   const [worldWatchesMode, setWorldWatchesMode] = useState(true);
   const [sortOption, setSortOption] = useState("random");
   const [searchQuery, setSearchQuery] = useState("");
   const [interpolatorOption, setInterpolatorOption] = useState("Greys");
+  const [fontOption, setFontOption] = useState("futural");
 
   const timeZones = useMemo(() => {
     try {
@@ -89,6 +93,26 @@ function App() {
     return sortedTimeZones.filter((tz) => tz.toLowerCase().includes(query));
   }, [sortedTimeZones, searchQuery]);
 
+  // Generate random font assignments for each timezone when fontOption is "random"
+  const fontAssignments = useMemo(() => {
+    if (fontOption !== "random") {
+      return null; // Not using random, will use fontOption directly
+    }
+    const assignments = {};
+    filteredTimeZones.forEach((tz) => {
+      assignments[tz] = VALID_FONTS[Math.floor(Math.random() * VALID_FONTS.length)];
+    });
+    return assignments;
+  }, [filteredTimeZones, fontOption]);
+
+  // Generate a stable random font for single watch mode
+  const singleWatchFont = useMemo(() => {
+    if (fontOption === "random") {
+      return VALID_FONTS[Math.floor(Math.random() * VALID_FONTS.length)];
+    }
+    return fontOption;
+  }, [fontOption]);
+
   return (
     <div className="w-screen h-screen flex flex-col items-center justify-center p-4">
       {/* <button
@@ -136,15 +160,32 @@ function App() {
                 </option>
               ))}
             </select>
+            <select
+              value={fontOption}
+              onChange={(e) => setFontOption(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="random">Random</option>
+              {VALID_FONTS.map((font) => (
+                <option key={font} value={font}>
+                  {font}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 p-4 justify-items-center">
             {filteredTimeZones.map((tz) => (
-              <Watch key={tz} timeZone={tz} interpolator={interpolators[interpolatorOption]} />
+              <Watch
+                key={tz}
+                timeZone={tz}
+                interpolator={interpolators[interpolatorOption]}
+                font={fontOption === "random" ? fontAssignments?.[tz] || "futural" : fontOption}
+              />
             ))}
           </div>
         </div>
       ) : (
-        <Watch interpolator={interpolators[interpolatorOption]} />
+        <Watch interpolator={interpolators[interpolatorOption]} font={singleWatchFont} />
       )}
     </div>
   );
