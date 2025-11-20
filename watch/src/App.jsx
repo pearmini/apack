@@ -1,4 +1,4 @@
-import {useState, useMemo} from "react";
+import {useState, useMemo, useEffect} from "react";
 import "./App.css";
 import Watch from "./Watch.jsx";
 import * as d3 from "d3";
@@ -40,8 +40,18 @@ function App() {
   const [worldWatchesMode, setWorldWatchesMode] = useState(true);
   const [sortOption, setSortOption] = useState("random");
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [interpolatorOption, setInterpolatorOption] = useState("Greys");
   const [fontOption, setFontOption] = useState("futural");
+
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const timeZones = useMemo(() => {
     try {
@@ -86,12 +96,31 @@ function App() {
   }, [timeZones, sortOption]);
 
   const filteredTimeZones = useMemo(() => {
-    if (!searchQuery.trim()) {
+    if (!debouncedSearchQuery.trim()) {
       return sortedTimeZones;
     }
-    const query = searchQuery.toLowerCase();
-    return sortedTimeZones.filter((tz) => tz.toLowerCase().includes(query));
-  }, [sortedTimeZones, searchQuery]);
+    const query = debouncedSearchQuery.toLowerCase().trim();
+    // Normalize query: replace spaces with underscores and also keep spaces for flexible matching
+    const normalizedQuery = query.replace(/\s+/g, " ");
+    
+    return sortedTimeZones.filter((tz) => {
+      const tzLower = tz.toLowerCase();
+      // Check if query matches the full timezone string (with underscores)
+      if (tzLower.includes(query.replace(/\s+/g, "_"))) {
+        return true;
+      }
+      // Check if query matches the timezone string with spaces normalized
+      if (tzLower.replace(/_/g, " ").includes(normalizedQuery)) {
+        return true;
+      }
+      // Check the timezone label (part after last slash) - this is what's displayed
+      const label = tz.split("/").pop().toLowerCase().replace(/_/g, " ");
+      if (label.includes(normalizedQuery)) {
+        return true;
+      }
+      return false;
+    });
+  }, [sortedTimeZones, debouncedSearchQuery]);
 
   // Generate random font assignments for each timezone when fontOption is "random"
   const fontAssignments = useMemo(() => {
