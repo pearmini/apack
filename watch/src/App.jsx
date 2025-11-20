@@ -6,6 +6,7 @@ import * as d3 from "d3";
 function App() {
   const [worldWatchesMode, setWorldWatchesMode] = useState(true);
   const [sortOption, setSortOption] = useState("random");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const timeZones = useMemo(() => {
     try {
@@ -49,6 +50,14 @@ function App() {
     return tzArray;
   }, [timeZones, sortOption]);
 
+  const filteredTimeZones = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return sortedTimeZones;
+    }
+    const query = searchQuery.toLowerCase();
+    return sortedTimeZones.filter((tz) => tz.toLowerCase().includes(query));
+  }, [sortedTimeZones, searchQuery]);
+
   return (
     <div className="w-screen h-screen flex flex-col items-center justify-center p-4">
       {/* <button
@@ -66,7 +75,14 @@ function App() {
               APack
             </a>
           </h1>
-          <div className="flex justify-center mb-4">
+          <div className="flex justify-center gap-4 mb-4 flex-wrap">
+            <input
+              type="text"
+              placeholder="Search timezones..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[200px]"
+            />
             <select
               value={sortOption}
               onChange={(e) => setSortOption(e.target.value)}
@@ -80,7 +96,7 @@ function App() {
             </select>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 p-4 justify-items-center">
-            {sortedTimeZones.map((tz) => (
+            {filteredTimeZones.map((tz) => (
               <Watch key={tz} timeZone={tz} />
             ))}
           </div>
