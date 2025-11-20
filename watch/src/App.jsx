@@ -37,11 +37,10 @@ const interpolators = {
 const VALID_FONTS = FONT_FAMILIES.filter((font) => font !== "markers");
 
 function App() {
-  const [worldWatchesMode, setWorldWatchesMode] = useState(true);
   const [sortOption, setSortOption] = useState("random");
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [interpolatorOption, setInterpolatorOption] = useState("Greys");
+  const [interpolatorOption, setInterpolatorOption] = useState("Viridis");
   const [fontOption, setFontOption] = useState("futural");
 
   // Debounce search query
@@ -102,7 +101,7 @@ function App() {
     const query = debouncedSearchQuery.toLowerCase().trim();
     // Normalize query: replace spaces with underscores and also keep spaces for flexible matching
     const normalizedQuery = query.replace(/\s+/g, " ");
-    
+
     return sortedTimeZones.filter((tz) => {
       const tzLower = tz.toLowerCase();
       // Check if query matches the full timezone string (with underscores)
@@ -143,34 +142,31 @@ function App() {
   }, [fontOption]);
 
   return (
-    <div className="w-screen h-screen flex flex-col items-center justify-center p-4">
-      {/* <button
-        onClick={() => setWorldWatchesMode(!worldWatchesMode)}
-        className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-      >
-        {worldWatchesMode ? "Switch to Single Watch" : "Switch to World Watches"}
-      </button> */}
-
-      {worldWatchesMode ? (
-        <div className="w-full h-full overflow-auto flex flex-col">
-          <h1 className="text-4xl font-bold text-center mt-6 mb-4">
-            World Clocks by{" "}
-            <a href="https://apack.bairui.dev/" target="_blank" rel="noopener noreferrer" className="underline">
-              APack
-            </a>
-          </h1>
-          <div className="flex justify-center gap-4 mb-4 flex-wrap">
+    <div className="w-screen h-screen flex flex-col items-center justify-center">
+      <div className="w-full h-full overflow-auto flex flex-col">
+        <h1 className="text-4xl font-bold text-center mt-8 mb-8">
+          World Clocks by{" "}
+          <a href="https://apack.bairui.dev/" target="_blank" rel="noopener noreferrer" className="underline">
+            APack
+          </a>
+        </h1>
+        <div className="flex justify-center gap-4 mb-8 flex-wrap items-end">
+          <div className="flex flex-col">
+            <label className="text-xs text-gray-600 mb-1">Search</label>
             <input
               type="text"
               placeholder="Search timezones..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[200px]"
+              className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[180px]"
             />
+          </div>
+          <div className="flex flex-col">
+            <label className="text-xs text-gray-600 mb-1">Sort</label>
             <select
               value={sortOption}
               onChange={(e) => setSortOption(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="random">Random</option>
               <option value="alphabet-asc">Alphabet (A-Z)</option>
@@ -178,10 +174,13 @@ function App() {
               <option value="time-asc">Time (Earliest First)</option>
               <option value="time-desc">Time (Latest First)</option>
             </select>
+          </div>
+          <div className="flex flex-col">
+            <label className="text-xs text-gray-600 mb-1">Color</label>
             <select
               value={interpolatorOption}
               onChange={(e) => setInterpolatorOption(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {Object.keys(interpolators).map((name) => (
                 <option key={name} value={name}>
@@ -189,10 +188,13 @@ function App() {
                 </option>
               ))}
             </select>
+          </div>
+          <div className="flex flex-col">
+            <label className="text-xs text-gray-600 mb-1">Font</label>
             <select
               value={fontOption}
               onChange={(e) => setFontOption(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="random">Random</option>
               {VALID_FONTS.map((font) => (
@@ -202,20 +204,18 @@ function App() {
               ))}
             </select>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 p-4 justify-items-center">
-            {filteredTimeZones.map((tz) => (
-              <Watch
-                key={tz}
-                timeZone={tz}
-                interpolator={interpolators[interpolatorOption]}
-                font={fontOption === "random" ? fontAssignments?.[tz] || "futural" : fontOption}
-              />
-            ))}
-          </div>
         </div>
-      ) : (
-        <Watch interpolator={interpolators[interpolatorOption]} font={singleWatchFont} />
-      )}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 p-6 justify-items-center">
+          {filteredTimeZones.map((tz) => (
+            <Watch
+              key={tz}
+              timeZone={tz}
+              interpolator={interpolators[interpolatorOption]}
+              font={fontOption === "random" ? fontAssignments?.[tz] || "futural" : fontOption}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
