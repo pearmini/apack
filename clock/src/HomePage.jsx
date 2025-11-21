@@ -221,8 +221,11 @@ export default function HomePage() {
   return (
     <div className="w-screen h-screen flex flex-col items-center justify-center">
       <div className="w-full h-full overflow-auto flex flex-col">
-        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mt-4 sm:mt-6 md:mt-8 mb-4 sm:mb-6 md:mb-8 px-4 sm:px-6 md:px-8 lg:px-12">
-          World Clocks by{" "}
+        <h1 className="text-2xl md:text-3xl lg:text-4xl font-normal text-center mt-4 sm:mt-6 md:mt-8 mb-4 sm:mb-6 md:mb-8 px-4 sm:px-6 md:px-8 lg:px-12">
+          <a href="https://github.com/pearmini/apack/tree/main/clock" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-700 transition-colors">
+            World Clocks
+          </a>{" "}
+          by{" "}
           <a href="https://apack.bairui.dev/" target="_blank" rel="noopener noreferrer" className="underline">
             APack
           </a>
