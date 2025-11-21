@@ -56,7 +56,7 @@ const DEFAULT_FONT = "futural";
 export default function WatchPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   // Get city name from pathname (remove leading slash)
   const pathname = location.pathname;
   const cityName = pathname !== "/" ? pathname.slice(1) : null;
@@ -103,10 +103,7 @@ export default function WatchPage() {
       <div className="w-screen h-screen flex flex-col items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Time zone not found</h1>
-          <button
-            onClick={() => navigate("/")}
-            className="text-blue-600 hover:underline"
-          >
+          <button onClick={() => navigate("/")} className="text-blue-600 hover:underline">
             Return to home
           </button>
         </div>
@@ -151,7 +148,7 @@ export default function WatchPage() {
             minHeight: "150px",
           }}
         >
-          <div style={{ width: "150px", height: "150px" }}>
+          <div style={{width: "150px", height: "150px"}}>
             <Watch
               key={selectedTimeZone}
               timeZone={selectedTimeZone}
@@ -166,4 +163,3 @@ export default function WatchPage() {
     </div>
   );
 }
-

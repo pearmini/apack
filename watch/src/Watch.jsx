@@ -112,7 +112,14 @@ function renderWatch(parent, timeZone = null, interpolator = d3.interpolateGreys
   };
 }
 
-export default function Watch({timeZone = null, interpolator = d3.interpolateGreys, font = "futural", onClick, fixedSize, hideLabel = false}) {
+export default function Watch({
+  timeZone = null,
+  interpolator = d3.interpolateGreys,
+  font = "futural",
+  onClick,
+  fixedSize,
+  hideLabel = false,
+}) {
   const containerRef = useRef(null);
   const watchRef = useRef(null);
   const [size, setSize] = useState(fixedSize || 150);
