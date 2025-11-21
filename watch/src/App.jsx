@@ -227,7 +227,15 @@ function App() {
           legendRef={legendRef}
         />
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6 p-6 px-12 justify-items-start">
+        <div
+          className="px-12"
+          style={{
+            display: "grid",
+            gridGap: "0.875rem",
+            gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
+            width: "100%",
+          }}
+        >
           {filteredTimeZones.map((tz) => (
             <Watch
               key={tz}

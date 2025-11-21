@@ -1,11 +1,10 @@
-import {useRef, useEffect} from "react";
+import {useRef, useEffect, useState} from "react";
 import * as apack from "apackjs";
 import * as d3 from "d3";
 import {getFlagEmoji, getCountryCodeFromTimezone} from "./flag.js";
 
-function renderWatch(parent, timeZone = null, interpolator = d3.interpolateGreys, font = "futural") {
+function renderWatch(parent, timeZone = null, interpolator = d3.interpolateGreys, font = "futural", size = 150) {
   let timer;
-  const size = 150;
   const strokeWidth = 3;
   const strokeRadius = strokeWidth * 0;
 
@@ -69,7 +68,12 @@ function renderWatch(parent, timeZone = null, interpolator = d3.interpolateGreys
       })
       .render();
 
-    const svg = d3.create("svg").attr("width", size).attr("height", size);
+    const svg = d3
+      .create("svg")
+      .attr("viewBox", `0 0 ${size} ${size}`)
+      .attr("preserveAspectRatio", "xMidYMid meet")
+      .style("width", "100%")
+      .style("height", "100%");
 
     svg
       .append("rect")
@@ -108,26 +112,82 @@ function renderWatch(parent, timeZone = null, interpolator = d3.interpolateGreys
 }
 
 export default function Watch({timeZone = null, interpolator = d3.interpolateGreys, font = "futural"}) {
-  const ref = useRef(null);
+  const containerRef = useRef(null);
+  const watchRef = useRef(null);
+  const [size, setSize] = useState(150);
+
+  // Measure container size and update when it changes
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const width = entry.contentRect.width;
+        setSize(width);
+      }
+    });
+
+    resizeObserver.observe(containerRef.current);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
-    if (ref.current) {
-      ref.current.innerHTML = "";
-      const {start, stop} = renderWatch(ref.current, timeZone, interpolator, font);
+    if (watchRef.current && size > 0) {
+      watchRef.current.innerHTML = "";
+      const {start, stop} = renderWatch(watchRef.current, timeZone, interpolator, font, size);
       start();
       return () => stop();
     }
-  }, [timeZone, interpolator, font]);
+  }, [timeZone, interpolator, font, size]);
 
   const timeZoneLabel = timeZone ? timeZone.split("/").pop().replace(/_/g, " ") : null;
   const countryCode = timeZone ? getCountryCodeFromTimezone(timeZone) : null;
   const flagEmoji = countryCode ? getFlagEmoji(countryCode) : "";
 
   return (
-    <div className="flex flex-col items-center">
-      <div ref={ref}></div>
+    <div
+      style={{
+        display: "inline-flex",
+        flexDirection: "column",
+        alignItems: "start",
+        width: "100%",
+      }}
+    >
+      <div
+        ref={containerRef}
+        style={{
+          width: "100%",
+          paddingTop: "100%",
+          position: "relative",
+        }}
+      >
+        <div
+          ref={watchRef}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+          }}
+        ></div>
+      </div>
       {timeZoneLabel && (
-        <div className="text-center mt-2 text-sm text-gray-800 max-w-[150px] break-words">
+        <div
+          style={{
+            width: "100%",
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+            overflow: "hidden",
+            textAlign: "center",
+            marginTop: "0.5rem",
+            fontSize: "0.875rem",
+            color: "#1b1e23",
+          }}
+        >
           {/* {flagEmoji} */}
           {timeZoneLabel}
         </div>
