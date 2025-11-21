@@ -1,6 +1,7 @@
 import {useRef, useEffect, useState} from "react";
 import * as apack from "apackjs";
 import * as d3 from "d3";
+import {MapPin} from "lucide-react";
 import {getFlagEmoji, getCountryCodeFromTimezone} from "./flag.js";
 
 function renderWatch(parent, timeZone = null, interpolator = d3.interpolateGreys, font = "futural", size = 150) {
@@ -187,7 +188,11 @@ export default function Watch({timeZone = null, interpolator = d3.interpolateGre
         ></div>
       </div>
       {timeZoneLabel && !hideLabel && (
-        <div
+        <a
+          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(timeZoneLabel)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
           style={{
             width: "100%",
             whiteSpace: "nowrap",
@@ -197,11 +202,35 @@ export default function Watch({timeZone = null, interpolator = d3.interpolateGre
             marginTop: "0.5rem",
             fontSize: "0.875rem",
             color: "#1b1e23",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.25rem",
+            cursor: "pointer",
+            textDecoration: "none",
+          }}
+          onMouseEnter={(e) => {
+            setIsHovered(true);
+            e.stopPropagation();
+          }}
+          onMouseLeave={(e) => {
+            setIsHovered(false);
+            e.stopPropagation();
           }}
         >
-          {isHovered && flagEmoji ? `${flagEmoji} ` : ""}
-          {timeZoneLabel}
-        </div>
+          {isHovered && flagEmoji ? <span>{flagEmoji} </span> : ""}
+          <span>{timeZoneLabel}</span>
+          {isHovered && (
+            <MapPin
+              className="inline-block"
+              style={{
+                width: "0.875rem",
+                height: "0.875rem",
+                flexShrink: 0,
+              }}
+            />
+          )}
+        </a>
       )}
     </div>
   );

@@ -1,7 +1,7 @@
 import {useState, useMemo} from "react";
 import {useNavigate, useLocation} from "react-router-dom";
 import Watch from "./Watch.jsx";
-import {Globe} from "lucide-react";
+import {Globe, MapPin} from "lucide-react";
 import {cityNameToTimezone} from "./utils.js";
 import {getFlagEmoji, getCountryCodeFromTimezone} from "./flag.js";
 import * as d3 from "d3";
@@ -127,10 +127,16 @@ export default function WatchPage() {
             <Globe className="w-5 h-5" />
           </button>
           {flagEmoji && countryName && (
-            <div className="flex items-center gap-2 text-gray-700">
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(countryName)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-gray-700 hover:text-gray-900 cursor-pointer transition-colors"
+            >
               <span className="text-2xl">{flagEmoji}</span>
               <span className="font-medium">{countryName} Time</span>
-            </div>
+              <MapPin className="w-4 h-4" />
+            </a>
           )}
         </div>
 
