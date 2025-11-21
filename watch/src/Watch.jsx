@@ -115,6 +115,7 @@ export default function Watch({timeZone = null, interpolator = d3.interpolateGre
   const containerRef = useRef(null);
   const watchRef = useRef(null);
   const [size, setSize] = useState(150);
+  const [isHovered, setIsHovered] = useState(false);
 
   // Measure container size and update when it changes
   useEffect(() => {
@@ -149,6 +150,8 @@ export default function Watch({timeZone = null, interpolator = d3.interpolateGre
 
   return (
     <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       style={{
         display: "inline-flex",
         flexDirection: "column",
@@ -188,7 +191,7 @@ export default function Watch({timeZone = null, interpolator = d3.interpolateGre
             color: "#1b1e23",
           }}
         >
-          {/* {flagEmoji} */}
+          {isHovered && flagEmoji ? `${flagEmoji} ` : ""}
           {timeZoneLabel}
         </div>
       )}
