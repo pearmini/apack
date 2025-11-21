@@ -16,7 +16,7 @@ function points(key, ch) {
   let current = [];
   let mode = "";
   for (let t of path.split(" ")) {
-    if (t[0] === "M" || t[0] === "L") (mode = t[0]), (t = t.slice(1));
+    if (t[0] === "M" || t[0] === "L") ((mode = t[0]), (t = t.slice(1)));
     const coords = t.split(",").map(Number);
     if (mode === "M" && current.length > 0) {
       plines.push(current);

@@ -13,6 +13,7 @@
   "scripts": {
     "dev": "vite",
     "editor:dev": "pnpm --filter editor dev",
+    "clock:dev": "pnpm --filter clock dev",
     "test": "npm run test:js && npm run test:lint && npm run test:format",
     "test:js": "vitest",
     "test:lint": "eslint src test",
@@ -21,16 +22,16 @@
   },
   "devDependencies": {
     "@rollup/plugin-json": "^6.1.0",
-    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-terser": "^0.4.4",
     "eslint": "^8.57.1",
-    "eslint-config-prettier": "^10.1.2",
+    "eslint-config-prettier": "^10.1.8",
     "js-beautify": "^1.15.4",
     "jsdom": "^26.1.0",
-    "prettier": "^3.5.3",
-    "rollup": "^4.40.1",
-    "vite": "^6.3.4",
-    "vitest": "^3.1.2"
+    "prettier": "^3.6.2",
+    "rollup": "^4.53.3",
+    "vite": "^6.4.1",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "charmingjs": "^0.0.17",
