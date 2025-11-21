@@ -83,7 +83,7 @@ function renderWatch(parent, timeZone = null, interpolator = d3.interpolateGreys
       .attr("width", size - strokeWidth * 2)
       .attr("height", size - strokeWidth * 2)
       .attr("fill", fillColor)
-      .attr("stroke", rectStrokeColor)
+      // .attr("stroke", rectStrokeColor)
       .attr("rx", strokeRadius)
       .attr("ry", strokeRadius)
       .attr("stroke-width", strokeWidth);

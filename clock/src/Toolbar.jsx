@@ -44,9 +44,9 @@ export default function Toolbar({
         <div
           className={`${
             isOpen ? "block" : "hidden"
-          } lg:flex lg:justify-center gap-4 mb-8 flex-wrap items-end w-full lg:w-auto mt-4 lg:mt-0`}
+          } lg:flex lg:justify-center gap-6 sm:gap-6 md:gap-4 lg:gap-4 mb-8 flex-wrap items-end w-full lg:w-auto mt-4 lg:mt-0`}
         >
-          <div className="flex flex-col">
+          <div className="flex flex-col mb-3 sm:mb-3 md:mb-3 lg:mb-0">
             <label className="text-xs text-gray-600 mb-1">Search</label>
             <input
               type="text"
@@ -56,7 +56,7 @@ export default function Toolbar({
               className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[180px]"
             />
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col mb-3 sm:mb-3 md:mb-3 lg:mb-0">
             <label className="text-xs text-gray-600 mb-1">Color</label>
             <select
               value={interpolatorOption}
@@ -80,7 +80,7 @@ export default function Toolbar({
                 ))}
             </select>
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col mb-3 sm:mb-3 md:mb-3 lg:mb-0">
             <label className="text-xs text-gray-600 mb-1">Font</label>
             <select
               value={fontOption}
@@ -103,7 +103,7 @@ export default function Toolbar({
               ))}
             </select>
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col mb-3 sm:mb-3 md:mb-3 lg:mb-0">
             <label className="text-xs text-gray-600 mb-1">Sort</label>
             <select
               value={sortOption}
