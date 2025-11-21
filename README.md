@@ -12,7 +12,7 @@ What if we could write English in a Chinese-style manner—arranging the letters
 
 And [world clocks](https://aclocks.bairui.dev/)!
 
-<a href="https://aclocks.bairui.dev/"><img src="./img/aclocks.png" /></a>
+<a href="https://aclocks.bairui.dev/"><img src="./img/futural-brbg.png" /></a>
 
 ## Get started
 
