@@ -1,6 +1,7 @@
 import {useState, useMemo, useEffect, useRef} from "react";
 import "./App.css";
 import Watch from "./Watch.jsx";
+import Toolbar from "./Toolbar.jsx";
 import * as d3 from "d3";
 import * as Plot from "@observablehq/plot";
 import {FONT_FAMILIES} from "apackjs";
@@ -180,14 +181,6 @@ function App() {
     return assignments;
   }, [filteredTimeZones, fontOption]);
 
-  // Generate a stable random font for single watch mode
-  const singleWatchFont = useMemo(() => {
-    if (fontOption === "random") {
-      return VALID_FONTS[Math.floor(Math.random() * VALID_FONTS.length)];
-    }
-    return fontOption;
-  }, [fontOption]);
-
   // Legend container ref
   const legendRef = useRef(null);
 
@@ -219,88 +212,20 @@ function App() {
             APack
           </a>
         </h1>
-        <div className="flex justify-between px-12">
-          <div className="flex justify-center gap-4 mb-8 flex-wrap items-end">
-            <div className="flex flex-col">
-              <label className="text-xs text-gray-600 mb-1">Search</label>
-              <input
-                type="text"
-                placeholder="Search timezones..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[180px]"
-              />
-            </div>
-            <div className="flex flex-col">
-              <label className="text-xs text-gray-600 mb-1">Color</label>
-              <select
-                value={interpolatorOption}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (value === "reset") {
-                    handleReset();
-                  } else {
-                    setInterpolatorOption(value);
-                  }
-                }}
-                className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="reset">Reset</option>
-                {Object.keys(interpolators).sort().map((name) => (
-                  <option key={name} value={name}>
-                    {name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="flex flex-col">
-              <label className="text-xs text-gray-600 mb-1">Font</label>
-              <select
-                value={fontOption}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (value === "reset") {
-                    handleReset();
-                  } else {
-                    setFontOption(value);
-                  }
-                }}
-                className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="reset">Reset</option>
-                <option value="random">Random</option>
-                {VALID_FONTS.map((font) => (
-                  <option key={font} value={font}>
-                    {font}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="flex flex-col">
-              <label className="text-xs text-gray-600 mb-1">Sort</label>
-              <select
-                value={sortOption}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (value === "reset") {
-                    handleReset();
-                  } else {
-                    setSortOption(value);
-                  }
-                }}
-                className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="random">Random</option>
-                <option value="alphabet-asc">Alphabet (A-Z)</option>
-                <option value="alphabet-desc">Alphabet (Z-A)</option>
-                <option value="time-asc">Time (Earliest First)</option>
-                <option value="time-desc">Time (Latest First)</option>
-                <option value="reset">Reset</option>
-              </select>
-            </div>
-          </div>
-          <div ref={legendRef} className="flex justify-start"></div>
-        </div>
+        <Toolbar
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          interpolatorOption={interpolatorOption}
+          setInterpolatorOption={setInterpolatorOption}
+          fontOption={fontOption}
+          setFontOption={setFontOption}
+          sortOption={sortOption}
+          setSortOption={setSortOption}
+          interpolators={interpolators}
+          validFonts={VALID_FONTS}
+          handleReset={handleReset}
+          legendRef={legendRef}
+        />
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6 p-6 px-12 justify-items-start">
           {filteredTimeZones.map((tz) => (
