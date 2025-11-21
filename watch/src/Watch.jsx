@@ -157,7 +157,11 @@ export default function Watch({
     }
   }, [timeZone, interpolator, font, size]);
 
-  const timeZoneLabel = timeZone ? timeZone.split("/").pop().replace(/_/g, " ") : null;
+  const timeZoneLabel = timeZone 
+    ? timeZone === "UTC" 
+      ? "UTC" 
+      : timeZone.split("/").pop().replace(/_/g, " ")
+    : "Local";
   const countryCode = timeZone ? getCountryCodeFromTimezone(timeZone) : null;
   const flagEmoji = countryCode ? getFlagEmoji(countryCode) : "";
 
@@ -214,7 +218,7 @@ export default function Watch({
             justifyContent: "center",
             gap: "0.25rem",
             cursor: "pointer",
-            textDecoration: "none",
+            textDecoration: timeZoneLabel === "Local" || timeZoneLabel === "UTC" ? "underline" : "none",
           }}
           onMouseEnter={(e) => {
             setIsHovered(true);

@@ -77,13 +77,26 @@ export default function WatchPage() {
     }
   }, []);
 
-  // Convert city name to full timezone
+  // Convert city name to full timezone (handle special cases for "local" and "utc")
   const selectedTimeZone = useMemo(() => {
     if (!cityName) return null;
+    
+    // Handle special cases
+    if (cityName.toLowerCase() === "local") {
+      try {
+        return Intl.DateTimeFormat().resolvedOptions().timeZone;
+      } catch (e) {
+        return null;
+      }
+    }
+    if (cityName.toLowerCase() === "utc") {
+      return "UTC";
+    }
+    
     return cityNameToTimezone(cityName, timeZones);
   }, [cityName, timeZones]);
 
-  const isValidTimeZone = selectedTimeZone && timeZones.includes(selectedTimeZone);
+  const isValidTimeZone = selectedTimeZone && (selectedTimeZone === "UTC" || timeZones.includes(selectedTimeZone));
 
   // Generate random font assignment if needed
   const fontAssignment = useMemo(() => {
@@ -94,9 +107,13 @@ export default function WatchPage() {
   }, [fontOption, isValidTimeZone]);
 
   // Get country info for display
-  const countryCode = selectedTimeZone ? getCountryCodeFromTimezone(selectedTimeZone) : null;
+  const countryCode = selectedTimeZone && selectedTimeZone !== "UTC" ? getCountryCodeFromTimezone(selectedTimeZone) : null;
   const flagEmoji = countryCode ? getFlagEmoji(countryCode) : "";
-  const countryName = selectedTimeZone ? selectedTimeZone.split("/").pop().replace(/_/g, " ") : "";
+  const countryName = selectedTimeZone 
+    ? selectedTimeZone === "UTC" 
+      ? "UTC" 
+      : selectedTimeZone.split("/").pop().replace(/_/g, " ")
+    : "Local";
 
   if (!isValidTimeZone) {
     return (
@@ -123,14 +140,14 @@ export default function WatchPage() {
           >
             <Globe className="w-5 h-5" />
           </button>
-          {flagEmoji && countryName && (
+          {countryName && (
             <a
               href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(countryName)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-gray-700 hover:text-gray-900 cursor-pointer transition-colors"
             >
-              <span className="text-2xl">{flagEmoji}</span>
+              {flagEmoji && <span className="text-2xl">{flagEmoji}</span>}
               <span className="font-medium">{countryName} Time</span>
               <MapPin className="w-4 h-4" />
             </a>

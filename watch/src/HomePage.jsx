@@ -181,8 +181,20 @@ export default function HomePage() {
     filteredTimeZones.forEach((tz) => {
       assignments[tz] = VALID_FONTS[Math.floor(Math.random() * VALID_FONTS.length)];
     });
+    // Add assignments for special watches
+    assignments["local"] = VALID_FONTS[Math.floor(Math.random() * VALID_FONTS.length)];
+    assignments["UTC"] = VALID_FONTS[Math.floor(Math.random() * VALID_FONTS.length)];
     return assignments;
   }, [filteredTimeZones, fontOption]);
+
+  // Get user's local timezone label
+  const localTimeZoneLabel = useMemo(() => {
+    try {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone.split("/").pop().replace(/_/g, " ") || "Local";
+    } catch (e) {
+      return "Local";
+    }
+  }, []);
 
   // Legend container ref
   const legendRef = useRef(null);
@@ -239,6 +251,27 @@ export default function HomePage() {
             width: "100%",
           }}
         >
+          {/* Local Time watch - always first (only show when not searching) */}
+          {!debouncedSearchQuery.trim() && (
+            <Watch
+              key="local"
+              timeZone={null}
+              interpolator={interpolators[interpolatorOption]}
+              font={fontOption === "random" ? fontAssignments?.["local"] || "futural" : fontOption}
+              onClick={() => navigate("/local")}
+            />
+          )}
+          {/* UTC watch - always second (only show when not searching) */}
+          {!debouncedSearchQuery.trim() && (
+            <Watch
+              key="UTC"
+              timeZone="UTC"
+              interpolator={interpolators[interpolatorOption]}
+              font={fontOption === "random" ? fontAssignments?.["UTC"] || "futural" : fontOption}
+              onClick={() => navigate("/utc")}
+            />
+          )}
+          {/* Other timezones */}
           {filteredTimeZones.map((tz) => (
             <Watch
               key={tz}
