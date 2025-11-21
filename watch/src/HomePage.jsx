@@ -2,6 +2,7 @@ import {useState, useMemo, useEffect, useRef} from "react";
 import {useNavigate} from "react-router-dom";
 import Watch from "./Watch.jsx";
 import Toolbar from "./Toolbar.jsx";
+import {timezoneToCityName} from "./utils.js";
 import * as d3 from "d3";
 import * as Plot from "@observablehq/plot";
 import {FONT_FAMILIES} from "apackjs";
@@ -244,7 +245,7 @@ export default function HomePage() {
               timeZone={tz}
               interpolator={interpolators[interpolatorOption]}
               font={fontOption === "random" ? fontAssignments?.[tz] || "futural" : fontOption}
-              onClick={() => navigate(`/${encodeURIComponent(tz)}`)}
+              onClick={() => navigate(`/${timezoneToCityName(tz)}`)}
             />
           ))}
         </div>

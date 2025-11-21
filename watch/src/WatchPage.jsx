@@ -2,6 +2,7 @@ import {useState, useMemo} from "react";
 import {useNavigate, useLocation} from "react-router-dom";
 import Watch from "./Watch.jsx";
 import {Home} from "lucide-react";
+import {cityNameToTimezone} from "./utils.js";
 import * as d3 from "d3";
 import {FONT_FAMILIES} from "apackjs";
 
@@ -55,9 +56,9 @@ export default function WatchPage() {
   const location = useLocation();
   const navigate = useNavigate();
   
-  // Get timezone from pathname (remove leading slash)
+  // Get city name from pathname (remove leading slash)
   const pathname = location.pathname;
-  const selectedTimeZone = pathname !== "/" ? decodeURIComponent(pathname.slice(1)) : null;
+  const cityName = pathname !== "/" ? pathname.slice(1) : null;
 
   const [interpolatorOption] = useState(() => {
     return localStorage.getItem("watchInterpolatorOption") || DEFAULT_INTERPOLATOR;
@@ -66,7 +67,7 @@ export default function WatchPage() {
     return localStorage.getItem("watchFontOption") || DEFAULT_FONT;
   });
 
-  // Check if timezone is valid
+  // Get all timezones
   const timeZones = useMemo(() => {
     try {
       return Intl.supportedValuesOf("timeZone");
@@ -74,6 +75,12 @@ export default function WatchPage() {
       return ["America/New_York", "Europe/London", "Asia/Tokyo", "Australia/Sydney"];
     }
   }, []);
+
+  // Convert city name to full timezone
+  const selectedTimeZone = useMemo(() => {
+    if (!cityName) return null;
+    return cityNameToTimezone(cityName, timeZones);
+  }, [cityName, timeZones]);
 
   const isValidTimeZone = selectedTimeZone && timeZones.includes(selectedTimeZone);
 
