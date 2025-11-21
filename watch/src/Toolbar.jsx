@@ -18,11 +18,11 @@ export default function Toolbar({
 
   return (
     <div className="px-4 sm:px-6 md:px-8 lg:px-12 mb-4">
-      <div className="flex justify-between items-start">
+      <div className="flex justify-between items-start lg:flex-row flex-col">
         {/* Hamburger button for small and medium screens */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="lg:hidden text-gray-700 hover:bg-gray-100 p-2 rounded-md transition-colors"
+          className="lg:hidden text-gray-700 hover:bg-gray-100 transition-colors"
           aria-label="Toggle menu"
         >
           <svg
@@ -33,19 +33,9 @@ export default function Toolbar({
             xmlns="http://www.w3.org/2000/svg"
           >
             {isOpen ? (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             ) : (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             )}
           </svg>
         </button>
@@ -54,7 +44,7 @@ export default function Toolbar({
         <div
           className={`${
             isOpen ? "block" : "hidden"
-          } lg:flex lg:justify-center gap-4 mb-8 flex-wrap items-end w-full md:w-auto`}
+          } lg:flex lg:justify-center gap-4 mb-8 flex-wrap items-end w-full lg:w-auto mt-4 lg:mt-0`}
         >
           <div className="flex flex-col">
             <label className="text-xs text-gray-600 mb-1">Search</label>
@@ -81,11 +71,13 @@ export default function Toolbar({
               className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="reset">Reset</option>
-              {Object.keys(interpolators).sort().map((name) => (
-                <option key={name} value={name}>
-                  {name}
-                </option>
-              ))}
+              {Object.keys(interpolators)
+                .sort()
+                .map((name) => (
+                  <option key={name} value={name}>
+                    {name}
+                  </option>
+                ))}
             </select>
           </div>
           <div className="flex flex-col">
@@ -141,4 +133,3 @@ export default function Toolbar({
     </div>
   );
 }
-
