@@ -111,7 +111,7 @@ function renderWatch(parent, timeZone = null, interpolator = d3.interpolateGreys
   };
 }
 
-export default function Watch({timeZone = null, interpolator = d3.interpolateGreys, font = "futural"}) {
+export default function Watch({timeZone = null, interpolator = d3.interpolateGreys, font = "futural", onClick}) {
   const containerRef = useRef(null);
   const watchRef = useRef(null);
   const [size, setSize] = useState(150);
@@ -150,6 +150,7 @@ export default function Watch({timeZone = null, interpolator = d3.interpolateGre
 
   return (
     <div
+      onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{
@@ -157,6 +158,7 @@ export default function Watch({timeZone = null, interpolator = d3.interpolateGre
         flexDirection: "column",
         alignItems: "start",
         width: "100%",
+        cursor: onClick ? "pointer" : "default",
       }}
     >
       <div
