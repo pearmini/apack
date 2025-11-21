@@ -1,8 +1,9 @@
 import {useState, useMemo} from "react";
 import {useNavigate, useLocation} from "react-router-dom";
 import Watch from "./Watch.jsx";
-import {Home} from "lucide-react";
+import {Globe} from "lucide-react";
 import {cityNameToTimezone} from "./utils.js";
+import {getFlagEmoji, getCountryCodeFromTimezone} from "./flag.js";
 import * as d3 from "d3";
 import {FONT_FAMILIES} from "apackjs";
 
@@ -92,6 +93,11 @@ export default function WatchPage() {
     return VALID_FONTS[Math.floor(Math.random() * VALID_FONTS.length)];
   }, [fontOption, isValidTimeZone]);
 
+  // Get country info for display
+  const countryCode = selectedTimeZone ? getCountryCodeFromTimezone(selectedTimeZone) : null;
+  const flagEmoji = countryCode ? getFlagEmoji(countryCode) : "";
+  const countryName = selectedTimeZone ? selectedTimeZone.split("/").pop().replace(/_/g, " ") : "";
+
   if (!isValidTimeZone) {
     return (
       <div className="w-screen h-screen flex flex-col items-center justify-center">
@@ -111,38 +117,44 @@ export default function WatchPage() {
   return (
     <div className="w-screen h-screen flex flex-col items-center justify-center">
       <div className="w-full h-full overflow-auto flex flex-col relative">
-        {/* Home button */}
-        <button
-          onClick={() => navigate("/")}
-          className="absolute top-4 left-4 z-10 text-gray-700 hover:bg-gray-100 p-2 rounded-md transition-colors"
-          aria-label="Home"
-        >
-          <Home className="w-5 h-5" />
-        </button>
+        {/* Home button and country info */}
+        <div className="absolute top-4 left-4 z-10 flex items-center gap-4">
+          <button
+            onClick={() => navigate("/")}
+            className="text-gray-700 hover:bg-gray-100 p-2 rounded-md transition-colors cursor-pointer"
+            aria-label="Home"
+          >
+            <Globe className="w-5 h-5" />
+          </button>
+          {flagEmoji && countryName && (
+            <div className="flex items-center gap-2 text-gray-700">
+              <span className="text-2xl">{flagEmoji}</span>
+              <span className="font-medium">{countryName} Time</span>
+            </div>
+          )}
+        </div>
 
-        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mt-4 sm:mt-6 md:mt-8 mb-4 sm:mb-6 md:mb-8 px-4 sm:px-6 md:px-8 lg:px-12">
-          World Clocks by{" "}
-          <a href="https://apack.bairui.dev/" target="_blank" rel="noopener noreferrer" className="underline">
-            APack
-          </a>
-        </h1>
-
+        {/* Watch centered at 150px x 150px */}
         <div
-          className="px-4 sm:px-6 md:px-8 lg:px-12"
           style={{
-            display: "grid",
-            gridGap: "0.875rem",
-            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-            width: "100%",
+            display: "flex",
+            alignItems: "center",
             justifyContent: "center",
+            width: "100%",
+            height: "100%",
+            minHeight: "150px",
           }}
         >
-          <Watch
-            key={selectedTimeZone}
-            timeZone={selectedTimeZone}
-            interpolator={interpolators[interpolatorOption]}
-            font={fontAssignment}
-          />
+          <div style={{ width: "150px", height: "150px" }}>
+            <Watch
+              key={selectedTimeZone}
+              timeZone={selectedTimeZone}
+              interpolator={interpolators[interpolatorOption]}
+              font={fontAssignment}
+              fixedSize={150}
+              hideLabel={true}
+            />
+          </div>
         </div>
       </div>
     </div>

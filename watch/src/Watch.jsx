@@ -111,14 +111,19 @@ function renderWatch(parent, timeZone = null, interpolator = d3.interpolateGreys
   };
 }
 
-export default function Watch({timeZone = null, interpolator = d3.interpolateGreys, font = "futural", onClick}) {
+export default function Watch({timeZone = null, interpolator = d3.interpolateGreys, font = "futural", onClick, fixedSize, hideLabel = false}) {
   const containerRef = useRef(null);
   const watchRef = useRef(null);
-  const [size, setSize] = useState(150);
+  const [size, setSize] = useState(fixedSize || 150);
   const [isHovered, setIsHovered] = useState(false);
 
-  // Measure container size and update when it changes
+  // If fixedSize is provided, use it directly; otherwise use ResizeObserver
   useEffect(() => {
+    if (fixedSize !== undefined) {
+      setSize(fixedSize);
+      return;
+    }
+
     if (!containerRef.current) return;
 
     const resizeObserver = new ResizeObserver((entries) => {
@@ -133,7 +138,7 @@ export default function Watch({timeZone = null, interpolator = d3.interpolateGre
     return () => {
       resizeObserver.disconnect();
     };
-  }, []);
+  }, [fixedSize]);
 
   useEffect(() => {
     if (watchRef.current && size > 0) {
@@ -162,10 +167,11 @@ export default function Watch({timeZone = null, interpolator = d3.interpolateGre
       }}
     >
       <div
-        ref={containerRef}
+        ref={fixedSize ? null : containerRef}
         style={{
-          width: "100%",
-          paddingTop: "100%",
+          width: fixedSize ? `${fixedSize}px` : "100%",
+          height: fixedSize ? `${fixedSize}px` : "auto",
+          paddingTop: fixedSize ? 0 : "100%",
           position: "relative",
         }}
       >
@@ -180,7 +186,7 @@ export default function Watch({timeZone = null, interpolator = d3.interpolateGre
           }}
         ></div>
       </div>
-      {timeZoneLabel && (
+      {timeZoneLabel && !hideLabel && (
         <div
           style={{
             width: "100%",
