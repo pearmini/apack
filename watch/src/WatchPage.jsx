@@ -115,14 +115,67 @@ export default function WatchPage() {
       : selectedTimeZone.split("/").pop().replace(/_/g, " ")
     : "Local";
 
+  // Get local timezone for invalid route display
+  const localTimeZone = useMemo(() => {
+    try {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    } catch (e) {
+      return null;
+    }
+  }, []);
+
+  const localFontAssignment = useMemo(() => {
+    if (fontOption !== "random" || !localTimeZone) {
+      return fontOption;
+    }
+    return VALID_FONTS[Math.floor(Math.random() * VALID_FONTS.length)];
+  }, [fontOption, localTimeZone]);
+
   if (!isValidTimeZone) {
     return (
       <div className="w-screen h-screen flex flex-col items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Time zone not found</h1>
-          <button onClick={() => navigate("/")} className="text-blue-600 hover:underline">
-            Return to home
+        <div className="w-full h-full overflow-auto flex flex-col relative">
+          {/* Home button */}
+          <button
+            onClick={() => navigate("/")}
+            className="absolute top-4 left-4 z-10 text-gray-700 hover:bg-gray-100 p-2 rounded-md transition-colors cursor-pointer"
+            aria-label="Home"
+          >
+            <Globe className="w-5 h-5" />
           </button>
+
+          {/* Local watch */}
+          {localTimeZone && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                paddingTop: "4rem",
+                paddingBottom: "2rem",
+              }}
+            >
+              <div style={{width: "150px", height: "150px"}}>
+                <Watch
+                  key={localTimeZone}
+                  timeZone={localTimeZone}
+                  interpolator={interpolators[interpolatorOption]}
+                  font={localFontAssignment}
+                  fixedSize={150}
+                  hideLabel={true}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Error message */}
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Time zone not found</h1>
+            <button onClick={() => navigate("/")} className="text-blue-600 hover:underline cursor-pointer">
+              Return to home
+            </button>
+          </div>
         </div>
       </div>
     );
