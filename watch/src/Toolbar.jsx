@@ -22,7 +22,7 @@ export default function Toolbar({
         {/* Hamburger button for small and medium screens */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="lg:hidden bg-green-500 hover:bg-green-600 text-white p-2 rounded-md"
+          className="lg:hidden text-gray-700 hover:bg-gray-100 p-2 rounded-md transition-colors"
           aria-label="Toggle menu"
         >
           <svg
