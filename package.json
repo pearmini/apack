@@ -1,6 +1,6 @@
 {
   "name": "apackjs",
-  "version": "0.0.1-beta.3",
+  "version": "0.0.1",
   "type": "module",
   "main": "src/index.js",
   "module": "src/index.js",

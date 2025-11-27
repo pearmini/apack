@@ -39,7 +39,7 @@ export function flex(string, x, y, x1, y1, {padding = 0.05} = {}) {
     const w = x1 - x;
     const h = y1 - y;
     const remain = n - i;
-    const t = remain <= 1 ? 0.5 : 0.33;
+    const t = remain <= 1 ? 0.5 : remain <= 4 ? 0.33 : 0.25;
     if (next(code)) {
       const cell0 = {x, y, x1: x + w * t - p, y1, ch};
       const cell1 = {x: x + w * t + p, y, x1, y1, ch: char};
