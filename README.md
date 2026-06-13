@@ -254,7 +254,7 @@ APack sits at the intersection of typography, generative art, data visualization
 
 ## License
 
-MIT © Bairui Su
+[ISC](./LICENSE) © 2026 pearmini
 
 <p align="center">
   <a href="https://apack.bairui.dev/"><strong>apack.bairui.dev</strong></a>
