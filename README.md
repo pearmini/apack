@@ -19,24 +19,24 @@ It began as an assignment for Allison Parrish's [Computational Letterforms and L
 
 ## What it does
 
-1. **Pack** — Each word is assigned to a cell; each letter receives a sub-cell through recursive layout.
-2. **Draw** — Letters render as SVG paths from Hershey fonts — stroked, filled, connected in cursive mode, or styled for stamps and posters.
-3. **Compose** — Text becomes stamps, logos, wallpapers, concrete poems, signatures, labels, and visual marks.
-4. **Edit** — The online editor merges source text and rendered output into one canvas-like writing surface, so editing feels more like drawing than typing into a split preview pane.
-5. **Stamp** — [Name2Tree](https://tree.bairui.dev/) uses APack to sign each generated tree with a Chinese-character-like name stamp.
-6. **Tell time** — [World Clocks](https://aclocks.bairui.dev/) packs hour, minute, and second digits into animated square clocks for many time zones.
+1. **Pack:** Each word is assigned to a cell; each letter receives a sub-cell through recursive layout.
+2. **Draw:** Letters render as SVG paths from Hershey fonts, stroked, filled, connected in cursive mode, or styled for stamps and posters.
+3. **Compose:** Text becomes stamps, logos, wallpapers, concrete poems, signatures, labels, and visual marks.
+4. **Edit:** The online editor merges source text and rendered output into one canvas-like writing surface, so editing feels more like drawing than typing into a split preview pane.
+5. **Stamp:** [Name2Tree](https://tree.bairui.dev/) uses APack to sign each generated tree with a Chinese-character-like name stamp.
+6. **Tell time:** [World Clocks](https://aclocks.bairui.dev/) packs hour, minute, and second digits into animated square clocks for many time zones.
 
 <img src="./img/stamps.png" width="720" alt="APack stamps, logos, and wallpapers" />
 
 ## Why it exists
 
-The inspiration comes from the visual richness of Chinese characters — each character is a carefully composed unit that fits within a square space, with strokes arranged in balanced harmony. English and Chinese use radically different spatial habits. Latin letters usually unfold in a line. Chinese characters gather strokes into a balanced square. APack asks: what happens if English words are no longer a sequence, but a composition?
+The inspiration comes from the visual richness of Chinese characters. Each character is a carefully composed unit that fits within a square space, with strokes arranged in balanced harmony. English and Chinese use radically different spatial habits. Latin letters usually unfold in a line. Chinese characters gather strokes into a balanced square. APack asks: what happens if English words are no longer a sequence, but a composition?
 
-The project is not trying to imitate Chinese calligraphy as ornament. It is a small system for thinking with two writing logics at once: the alphabetic legibility of Latin text and the spatial density of character-like construction. A familiar name becomes strange enough to look at again — and that strangeness is useful. A name can become a stamp. A phrase can become a poster. A poem can become a texture. A clock can become a glyph that changes every second.
+The project is not trying to imitate Chinese calligraphy as ornament. It is a small system for thinking with two writing logics at once: the alphabetic legibility of Latin text and the spatial density of character-like construction. A familiar name becomes strange enough to look at again, and that strangeness is useful. A name can become a stamp. A phrase can become a poster. A poem can become a texture. A clock can become a glyph that changes every second.
 
-APack was shown with [Find Trees in Names](https://bairui.dev/name2tree) at ITP Spring Show 2025. Visitors grew trees from their names and received APack stamps as marks of authorship; later, those stamps were planted into the infinite landscape [{Mountains, Trees, Names}*](https://landscape.bairui.dev/). During the show, people could also try the editor directly — many kept typing to figure out how it works, and a lot of them thought it would make a great logo generator. [Photos and videos from the show →](https://bairui.dev/apack#itp-spring-show-2025)
+APack was shown with [Find Trees in Names](https://bairui.dev/name2tree) at ITP Spring Show 2025. Visitors grew trees from their names and received APack stamps as marks of authorship; later, those stamps were planted into the infinite landscape [{Mountains, Trees, Names}*](https://landscape.bairui.dev/). During the show, people could also try the editor directly. Many kept typing to figure out how it works, and a lot of them thought it would make a great logo generator. [Photos and videos from the show →](https://bairui.dev/apack#itp-spring-show-2025)
 
-After the show, my friend [Sai](https://www.instagram.com/sairamved/) used APack for a poster in the FIGHT FOR KINDNESS design activity — [*Stick Together to Make Peace*](https://www.typecampus.com/fight-for-kindness-gallery-2025?pgid=maasv5d321-b22ea6e7-6be1-4b74-83e0-33c9d3d25d56). I also noticed that packing digits into a single cell is a natural way to draw a clock, which led to [World Clocks](https://aclocks.bairui.dev/) — I was surprised how many time zones exist, and it is fun to watch the animations and try different fonts.
+After the show, my friend [Sai](https://www.instagram.com/sairamved/) used APack for a poster in the FIGHT FOR KINDNESS design activity: [*Stick Together to Make Peace*](https://www.typecampus.com/fight-for-kindness-gallery-2025?pgid=maasv5d321-b22ea6e7-6be1-4b74-83e0-33c9d3d25d56). I also noticed that packing digits into a single cell is a natural way to draw a clock, which led to [World Clocks](https://aclocks.bairui.dev/). I was surprised how many time zones exist, and it is fun to watch the animations and try different fonts.
 
 <a href="https://aclocks.bairui.dev/"><img src="./img/futural-brbg.png" width="720" alt="World clocks made with APack" /></a>
 
@@ -72,13 +72,13 @@ Text input
 └─────────────────────────────────────┘
 ```
 
-**Layout** (`src/flex.js`, `src/treemap.js`) — `flex` recursively splits the previous letter cell into horizontal or vertical pieces based on character codes, producing structures that feel closer to Chinese character composition. `treemap` uses D3's binary treemap tiling to make compact, poster-like blocks.
+**Layout** (`src/flex.js`, `src/treemap.js`): `flex` recursively splits the previous letter cell into horizontal or vertical pieces based on character codes, producing structures that feel closer to Chinese character composition. `treemap` uses D3's binary treemap tiling to make compact, poster-like blocks.
 
-**Letter geometry** (`src/text.js`, `src/hersheytext.json`) — each character is pulled from Hershey vector fonts, scaled into its assigned cell, and rendered as SVG paths. `cursive` mode connects all letter strokes in a word into one continuous path.
+**Letter geometry** (`src/text.js`, `src/hersheytext.json`): each character is pulled from Hershey vector fonts, scaled into its assigned cell, and rendered as SVG paths. `cursive` mode connects all letter strokes in a word into one continuous path.
 
-**Renderer** (`src/index.js`) — exports `text()` and `FONT_FAMILIES` for browser, package, and notebook usage. The UMD build in `dist/` powers the Python wrapper and CDN embedding.
+**Renderer** (`src/index.js`): exports `text()` and `FONT_FAMILIES` for browser, package, and notebook usage. The UMD build in `dist/` powers the Python wrapper and CDN embedding.
 
-**Editor** — when building the online editor, I chose to merge source text and rendered output into a single canvas instead of a split Markdown-style editor and preview. That choice made the experience feel more like drawing. [See a walkthrough →](https://bairui.dev/apack)
+**Editor:** when building the online editor, I chose to merge source text and rendered output into a single canvas instead of a split Markdown-style editor and preview. That choice made the experience feel more like drawing. [See a walkthrough →](https://bairui.dev/apack)
 
 ## Examples
 
@@ -239,18 +239,18 @@ apack/
 
 ## Related work
 
-- [apack.bairui.dev](https://apack.bairui.dev/) — live editor
-- [bairui.dev/apack](https://bairui.dev/apack) — full story, ITP photos, process, style explorations, and future directions
-- [aclocks.bairui.dev](https://aclocks.bairui.dev/) — world clocks made from APack digits
-- [tree.bairui.dev](https://tree.bairui.dev/) — Name2Tree uses APack stamps as authorship marks
-- [landscape.bairui.dev](https://landscape.bairui.dev/) — APack stamps embedded in an infinite procedural landscape
-- [BioGlyph](https://bio.bairui.dev/) — one-line faces from the same ITP lineage
+- [apack.bairui.dev](https://apack.bairui.dev/): live editor
+- [bairui.dev/apack](https://bairui.dev/apack): full story, ITP photos, process, style explorations, and future directions
+- [aclocks.bairui.dev](https://aclocks.bairui.dev/): world clocks made from APack digits
+- [tree.bairui.dev](https://tree.bairui.dev/): Name2Tree uses APack stamps as authorship marks
+- [landscape.bairui.dev](https://landscape.bairui.dev/): APack stamps embedded in an infinite procedural landscape
+- [BioGlyph](https://bio.bairui.dev/): one-line faces from the same ITP lineage
 
 ## Future work
 
-There are two directions I want to keep exploring. The first is to craft APack off the screen — fabricating wooden stamps and plotting them out with AxiDraw. The second is writing as drawing: I used APack to redraw a figure I saw at a Processing exhibition, and I want to keep pushing that idea toward icons and abstract versions of classical paintings. [See the comparison and more on the story →](https://bairui.dev/apack#future-work)
+There are two directions I want to keep exploring. The first is to craft APack off the screen: fabricating wooden stamps and plotting them out with AxiDraw. The second is writing as drawing: I used APack to redraw a figure I saw at a Processing exhibition, and I want to keep pushing that idea toward icons and abstract versions of classical paintings. [See the comparison and more on the story →](https://bairui.dev/apack#future-work)
 
-APack sits at the intersection of typography, generative art, data visualization, and cultural exchange — a small tool for stylized text, and a concept exploration of how digital systems can bridge different writing traditions.
+APack sits at the intersection of typography, generative art, data visualization, and cultural exchange: a small tool for stylized text, and a concept exploration of how digital systems can bridge different writing traditions.
 
 ## License
 
