@@ -562,7 +562,12 @@ function App() {
           <textarea
             className="input"
             // If the textarea is empty, adjust the position of the cursor by 10px.
-            style={{...style, transform: `scale(1, ${scale}) ${textareaValue ? "" : "translate(0, 10px)"}`}}
+            style={{
+              ...style,
+              lineHeight: `${cellHeight}px`,
+              padding: 0,
+              transform: `scale(1, ${scale}) ${textareaValue ? "" : "translate(0, 10px)"}`,
+            }}
             value={textareaValue}
             ref={textareaRef}
             onChange={onTextareaChange}
