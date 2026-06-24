@@ -359,6 +359,10 @@ function App() {
     // Do nothing if the user holds down the meta key.
     if (e.metaKey) return;
 
+    // Ignore non-content keys (arrows, Tab, Escape, Alt/Option, Shift, F-keys, etc.)
+    // so that a selection is never accidentally wiped by a key that doesn't type anything.
+    if (!isPrintable(e.key) && e.key !== " " && e.key !== "Backspace" && e.key !== "Enter") return;
+
     const newWords = [...words];
 
     // If the user selects a part of the text, remove it.
