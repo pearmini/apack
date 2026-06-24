@@ -157,6 +157,7 @@ function App() {
     editorRef.current.style.marginLeft = marginLeft + "px";
     editorRef.current.style.marginTop = marginTop + "px";
     editorRef.current.style.marginBottom = "200px";
+    editorRef.current.style.marginRight = "200px";
     editorRef.current.style.width = width + "px";
     editorRef.current.style.height = height + "px";
   };
