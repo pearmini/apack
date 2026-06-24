@@ -119,6 +119,10 @@ function App() {
 
   const [words, setWords] = useState(splitWordsWithNewlines(text));
 
+  const historyRef = useRef([splitWordsWithNewlines(text)]);
+  const historyIndexRef = useRef(0);
+  const isUndoingRef = useRef(false);
+
   positionWords(words, {cols});
 
   const textareaValue = useMemo(() => {
@@ -190,6 +194,20 @@ function App() {
     computeEditorPosition();
   }, [words, cellWidth, cellHeight, cols, containerWidth]);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "z" && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+      } else if ((e.metaKey || e.ctrlKey) && (e.key === "y" || (e.key === "z" && e.shiftKey))) {
+        e.preventDefault();
+        redo();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   // Track container width so cols (and centering) react to window resize.
   useEffect(() => {
     if (!editorContainerRef.current) return;
@@ -219,6 +237,41 @@ function App() {
   }, [words, cellWidth, cellHeight, cols]);
 
   const fire = (callback) => setTimeout(callback, 10);
+
+  const setWordsWithHistory = (newWords) => {
+    historyRef.current = historyRef.current.slice(0, historyIndexRef.current + 1);
+    historyRef.current.push(newWords);
+    historyIndexRef.current = historyRef.current.length - 1;
+    setWords(newWords);
+  };
+
+  const undo = () => {
+    if (historyIndexRef.current > 0) {
+      isUndoingRef.current = true;
+      historyIndexRef.current--;
+      setWords(historyRef.current[historyIndexRef.current]);
+      fire(() => {
+        isUndoingRef.current = false;
+        textareaRef.current.focus();
+        const len = historyRef.current[historyIndexRef.current].length;
+        textareaRef.current.setSelectionRange(len, len);
+      });
+    }
+  };
+
+  const redo = () => {
+    if (historyIndexRef.current < historyRef.current.length - 1) {
+      isUndoingRef.current = true;
+      historyIndexRef.current++;
+      setWords(historyRef.current[historyIndexRef.current]);
+      fire(() => {
+        isUndoingRef.current = false;
+        textareaRef.current.focus();
+        const len = historyRef.current[historyIndexRef.current].length;
+        textareaRef.current.setSelectionRange(len, len);
+      });
+    }
+  };
 
   // word.fill => {word: {fill: value}}
   const updateConfig = (key, value) => {
@@ -270,7 +323,10 @@ function App() {
 
   const loadConfig = (config) => {
     setConfig(config);
-    setWords(splitWordsWithNewlines(config.text));
+    const newWords = splitWordsWithNewlines(config.text);
+    setWords(newWords);
+    historyRef.current = [newWords];
+    historyIndexRef.current = 0;
   };
 
   // Save the current config to the local storage.
@@ -337,7 +393,7 @@ function App() {
         navigator.clipboard.writeText(joinWords(words.slice(index, endSelection)));
         const newWords = [...words];
         newWords.splice(index, endSelection - index);
-        setWords(newWords);
+        setWordsWithHistory(newWords);
         fire(() => {
           textareaRef.current.focus();
           textareaRef.current.setSelectionRange(index, index);
@@ -353,7 +409,7 @@ function App() {
         const newWords = [...words];
         const deleteCount = endSelection > index ? endSelection - index : 0;
         newWords.splice(index, deleteCount, ...pasted);
-        setWords(newWords);
+        setWordsWithHistory(newWords);
         fire(() => {
           textareaRef.current.focus();
           textareaRef.current.setSelectionRange(index + pasted.length, index + pasted.length);
@@ -382,7 +438,7 @@ function App() {
 
       // Only remove the current word when backspace, do not enter the delete mode.
       if (e.key === "Backspace") {
-        setWords(newWords);
+        setWordsWithHistory(newWords);
         return;
       }
     }
@@ -436,7 +492,7 @@ function App() {
       });
     }
 
-    setWords(newWords);
+    setWordsWithHistory(newWords);
   };
 
   // Do nothing. Dismiss warning from React.
@@ -450,7 +506,7 @@ function App() {
 
       const newWords = [...words];
       newWords.splice(i, 1);
-      setWords(newWords);
+      setWordsWithHistory(newWords);
 
       fire(() => {
         textareaRef.current.focus();
@@ -470,7 +526,7 @@ function App() {
       // Add a newline after the current word.
       const newWords = [...words];
       newWords.splice(i + 1, 0, {ch: "\n", id: uid()});
-      setWords(newWords);
+      setWordsWithHistory(newWords);
 
       fire(() => {
         // Move the cursor to the next word.
@@ -486,17 +542,19 @@ function App() {
     const newWords = [...words];
     const newValue = e.target.value;
     newWords[i] = {...newWords[i], ch: newValue};
-    setWords(newWords);
+    setWordsWithHistory(newWords);
   };
 
   const onGridInputBlur = (e, d, i) => {
     logEditor("Grid input blur", "Remove current empty word", {value: e.target.value, index: i});
 
+    if (isUndoingRef.current) return;
+
     // Remove current empty word when blur.
     const newWords = [...words];
     if (newWords[i].ch === "") {
       newWords.splice(i, 1);
-      setWords(newWords);
+      setWordsWithHistory(newWords);
     }
   };
 
