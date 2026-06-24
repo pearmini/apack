@@ -28,10 +28,10 @@
     "eslint-config-prettier": "^10.1.8",
     "js-beautify": "^1.15.4",
     "jsdom": "^26.1.0",
-    "prettier": "^3.6.2",
-    "rollup": "^4.53.3",
-    "vite": "^6.4.1",
-    "vitest": "^3.2.4"
+    "prettier": "^3.8.4",
+    "rollup": "^4.62.2",
+    "vite": "^6.4.3",
+    "vitest": "^3.2.6"
   },
   "dependencies": {
     "charmingjs": "^0.0.17",
