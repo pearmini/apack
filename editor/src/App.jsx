@@ -95,6 +95,7 @@ function App() {
   const [showExample, setShowExample] = useState(false);
   const [template, setTemplate] = useState("None");
   const [config, setConfig] = useState(getConfig());
+  const [containerWidth, setContainerWidth] = useState(Infinity);
 
   const text = config.text;
 
@@ -109,7 +110,7 @@ function App() {
 
   const {width: cellWidth, height: cellHeight} = useMemo(() => measureText(ch, style), [ch, style]);
 
-  const cols = config.autoWrap ? Math.floor(+config.wrapWidth / cellWidth) : Infinity;
+  const cols = config.autoWrap ? Math.floor(Math.min(containerWidth, +config.wrapWidth) / cellWidth) : Infinity;
 
   const placeholderWords = useMemo(
     () => positionWords(splitWordsWithNewlines(placeHolder), {cols}),
@@ -168,7 +169,7 @@ function App() {
         }),
       );
     }
-  }, [words, cellWidth, config]);
+  }, [words, cellWidth, config, cols]);
 
   // When enter the page, focus on the textarea.
   useEffect(() => {
@@ -181,17 +182,17 @@ function App() {
 
   useEffect(() => {
     computeEditorPosition();
-  }, [words, cellWidth, cellHeight, cols]);
+  }, [words, cellWidth, cellHeight, cols, containerWidth]);
 
-  // Add resize observer for editor container
+  // Track container width so cols (and centering) react to window resize.
   useEffect(() => {
     if (!editorContainerRef.current) return;
-    const resizeObserver = new ResizeObserver(() => {
-      computeEditorPosition();
+    const resizeObserver = new ResizeObserver((entries) => {
+      setContainerWidth(entries[0].contentRect.width);
     });
     resizeObserver.observe(editorContainerRef.current);
     return () => resizeObserver.disconnect();
-  }, [words, cellWidth, cellHeight, cols]);
+  }, []);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -209,7 +210,7 @@ function App() {
       textareaRef.current.style.width = `${(maxX + 1) * cellWidth}px`;
       textareaRef.current.style.height = `${(maxY + 1 + offset) * cellHeight}px`;
     }
-  }, [words, cellWidth, cellHeight]);
+  }, [words, cellWidth, cellHeight, cols]);
 
   const fire = (callback) => setTimeout(callback, 10);
 
