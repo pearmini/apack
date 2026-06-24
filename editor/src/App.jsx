@@ -33,6 +33,8 @@ function createDefaultConfig() {
     padding: 0,
     canvas: "transparent",
     cursive: false,
+    autoWrap: true,
+    wrapWidth: 1000,
     word: {
       fill: "transparent",
       strokeWidth: 1.5,
@@ -107,11 +109,16 @@ function App() {
 
   const {width: cellWidth, height: cellHeight} = useMemo(() => measureText(ch, style), [ch, style]);
 
-  const placeholderWords = useMemo(() => positionWords(splitWordsWithNewlines(placeHolder)), [placeHolder]);
+  const cols = config.autoWrap ? Math.floor(+config.wrapWidth / cellWidth) : Infinity;
+
+  const placeholderWords = useMemo(
+    () => positionWords(splitWordsWithNewlines(placeHolder), {cols}),
+    [placeHolder, cols],
+  );
 
   const [words, setWords] = useState(splitWordsWithNewlines(text));
 
-  positionWords(words);
+  positionWords(words, {cols});
 
   const textareaValue = useMemo(() => {
     // Show \n as is. There is no need to show it as a Chinese character.
@@ -122,30 +129,30 @@ function App() {
     return cellWidth / cellHeight;
   }, [cellWidth, cellHeight]);
 
-  const computeEditorPosition = (textareaValue, style) => {
-    const placeholderText = placeHolder
-      .split(" ")
-      .map(() => ch)
-      .join("");
+  const computeEditorPosition = () => {
+    if (!textareaRef.current || !editorContainerRef.current) return;
 
-    // Center the textarea based on the size of the output,
-    // not the size of the textarea, because the textarea is not visible.
-    if (textareaRef.current && editorContainerRef.current) {
-      const {width, height: h} = measureText(textareaValue || placeholderText, style);
+    const isEmpty = words.length === 0;
+    const W = isEmpty ? placeholderWords : words;
+    if (W.length === 0) return;
 
-      // Apply the scale to the height.
-      const height = h * scale;
+    const maxX = Math.max(...W.map((d) => d.x));
+    const maxY = Math.max(...W.map((d) => d.y));
+    const lastWord = W[W.length - 1];
+    const offset = lastWord && lastWord.ch === "\n" ? 1 : 0;
 
-      const container = editorContainerRef.current;
-      const containerWidth = container.clientWidth;
-      const containerHeight = container.clientHeight;
+    const width = (maxX + 1) * cellWidth;
+    const height = (maxY + 1 + offset) * cellHeight * scale;
 
-      if (width < containerWidth) editorRef.current.style.left = (containerWidth - width) / 2 + "px";
-      else editorRef.current.style.left = "10px";
+    const container = editorContainerRef.current;
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
 
-      if (height < containerHeight) editorRef.current.style.top = (containerHeight - height) / 2 + "px";
-      else editorRef.current.style.top = "100px";
-    }
+    if (width < containerWidth) editorRef.current.style.left = (containerWidth - width) / 2 + "px";
+    else editorRef.current.style.left = "10px";
+
+    if (height < containerHeight) editorRef.current.style.top = (containerHeight - height) / 2 + "px";
+    else editorRef.current.style.top = "100px";
   };
 
   useEffect(() => {
@@ -173,18 +180,18 @@ function App() {
   }, []);
 
   useEffect(() => {
-    computeEditorPosition(textareaValue, style);
-  }, [textareaValue, style]);
+    computeEditorPosition();
+  }, [words, cellWidth, cellHeight, cols]);
 
   // Add resize observer for editor container
   useEffect(() => {
     if (!editorContainerRef.current) return;
     const resizeObserver = new ResizeObserver(() => {
-      computeEditorPosition(textareaValue, style);
+      computeEditorPosition();
     });
     resizeObserver.observe(editorContainerRef.current);
     return () => resizeObserver.disconnect();
-  }, [textareaValue, style]);
+  }, [words, cellWidth, cellHeight, cols]);
 
   useEffect(() => {
     if (textareaRef.current) {

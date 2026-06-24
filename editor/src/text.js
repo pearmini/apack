@@ -35,16 +35,26 @@ export function uid() {
   return Math.random().toString(36).substring(2, 15);
 }
 
-export function positionWords(words) {
+export function positionWords(words, {cols = Infinity} = {}) {
   let x = 0;
   let y = 0;
-  for (const word of words) {
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i];
     word.x = x;
     word.y = y;
     x += 1;
     if (word.ch === "\n") {
       y += 1;
       x = 0;
+    } else if (x >= cols) {
+      // Skip the auto-wrap when the next word is an explicit \n — the \n
+      // will break the line in both the SVG and the textarea, so adding
+      // a phantom row here would make them go out of sync.
+      const next = words[i + 1];
+      if (!next || next.ch !== "\n") {
+        y += 1;
+        x = 0;
+      }
     }
   }
   return words;
