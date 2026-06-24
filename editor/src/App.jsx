@@ -33,6 +33,8 @@ function createDefaultConfig() {
     padding: 0,
     canvas: "transparent",
     cursive: false,
+    autoWrap: true,
+    wrapWidth: 1000,
     word: {
       fill: "transparent",
       strokeWidth: 1.5,
@@ -93,6 +95,7 @@ function App() {
   const [showExample, setShowExample] = useState(false);
   const [template, setTemplate] = useState("None");
   const [config, setConfig] = useState(getConfig());
+  const [containerWidth, setContainerWidth] = useState(Infinity);
 
   const text = config.text;
 
@@ -107,11 +110,16 @@ function App() {
 
   const {width: cellWidth, height: cellHeight} = useMemo(() => measureText(ch, style), [ch, style]);
 
-  const placeholderWords = useMemo(() => positionWords(splitWordsWithNewlines(placeHolder)), [placeHolder]);
+  const cols = config.autoWrap ? Math.floor(Math.min(containerWidth, +config.wrapWidth) / cellWidth) : Infinity;
+
+  const placeholderWords = useMemo(
+    () => positionWords(splitWordsWithNewlines(placeHolder), {cols}),
+    [placeHolder, cols],
+  );
 
   const [words, setWords] = useState(splitWordsWithNewlines(text));
 
-  positionWords(words);
+  positionWords(words, {cols});
 
   const textareaValue = useMemo(() => {
     // Show \n as is. There is no need to show it as a Chinese character.
@@ -122,30 +130,36 @@ function App() {
     return cellWidth / cellHeight;
   }, [cellWidth, cellHeight]);
 
-  const computeEditorPosition = (textareaValue, style) => {
-    const placeholderText = placeHolder
-      .split(" ")
-      .map(() => ch)
-      .join("");
+  const computeEditorPosition = () => {
+    if (!textareaRef.current || !editorContainerRef.current) return;
 
-    // Center the textarea based on the size of the output,
-    // not the size of the textarea, because the textarea is not visible.
-    if (textareaRef.current && editorContainerRef.current) {
-      const {width, height: h} = measureText(textareaValue || placeholderText, style);
+    const isEmpty = words.length === 0;
+    const W = isEmpty ? placeholderWords : words;
+    if (W.length === 0) return;
 
-      // Apply the scale to the height.
-      const height = h * scale;
+    const maxX = Math.max(...W.map((d) => d.x));
+    const maxY = Math.max(...W.map((d) => d.y));
+    const lastWord = W[W.length - 1];
+    const offset = lastWord && lastWord.ch === "\n" ? 1 : 0;
 
-      const container = editorContainerRef.current;
-      const containerWidth = container.clientWidth;
-      const containerHeight = container.clientHeight;
+    const width = (maxX + 1) * cellWidth;
+    const height = (maxY + 1 + offset) * cellHeight * scale;
 
-      if (width < containerWidth) editorRef.current.style.left = (containerWidth - width) / 2 + "px";
-      else editorRef.current.style.left = "10px";
+    const container = editorContainerRef.current;
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
 
-      if (height < containerHeight) editorRef.current.style.top = (containerHeight - height) / 2 + "px";
-      else editorRef.current.style.top = "100px";
-    }
+    const marginLeft = width < containerWidth ? (containerWidth - width) / 2 : 10;
+    const marginTop = Math.max(height < containerHeight ? (containerHeight - height) / 2 : 100, 100);
+
+    editorRef.current.style.top = "0px";
+    editorRef.current.style.left = "0px";
+    editorRef.current.style.marginLeft = marginLeft + "px";
+    editorRef.current.style.marginTop = marginTop + "px";
+    editorRef.current.style.marginBottom = "200px";
+    editorRef.current.style.marginRight = "200px";
+    editorRef.current.style.width = width + "px";
+    editorRef.current.style.height = height + "px";
   };
 
   useEffect(() => {
@@ -161,7 +175,7 @@ function App() {
         }),
       );
     }
-  }, [words, cellWidth, config]);
+  }, [words, cellWidth, config, cols]);
 
   // When enter the page, focus on the textarea.
   useEffect(() => {
@@ -173,18 +187,18 @@ function App() {
   }, []);
 
   useEffect(() => {
-    computeEditorPosition(textareaValue, style);
-  }, [textareaValue, style]);
+    computeEditorPosition();
+  }, [words, cellWidth, cellHeight, cols, containerWidth]);
 
-  // Add resize observer for editor container
+  // Track container width so cols (and centering) react to window resize.
   useEffect(() => {
     if (!editorContainerRef.current) return;
-    const resizeObserver = new ResizeObserver(() => {
-      computeEditorPosition(textareaValue, style);
+    const resizeObserver = new ResizeObserver((entries) => {
+      setContainerWidth(entries[0].contentRect.width);
     });
     resizeObserver.observe(editorContainerRef.current);
     return () => resizeObserver.disconnect();
-  }, [textareaValue, style]);
+  }, []);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -202,7 +216,7 @@ function App() {
       textareaRef.current.style.width = `${(maxX + 1) * cellWidth}px`;
       textareaRef.current.style.height = `${(maxY + 1 + offset) * cellHeight}px`;
     }
-  }, [words, cellWidth, cellHeight]);
+  }, [words, cellWidth, cellHeight, cols]);
 
   const fire = (callback) => setTimeout(callback, 10);
 
@@ -350,6 +364,10 @@ function App() {
 
     // Do nothing if the user holds down the meta key.
     if (e.metaKey) return;
+
+    // Ignore non-content keys (arrows, Tab, Escape, Alt/Option, Shift, F-keys, etc.)
+    // so that a selection is never accidentally wiped by a key that doesn't type anything.
+    if (!isPrintable(e.key) && e.key !== " " && e.key !== "Backspace" && e.key !== "Enter") return;
 
     const newWords = [...words];
 
@@ -550,7 +568,12 @@ function App() {
           <textarea
             className="input"
             // If the textarea is empty, adjust the position of the cursor by 10px.
-            style={{...style, transform: `scale(1, ${scale}) ${textareaValue ? "" : "translate(0, 10px)"}`}}
+            style={{
+              ...style,
+              lineHeight: `${cellHeight}px`,
+              padding: 0,
+              transform: `scale(1, ${scale}) ${textareaValue ? "" : "translate(0, 10px)"}`,
+            }}
             value={textareaValue}
             ref={textareaRef}
             onChange={onTextareaChange}
