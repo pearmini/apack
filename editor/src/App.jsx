@@ -310,6 +310,44 @@ function App() {
 
     logEditor("Textarea keydown", {index, endSelection, value: e.target.value, key: e.key});
 
+    if ((e.metaKey || e.ctrlKey) && e.key === "c") {
+      e.preventDefault();
+      const selected = endSelection > index ? words.slice(index, endSelection) : words;
+      navigator.clipboard.writeText(joinWords(selected));
+      return;
+    }
+
+    if ((e.metaKey || e.ctrlKey) && e.key === "x") {
+      e.preventDefault();
+      if (endSelection > index) {
+        navigator.clipboard.writeText(joinWords(words.slice(index, endSelection)));
+        const newWords = [...words];
+        newWords.splice(index, endSelection - index);
+        setWords(newWords);
+        fire(() => {
+          textareaRef.current.focus();
+          textareaRef.current.setSelectionRange(index, index);
+        });
+      }
+      return;
+    }
+
+    if ((e.metaKey || e.ctrlKey) && e.key === "v") {
+      e.preventDefault();
+      navigator.clipboard.readText().then((text) => {
+        const pasted = splitWordsWithNewlines(text);
+        const newWords = [...words];
+        const deleteCount = endSelection > index ? endSelection - index : 0;
+        newWords.splice(index, deleteCount, ...pasted);
+        setWords(newWords);
+        fire(() => {
+          textareaRef.current.focus();
+          textareaRef.current.setSelectionRange(index + pasted.length, index + pasted.length);
+        });
+      });
+      return;
+    }
+
     // Do nothing if the user holds down the meta key.
     if (e.metaKey) return;
 
