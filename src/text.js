@@ -9,7 +9,8 @@ const LAYOUTS = {
 };
 
 function points(key, ch) {
-  const idx = (ch) => ch.charCodeAt(0) - 33;
+  const offset = fonts[key]["offset"] ?? 33;
+  const idx = (ch) => ch.charCodeAt(0) - offset;
   const font = fonts[key]["chars"];
   const path = ch === " " ? "M8,0" : font[idx(ch)]["d"];
   const plines = [];
