@@ -149,11 +149,16 @@ function App() {
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
 
-    if (width < containerWidth) editorRef.current.style.left = (containerWidth - width) / 2 + "px";
-    else editorRef.current.style.left = "10px";
+    const marginLeft = width < containerWidth ? (containerWidth - width) / 2 : 10;
+    const marginTop = Math.max(height < containerHeight ? (containerHeight - height) / 2 : 100, 100);
 
-    if (height < containerHeight) editorRef.current.style.top = (containerHeight - height) / 2 + "px";
-    else editorRef.current.style.top = "100px";
+    editorRef.current.style.top = "0px";
+    editorRef.current.style.left = "0px";
+    editorRef.current.style.marginLeft = marginLeft + "px";
+    editorRef.current.style.marginTop = marginTop + "px";
+    editorRef.current.style.marginBottom = "200px";
+    editorRef.current.style.width = width + "px";
+    editorRef.current.style.height = height + "px";
   };
 
   useEffect(() => {
