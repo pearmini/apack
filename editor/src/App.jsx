@@ -625,12 +625,11 @@ function App() {
           <div className="canvas" ref={canvasRef}></div>
           <textarea
             className="input"
-            // If the textarea is empty, adjust the position of the cursor by 10px.
             style={{
               ...style,
               lineHeight: `${cellHeight}px`,
               padding: 0,
-              transform: `scale(1, ${scale}) ${textareaValue ? "" : "translate(0, 10px)"}`,
+              transform: `scale(1, ${scale})`,
             }}
             value={textareaValue}
             ref={textareaRef}
