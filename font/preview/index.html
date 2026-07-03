@@ -61,11 +61,9 @@
   <body>
     <h1>APack Font Preview</h1>
     <p>
-      <strong>Corpus words</strong> (hello, world, the, …) pack into one square per word.
-      <strong>Unknown words</strong> use one square per letter — that is why quick/brown/fox looked
-      different before they were added to the corpus. Type a space after each word.
+      <strong>Corpus words</strong> pack before spaces and punctuation; delimiters stay visible.
     </p>
-    <textarea id="input">hello world the quick brown fox</textarea>
+    <textarea id="input">hello world. the quick brown fox?</textarea>
     <div id="preview" class="preview"></div>
     <p id="status" class="hint">Loading font…</p>
     <script type="module" src="./main.js"></script>

@@ -86,3 +86,7 @@ export function wordContours(word, options = {}) {
 export function letterContours(ch, options = {}) {
   return wordContours(ch, options);
 }
+
+export function delimiterContours(ch, options = {}) {
+  return letterContours(ch, options);
+}

@@ -4,7 +4,7 @@ import {fileURLToPath} from "url";
 import {expandCaseVariants, glyphNameForWord, loadCorpus} from "./corpus.js";
 import {fallbackGlyphs} from "./fallback.js";
 import {buildFeatureFile, DELIMITER_GLYPHS, SPACE_ADVANCE} from "./gsub.js";
-import {UNITS_PER_EM, wordContours} from "./glyph.js";
+import {UNITS_PER_EM, delimiterContours, wordContours} from "./glyph.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -20,22 +20,27 @@ export function buildFontArtifacts({
   const words = expandCaseVariants(loadCorpus(corpusPath)).filter((word) => word.length >= 3);
   const glyphs = {
     ".notdef": {contours: [], advance: UNITS_PER_EM},
-    space: {contours: [], advance: UNITS_PER_EM},
+    space: {contours: [], advance: SPACE_ADVANCE},
   };
 
-  const fallback = fallbackGlyphs({font, layout, padding});
+  const glyphOptions = {font, layout, padding};
+
+  const fallback = fallbackGlyphs(glyphOptions);
   for (const [ch, data] of Object.entries(fallback)) {
     glyphs[ch] = data;
   }
 
   for (const [ch, name] of Object.entries(DELIMITER_GLYPHS)) {
-    glyphs[name] = {contours: [], advance: 250};
+    glyphs[name] = {
+      contours: delimiterContours(ch, glyphOptions),
+      advance: UNITS_PER_EM,
+    };
   }
 
   for (const word of words) {
     glyphs[glyphNameForWord(word)] = {
-      contours: wordContours(word, {font, layout, padding}),
-      advance: UNITS_PER_EM + SPACE_ADVANCE,
+      contours: wordContours(word, glyphOptions),
+      advance: UNITS_PER_EM,
     };
   }
 

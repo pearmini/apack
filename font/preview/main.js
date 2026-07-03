@@ -12,7 +12,7 @@ font
     document.fonts.add(loaded);
     fontReady = true;
     status.textContent =
-      "Font loaded. Flex packing · type a space after each word · try: hello world the quick brown fox";
+      "Font loaded. Flex packing · words split on spaces and punctuation (. ? ! , etc.)";
     sync();
   })
   .catch(() => {
