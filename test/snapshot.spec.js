@@ -1,7 +1,7 @@
 import {describe, test, expect} from "vitest";
 import path from "path";
 import * as fs from "fs";
-import * as examples from "../examples";
+import * as examples from "./examples";
 import beautify from "js-beautify";
 import {JSDOM} from "jsdom";
 
@@ -38,9 +38,9 @@ function match(expectPath, actualPath) {
 }
 
 async function expectMatchSnapshot(name, app) {
-  const dir = path.resolve(__dirname, "../output");
-  const expect = path.resolve(__dirname, `../output/${name}.svg`);
-  const actual = path.resolve(__dirname, `../output/${name}-actual.svg`);
+  const dir = path.resolve(__dirname, "./output");
+  const expect = path.resolve(__dirname, `./output/${name}.svg`);
+  const actual = path.resolve(__dirname, `./output/${name}-actual.svg`);
 
   if (!fs.existsSync(dir)) fs.mkdirSync(dir);
   if (!fs.existsSync(expect)) {
