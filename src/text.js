@@ -1,5 +1,5 @@
 import {cm, d3} from "./namespaces.js";
-import fonts from "./hersheytext.json";
+import fonts from "./hersheytext.json" with {type: "json"};
 import {flex} from "./flex.js";
 import {treemap} from "./treemap.js";
 
@@ -29,7 +29,7 @@ function points(key, ch) {
   return plines;
 }
 
-function packWord({string, x, y, width, height, layout, cursive = false, font = "futural"}) {
+export function packWord({string, x, y, width, height, layout, cursive = false, font = "futural"}) {
   const {type, ...options} = layout;
   const pack = LAYOUTS[type];
 

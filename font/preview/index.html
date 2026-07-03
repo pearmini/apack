@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>APack Font Preview</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, sans-serif;
+        background: #f6f6f6;
+        color: #141414;
+        padding: 2rem;
+      }
+      h1 {
+        margin: 0 0 0.5rem;
+        font-size: 1.5rem;
+      }
+      p {
+        margin: 0 0 1.5rem;
+        color: #555;
+      }
+      textarea {
+        width: 100%;
+        min-height: 5rem;
+        padding: 0.75rem;
+        font: inherit;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        resize: vertical;
+      }
+      .preview {
+        margin-top: 1.5rem;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #ddd;
+        font-family: "APack", monospace;
+        font-size: 72px;
+        line-height: 1;
+        min-height: 8rem;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      .hint {
+        margin-top: 1rem;
+        font-size: 0.875rem;
+        color: #666;
+      }
+      code {
+        background: #eee;
+        padding: 0.1rem 0.35rem;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>APack Font Preview</h1>
+    <p>
+      <strong>Corpus words</strong> (hello, world, the, …) pack into one square per word.
+      <strong>Unknown words</strong> use one square per letter — that is why quick/brown/fox looked
+      different before they were added to the corpus. Type a space after each word.
+    </p>
+    <textarea id="input">hello world the quick brown fox</textarea>
+    <div id="preview" class="preview"></div>
+    <p id="status" class="hint">Loading font…</p>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
