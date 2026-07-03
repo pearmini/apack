@@ -1,0 +1,26 @@
+.demoRow {
+  display: block;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--apack-border);
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.demoRow:hover {
+  opacity: 0.75;
+}
+
+.title {
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--apack-text);
+}
+
+.description {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--apack-muted);
+  max-width: 36rem;
+}

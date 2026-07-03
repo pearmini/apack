@@ -1,0 +1,102 @@
+.editor-app {
+  overflow: hidden;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fefaf1;
+}
+
+.editor {
+  position: relative;
+  background: transparent;
+  display: inline-block;
+}
+
+.editor-container {
+  height: 100vh;
+  overflow: auto;
+}
+
+.config-button {
+  position: fixed;
+  top: 0px;
+  left: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  color: #666;
+  transition: color 0.2s;
+  z-index: 1000;
+  display: flex;
+  gap: 12px;
+  background-color: #fefaf1;
+  width: 100%;
+  height: 100px;
+}
+
+.config-button:hover {
+  color: #333;
+}
+
+.canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.grid-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fefaf1;
+  border-radius: 2px;
+  outline: none;
+  border: none;
+  opacity: 0;
+  z-index: -1;
+}
+
+.grid-input:focus {
+  opacity: 1;
+  z-index: 1;
+}
+
+.input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: transparent;
+  color: transparent;
+  transform-origin: left top;
+  caret-color: black;
+  resize: none;
+  overflow: hidden;
+  outline: none;
+  border: none;
+}
+
+.input::selection {
+  background-color: rgba(0, 120, 215, 0.5);
+  color: transparent;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  transition: color 0.2s;
+}
+
+.icon-button:hover {
+  color: #333;
+}

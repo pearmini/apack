@@ -2,7 +2,7 @@
 
 **Write a word. Pack it into a glyph. Let alphabet become drawing.**
 
-[![Live editor](https://img.shields.io/badge/editor-apack.bairui.dev-141414?style=for-the-badge)](https://apack.bairui.dev/)
+[![Live site](https://img.shields.io/badge/site-apack.bairui.dev-141414?style=for-the-badge)](https://apack.bairui.dev/)
 [![ITP Spring Show 2025](https://img.shields.io/badge/ITP-Spring%20Show%202025-f6f6f6?style=for-the-badge&color=141414)](https://bairui.dev/apack)
 
 <img src="./img/poem.png" width="720" alt="Where the Mind Is Without Fear by Rabindranath Tagore, rendered with APack" />
@@ -11,11 +11,11 @@ APack is an alphabet-packing writing system that writes Latin text in the visual
 
 It began as an assignment for Allison Parrish's [Computational Letterforms and Layout](https://cll.decontextualize.com/) class at ITP, first prototyped in [Observable](https://observablehq.com/d/3d4704d5b7d5ac6f), then expanded into an online editor, JavaScript package, Python notebook helper, Name2Tree stamp system, and a field of world clocks.
 
-**You are welcome here.** Open the [live editor](https://apack.bairui.dev/), type a name, poem, slogan, or stray phrase, and tune the layout until the alphabet turns into something you can recognize and something you have to look at twice.
+**You are welcome here.** Open the [live editor](https://apack.bairui.dev/editor/), type a name, poem, slogan, or stray phrase, and tune the layout until the alphabet turns into something you can recognize and something you have to look at twice.
 
 > *Writing can be a line of text. It can also be a small architecture.*
 
-[**Try the editor →**](https://apack.bairui.dev/) · [**Read the story →**](https://bairui.dev/apack) · [**See world clocks →**](https://aclocks.bairui.dev/)
+[**Try the editor →**](https://apack.bairui.dev/editor/) · [**Read the story →**](https://bairui.dev/apack) · [**See world clocks →**](https://apack.bairui.dev/aclock/)
 
 ## What it does
 
@@ -24,7 +24,7 @@ It began as an assignment for Allison Parrish's [Computational Letterforms and L
 3. **Compose:** Text becomes stamps, logos, wallpapers, concrete poems, signatures, labels, and visual marks.
 4. **Edit:** The online editor merges source text and rendered output into one canvas-like writing surface, so editing feels more like drawing than typing into a split preview pane.
 5. **Stamp:** [Name2Tree](https://tree.bairui.dev/) uses APack to sign each generated tree with a Chinese-character-like name stamp.
-6. **Tell time:** [World Clocks](https://aclocks.bairui.dev/) packs hour, minute, and second digits into animated square clocks for many time zones.
+6. **Tell time:** [World Clocks](https://apack.bairui.dev/aclock/) packs hour, minute, and second digits into animated square clocks for many time zones.
 
 <img src="./img/stamps.png" width="720" alt="APack stamps, logos, and wallpapers" />
 
@@ -36,9 +36,9 @@ The project is not trying to imitate Chinese calligraphy as ornament. It is a sm
 
 APack was shown with [Find Trees in Names](https://bairui.dev/name2tree) at ITP Spring Show 2025. Visitors grew trees from their names and received APack stamps as marks of authorship; later, those stamps were planted into the infinite landscape [{Mountains, Trees, Names}*](https://landscape.bairui.dev/). During the show, people could also try the editor directly. Many kept typing to figure out how it works, and a lot of them thought it would make a great logo generator. [Photos and videos from the show →](https://bairui.dev/apack#itp-spring-show-2025)
 
-After the show, my friend [Sai](https://www.instagram.com/sairamved/) used APack for a poster in the FIGHT FOR KINDNESS design activity: [*Stick Together to Make Peace*](https://www.typecampus.com/fight-for-kindness-gallery-2025?pgid=maasv5d321-b22ea6e7-6be1-4b74-83e0-33c9d3d25d56). I also noticed that packing digits into a single cell is a natural way to draw a clock, which led to [World Clocks](https://aclocks.bairui.dev/). I was surprised how many time zones exist, and it is fun to watch the animations and try different fonts.
+After the show, my friend [Sai](https://www.instagram.com/sairamved/) used APack for a poster in the FIGHT FOR KINDNESS design activity: [*Stick Together to Make Peace*](https://www.typecampus.com/fight-for-kindness-gallery-2025?pgid=maasv5d321-b22ea6e7-6be1-4b74-83e0-33c9d3d25d56). I also noticed that packing digits into a single cell is a natural way to draw a clock, which led to [World Clocks](https://apack.bairui.dev/aclock/). I was surprised how many time zones exist, and it is fun to watch the animations and try different fonts.
 
-<a href="https://aclocks.bairui.dev/"><img src="./img/futural-brbg.png" width="720" alt="World clocks made with APack" /></a>
+<a href="https://apack.bairui.dev/aclock/"><img src="./img/futural-brbg.png" width="720" alt="World clocks made with APack" /></a>
 
 ## How it works
 
@@ -203,17 +203,19 @@ pnpm test            # vitest, eslint, prettier check
 pnpm prepublishOnly  # rebuild dist before publishing
 ```
 
-Run the editor:
+Run the web app (landing, editor, and clocks):
 
 ```bash
-pnpm editor:dev
+pnpm web:dev
 ```
 
-Run the world clocks app:
+Build for production:
 
 ```bash
-pnpm clock:dev
+pnpm web:build
 ```
+
+See [web/DEPLOY.md](./web/DEPLOY.md) for static hosting and URL rewrite notes.
 
 ## Project structure
 
@@ -225,10 +227,9 @@ apack/
 │   ├── flex.js           # Recursive character-code layout
 │   ├── treemap.js        # D3 treemap layout
 │   └── hersheytext.json  # Vector font paths
-├── editor/
-│   └── src/              # Online APack editor
-├── clock/
-│   └── src/              # World clocks experiment
+├── web/
+│   ├── app/              # Next.js routes (/, /editor, /aclock)
+│   └── components/       # Editor, clocks, landing page
 ├── python/
 │   └── pyapack/          # Notebook wrapper
 ├── examples/             # Snapshot/example generators
@@ -239,9 +240,10 @@ apack/
 
 ## Related work
 
-- [apack.bairui.dev](https://apack.bairui.dev/): live editor
+- [apack.bairui.dev](https://apack.bairui.dev/): demo hub (landing, editor, clocks)
+- [apack.bairui.dev/editor](https://apack.bairui.dev/editor/): live editor
+- [apack.bairui.dev/aclock](https://apack.bairui.dev/aclock/): world clocks made from APack digits
 - [bairui.dev/apack](https://bairui.dev/apack): full story, ITP photos, process, style explorations, and future directions
-- [aclocks.bairui.dev](https://aclocks.bairui.dev/): world clocks made from APack digits
 - [tree.bairui.dev](https://tree.bairui.dev/): Name2Tree uses APack stamps as authorship marks
 - [landscape.bairui.dev](https://landscape.bairui.dev/): APack stamps embedded in an infinite procedural landscape
 - [BioGlyph](https://bio.bairui.dev/): one-line faces from the same ITP lineage

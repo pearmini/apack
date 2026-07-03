@@ -1,0 +1,66 @@
+.page {
+  position: relative;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--apack-cream);
+  color: var(--apack-text);
+}
+
+.githubLink {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--apack-text);
+  opacity: 0.55;
+  transition: opacity 0.15s ease;
+}
+
+.githubLink:hover {
+  opacity: 1;
+}
+
+.landing {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 4rem 3rem 6rem;
+  min-height: 100vh;
+}
+
+.header {
+  margin-bottom: 4rem;
+}
+
+.title {
+  font-size: clamp(4rem, 12vw, 9rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  color: var(--apack-text);
+  margin-bottom: 1.5rem;
+}
+
+.tagline {
+  max-width: 48rem;
+  font-size: clamp(1.35rem, 2.8vw, 2rem);
+  line-height: 1.45;
+  color: var(--apack-muted);
+}
+
+.demos {
+  border-top: 1px solid var(--apack-border);
+}
+
+@media (max-width: 640px) {
+  .githubLink {
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+
+  .landing {
+    padding: 2.5rem 1.25rem 4rem;
+  }
+}
