@@ -1,0 +1,21 @@
+{
+  "name": "font",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "bin": {
+    "apack-font": "./bin/apack-font.js"
+  },
+  "scripts": {
+    "build": "node bin/apack-font.js build",
+    "build:500": "node bin/apack-font.js build --corpus data/corpus-500.txt",
+    "test": "vitest run --config vite.config.js",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "apackjs": "workspace:*"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.6"
+  }
+}
