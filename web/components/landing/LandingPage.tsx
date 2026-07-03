@@ -8,16 +8,12 @@ const DEMOS = [
     title: "The Editor",
     description:
       "Canvas-like writing surface where source text and packed glyphs merge into one editable view.",
-    tag: "EDITOR",
-    tagColor: "var(--apack-orange)",
   },
   {
     href: "/aclock/",
     title: "AClocks",
     description:
       "World clocks that pack hour, minute, and second digits into animated square glyphs across time zones.",
-    tag: "CLOCK",
-    tagColor: "var(--apack-teal)",
   },
 ];
 
