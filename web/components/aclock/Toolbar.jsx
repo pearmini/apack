@@ -17,9 +17,8 @@ export default function Toolbar({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 lg:px-12 mb-4">
+    <div className="aclock-toolbar">
       <div className="flex justify-between items-start lg:flex-row flex-col">
-        {/* Hamburger button for small and medium screens */}
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="lg:hidden text-gray-700 hover:bg-gray-100 transition-colors"
@@ -40,24 +39,23 @@ export default function Toolbar({
           </svg>
         </button>
 
-        {/* Toolbar controls */}
         <div
           className={`${
-            isOpen ? "block" : "hidden"
-          } lg:flex lg:justify-center gap-6 sm:gap-6 md:gap-4 lg:gap-4 mb-8 flex-wrap items-end w-full lg:w-auto mt-4 lg:mt-0`}
+            isOpen ? "flex" : "hidden"
+          } lg:flex flex-wrap items-end gap-4 sm:gap-6 w-full lg:w-auto mt-4 lg:mt-0`}
         >
-          <div className="flex flex-col mb-3 sm:mb-3 md:mb-3 lg:mb-0">
-            <label className="text-xs text-gray-600 mb-1">Search</label>
+          <div className="aclock-field">
+            <label>Search</label>
             <input
               type="text"
               placeholder="Search timezones..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[180px]"
+              className="aclock-input aclock-search"
             />
           </div>
-          <div className="flex flex-col mb-3 sm:mb-3 md:mb-3 lg:mb-0">
-            <label className="text-xs text-gray-600 mb-1">Color</label>
+          <div className="aclock-field">
+            <label>Color</label>
             <select
               value={interpolatorOption}
               onChange={(e) => {
@@ -68,7 +66,7 @@ export default function Toolbar({
                   setInterpolatorOption(value);
                 }
               }}
-              className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="aclock-select"
             >
               <option value="reset">Reset</option>
               {Object.keys(interpolators)
@@ -80,8 +78,8 @@ export default function Toolbar({
                 ))}
             </select>
           </div>
-          <div className="flex flex-col mb-3 sm:mb-3 md:mb-3 lg:mb-0">
-            <label className="text-xs text-gray-600 mb-1">Font</label>
+          <div className="aclock-field">
+            <label>Font</label>
             <select
               value={fontOption}
               onChange={(e) => {
@@ -92,7 +90,7 @@ export default function Toolbar({
                   setFontOption(value);
                 }
               }}
-              className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="aclock-select"
             >
               <option value="reset">Reset</option>
               <option value="random">Random</option>
@@ -103,8 +101,8 @@ export default function Toolbar({
               ))}
             </select>
           </div>
-          <div className="flex flex-col mb-3 sm:mb-3 md:mb-3 lg:mb-0">
-            <label className="text-xs text-gray-600 mb-1">Sort</label>
+          <div className="aclock-field">
+            <label>Sort</label>
             <select
               value={sortOption}
               onChange={(e) => {
@@ -115,7 +113,7 @@ export default function Toolbar({
                   setSortOption(value);
                 }
               }}
-              className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="aclock-select"
             >
               <option value="random">Random</option>
               <option value="alphabet-asc">Alphabet (A-Z)</option>
@@ -127,7 +125,6 @@ export default function Toolbar({
           </div>
         </div>
 
-        {/* Legend - hidden on small and medium screens, visible on larger screens */}
         <div ref={legendRef} className="hidden lg:flex justify-start"></div>
       </div>
     </div>

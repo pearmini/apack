@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function AClockLayout({children}: {children: React.ReactNode}) {
-  return children;
+  return <div className="aclock-root">{children}</div>;
 }
