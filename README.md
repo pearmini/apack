@@ -93,7 +93,7 @@ const node = ap.text("hello world").render();
 document.body.append(node);
 ```
 
-![APack render content example](./output/renderContent.svg)
+![APack render content example](./test/output/renderContent.svg)
 
 Change the cell size:
 
@@ -101,7 +101,7 @@ Change the cell size:
 ap.text("hello world", {cellSize: 200});
 ```
 
-![APack cell size example](./output/optionCellSize.svg)
+![APack cell size example](./test/output/optionCellSize.svg)
 
 Use non-square cells, a color background, and another font:
 
@@ -115,7 +115,7 @@ ap.text("hello world", {
 });
 ```
 
-![APack dimension and font example](./output/optionDimensions.svg)
+![APack dimension and font example](./test/output/optionDimensions.svg)
 
 Switch to treemap packing:
 
@@ -125,7 +125,7 @@ ap.text("hello world", {
 });
 ```
 
-![APack treemap layout example](./output/optionLayout.svg)
+![APack treemap layout example](./test/output/optionLayout.svg)
 
 ## API
 
@@ -156,7 +156,7 @@ More visual option examples:
 
 | Word style | Overall style | Grid | Padding |
 |------------|---------------|------|---------|
-| ![word option](./output/optionWord.svg) | ![style option](./output/optionStyle.svg) | ![grid option](./output/optionGrid.svg) | ![padding option](./output/optionPadding.svg) |
+| ![word option](./test/output/optionWord.svg) | ![style option](./test/output/optionStyle.svg) | ![grid option](./test/output/optionGrid.svg) | ![padding option](./test/output/optionPadding.svg) |
 
 ## Python
 
@@ -232,8 +232,10 @@ apack/
 │   └── components/       # Editor, clocks, landing page
 ├── python/
 │   └── pyapack/          # Notebook wrapper
-├── examples/             # Snapshot/example generators
-├── output/               # Rendered README/API examples
+├── test/
+│   ├── examples/         # Snapshot/example generators
+│   ├── output/             # Rendered README/API examples
+│   └── index.html          # Local example browser
 ├── img/                  # README images
 └── dist/                 # UMD bundle
 ```

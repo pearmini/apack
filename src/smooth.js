@@ -61,9 +61,7 @@ function normalizeForClosed(points, tolerance = 3) {
 export function smoothPolyline(points, {closed = false, segments = 4, alpha = DEFAULT_ALPHA, tolerance = 3} = {}) {
   if (points.length < 3 || segments < 1) return points;
 
-  const curve = closed
-    ? curveCatmullRomClosed.alpha(alpha)
-    : curveCatmullRom.alpha(alpha);
+  const curve = closed ? curveCatmullRomClosed.alpha(alpha) : curveCatmullRom.alpha(alpha);
   const input = closed ? normalizeForClosed(points, tolerance) : points;
   if (input.length < 3) return points;
 
