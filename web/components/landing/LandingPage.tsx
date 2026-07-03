@@ -38,8 +38,7 @@ export default function LandingPage() {
         <header className={styles.header}>
           <h1 className={styles.title}>APACK</h1>
           <p className={styles.tagline}>
-            Alphabet-packing writing system — Latin text composed into Chinese-character-like glyphs.
-            Type, pack, and export stamps, poems, and logos.
+            Write English letters in the style of Chinese characters.
           </p>
         </header>
 

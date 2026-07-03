@@ -44,9 +44,9 @@
 }
 
 .tagline {
-  max-width: 42rem;
-  font-size: 1.05rem;
-  line-height: 1.6;
+  max-width: 48rem;
+  font-size: clamp(1.35rem, 2.8vw, 2rem);
+  line-height: 1.45;
   color: var(--apack-muted);
 }
 
