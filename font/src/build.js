@@ -3,7 +3,7 @@ import path from "path";
 import {fileURLToPath} from "url";
 import {expandCaseVariants, glyphNameForWord, loadCorpus} from "./corpus.js";
 import {fallbackGlyphs} from "./fallback.js";
-import {buildFeatureFile, DELIMITER_GLYPHS, SPACE_ADVANCE} from "./gsub.js";
+import {buildFeatureFile, DELIMITER_GLYPHS, MIN_PACKED_WORD_LENGTH, SPACE_ADVANCE} from "./gsub.js";
 import {UNITS_PER_EM, fitGlyphAdvanceFromPaths, packWordGlyphs, wordGlyph} from "./glyph.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -17,7 +17,9 @@ export function buildFontArtifacts({
   styleName = "Regular",
   outDir = path.join(__dirname, "../dist/build"),
 } = {}) {
-  const words = expandCaseVariants(loadCorpus(corpusPath)).filter((word) => word.length >= 3);
+  const words = expandCaseVariants(loadCorpus(corpusPath)).filter(
+    (word) => word.length >= MIN_PACKED_WORD_LENGTH,
+  );
   const glyphs = {
     ".notdef": {contours: [], advance: UNITS_PER_EM},
     space: {contours: [], advance: SPACE_ADVANCE},

@@ -50,21 +50,21 @@ export function isClosedPolyline(points, tolerance = 3) {
   return Math.hypot(x0 - x1, y0 - y1) <= tolerance;
 }
 
-function normalizeForClosed(points) {
+function normalizeForClosed(points, tolerance = 3) {
   if (points.length < 3) return points;
   const [x0, y0] = points[0];
   const [x1, y1] = points[points.length - 1];
-  if (Math.hypot(x0 - x1, y0 - y1) <= 3) return points.slice(0, -1);
+  if (Math.hypot(x0 - x1, y0 - y1) <= tolerance) return points.slice(0, -1);
   return points;
 }
 
-export function smoothPolyline(points, {closed = false, segments = 4, alpha = DEFAULT_ALPHA} = {}) {
+export function smoothPolyline(points, {closed = false, segments = 4, alpha = DEFAULT_ALPHA, tolerance = 3} = {}) {
   if (points.length < 3 || segments < 1) return points;
 
   const curve = closed
     ? curveCatmullRomClosed.alpha(alpha)
     : curveCatmullRom.alpha(alpha);
-  const input = closed ? normalizeForClosed(points) : points;
+  const input = closed ? normalizeForClosed(points, tolerance) : points;
   if (input.length < 3) return points;
 
   const pathData = line().curve(curve)(input);

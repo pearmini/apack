@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import {spawnSync} from "child_process";
-import fs from "fs";
 import path from "path";
 import {fileURLToPath} from "url";
 import {buildFontArtifacts, defaultCorpusPath} from "../src/build.js";

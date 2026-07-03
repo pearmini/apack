@@ -32,20 +32,6 @@ function transformPoint([x, y], height = UNITS_PER_EM) {
   return [x, flipY(y, height)];
 }
 
-export function centerInEm(contours, {em = UNITS_PER_EM, width = UNITS_PER_EM} = {}) {
-  const pts = contours.flat();
-  if (!pts.length) return contours;
-
-  const xs = pts.map((p) => p[0]);
-  const ys = pts.map((p) => p[1]);
-  const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
-  const cy = (Math.min(...ys) + Math.max(...ys)) / 2;
-  const dx = width / 2 - cx;
-  const dy = em / 2 - cy;
-
-  return contours.map((ring) => ring.map(([x, y]) => [x + dx, y + dy]));
-}
-
 export function centerVertically(contours, {em = UNITS_PER_EM} = {}) {
   const pts = contours.flat();
   if (!pts.length) return contours;
@@ -145,8 +131,4 @@ export function wordGlyph(word, options = {}, advanceOptions = {}) {
 
 export function letterContours(ch, options = {}) {
   return wordContours(ch, options);
-}
-
-export function delimiterContours(ch, options = {}) {
-  return letterContours(ch, options);
 }

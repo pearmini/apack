@@ -21,15 +21,16 @@ describe("gsub", () => {
     expect(liga).toBe(calt);
   });
 
-  test("buildFeatureFile skips single-character words", () => {
-    const fea = buildFeatureFile(["a", "the"]);
+  test("buildFeatureFile skips words shorter than MIN_PACKED_WORD_LENGTH", () => {
+    const fea = buildFeatureFile(["a", "he", "the"]);
     expect(fea).not.toContain("sub a by");
+    expect(fea).not.toContain("sub h e by");
     expect(fea).toContain("word_the");
   });
 
   test("buildFeatureFile lists longer words before shorter words", () => {
-    const fea = buildFeatureFile(["he", "hello"]);
-    expect(fea.indexOf("sub h e l l o by")).toBeLessThan(fea.indexOf("sub h e by"));
+    const fea = buildFeatureFile(["the", "hello"]);
+    expect(fea.indexOf("sub h e l l o by")).toBeLessThan(fea.indexOf("sub t h e by"));
   });
 
   test("DELIMITERS includes punctuation splitters", () => {

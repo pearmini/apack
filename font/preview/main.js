@@ -53,15 +53,7 @@ function sync() {
   preview.textContent = input.value;
 }
 
-for (const el of [
-  input,
-  fontSize,
-  fontWeight,
-  italic,
-  letterSpacing,
-  wordSpacing,
-  lineHeight,
-]) {
+for (const el of [input, fontSize, fontWeight, letterSpacing, wordSpacing, lineHeight]) {
   el.addEventListener("input", sync);
-  el.addEventListener("change", sync);
 }
+italic.addEventListener("change", sync);

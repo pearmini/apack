@@ -1,8 +1,7 @@
 import {glyphNameForWord} from "./corpus.js";
 import {FALLBACK_CHARS} from "./fallback.js";
 
-// Delimiters that end a word trigger (they stay visible after the packed glyph).
-export const DELIMITERS = [" ", ".", ",", "!", "?", ";", ":", "'", '"', ")", "]"];
+export const MIN_PACKED_WORD_LENGTH = 3;
 
 export const DELIMITER_GLYPHS = {
   ".": "period",
@@ -17,21 +16,14 @@ export const DELIMITER_GLYPHS = {
   "]": "bracketright",
 };
 
+// Delimiters that end a word trigger (they stay visible after the packed glyph).
+export const DELIMITERS = [" ", ...Object.keys(DELIMITER_GLYPHS)];
+
 export const SPACE_ADVANCE = 150;
 
 function charName(ch) {
   if (ch === " ") return "space";
-  if (ch === ".") return "period";
-  if (ch === ",") return "comma";
-  if (ch === "!") return "exclamation";
-  if (ch === "?") return "question";
-  if (ch === ";") return "semicolon";
-  if (ch === ":") return "colon";
-  if (ch === "'") return "quote";
-  if (ch === '"') return "quotedbl";
-  if (ch === ")") return "parenright";
-  if (ch === "]") return "bracketright";
-  return ch;
+  return DELIMITER_GLYPHS[ch] ?? ch;
 }
 
 const LOOKUP_CHUNK = 80;
@@ -43,7 +35,9 @@ function lettersClass() {
 }
 
 export function buildFeatureFile(words) {
-  const sorted = [...words].filter((word) => word.length >= 2).sort((a, b) => b.length - a.length);
+  const sorted = [...words]
+    .filter((word) => word.length >= MIN_PACKED_WORD_LENGTH)
+    .sort((a, b) => b.length - a.length);
   const letterClass = lettersClass();
 
   const ignoreRules = sorted.map((word) => {
@@ -58,8 +52,6 @@ export function buildFeatureFile(words) {
 
   const lines = [
     "languagesystem latn dflt;",
-    "",
-    `@letters = [${letterClass}];`,
     "",
     "lookup WORD_IGNORE {",
     ...ignoreRules,
