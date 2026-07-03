@@ -581,7 +581,7 @@ function App() {
   logEditor("\n\n================= Rerendering Editor ==================\n\n", {text, words, textareaValue});
 
   return (
-    <div className="container">
+    <div className="editor-app">
       {showConfig ? (
         <Config
           style={{width: panelWidth, height: "100vh"}}
