@@ -12,8 +12,8 @@
   ],
   "scripts": {
     "dev": "vite",
-    "editor:dev": "pnpm --filter editor dev",
-    "clock:dev": "pnpm --filter clock dev",
+    "web:dev": "pnpm --filter web dev",
+    "web:build": "pnpm --filter web build",
     "font:build": "pnpm --filter font build",
     "font:test": "pnpm --filter font test",
     "font:dev": "pnpm --filter font dev",

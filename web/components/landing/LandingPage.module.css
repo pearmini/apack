@@ -1,0 +1,36 @@
+.landing {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 4rem 3rem 6rem;
+  min-height: 100vh;
+}
+
+.header {
+  margin-bottom: 4rem;
+}
+
+.title {
+  font-size: clamp(4rem, 12vw, 9rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  color: var(--apack-orange);
+  margin-bottom: 1.5rem;
+}
+
+.tagline {
+  max-width: 42rem;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--apack-muted);
+}
+
+.demos {
+  border-top: 1px solid var(--apack-border);
+}
+
+@media (max-width: 640px) {
+  .landing {
+    padding: 2.5rem 1.25rem 4rem;
+  }
+}
