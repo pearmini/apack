@@ -1,7 +1,7 @@
 import {isClosedPolyline, packWord, smoothPolyline} from "apackjs";
 
 export const UNITS_PER_EM = 1000;
-export const STROKE_WIDTH = 32;
+export const STROKE_WIDTH = 30;
 
 export function expandPolyline(points, halfWidth = STROKE_WIDTH / 2) {
   if (points.length < 2) return [];
