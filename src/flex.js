@@ -17,6 +17,8 @@ function findReminder(string) {
 }
 
 export function flex(string, x, y, x1, y1, {padding = 0.05} = {}) {
+  const cellSize = Math.min(x1 - x, y1 - y);
+  const p = cellSize * padding;
   const cells = [{x, y, x1, y1, ch: string[0]}];
   const n = string.length;
   const [r, d] = findReminder(string);
@@ -36,10 +38,9 @@ export function flex(string, x, y, x1, y1, {padding = 0.05} = {}) {
     const {x, y, x1, y1, ch} = cells[i - 1];
     const w = x1 - x;
     const h = y1 - y;
-    const p = w * padding + 2.5;
     const remain = n - i;
     const t = remain <= 1 ? 0.5 : remain <= 4 ? 0.33 : 0.25;
-    if (next(code) && char !== "m" && char !== "s") {
+    if (next(code)) {
       const cell0 = {x, y, x1: x + w * t - p, y1, ch};
       const cell1 = {x: x + w * t + p, y, x1, y1, ch: char};
       constrain(cell0);
