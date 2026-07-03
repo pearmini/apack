@@ -13,4 +13,9 @@ describe("glyph", () => {
     const word = wordContours("hello");
     expect(word.length).toBeGreaterThan(letter.length);
   });
+
+  test("wordContours for o uses more contours than an unsmoothed short polyline would", () => {
+    const contours = wordContours("o");
+    expect(contours.length).toBeGreaterThan(16);
+  });
 });

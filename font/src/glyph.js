@@ -1,7 +1,7 @@
-import {packWord} from "apackjs";
+import {isClosedPolyline, packWord, smoothPolyline} from "apackjs";
 
 export const UNITS_PER_EM = 1000;
-export const STROKE_WIDTH = 48;
+export const STROKE_WIDTH = 32;
 
 export function expandPolyline(points, halfWidth = STROKE_WIDTH / 2) {
   if (points.length < 2) return [];
@@ -46,12 +46,16 @@ export function centerInEm(contours, {em = UNITS_PER_EM, width = UNITS_PER_EM} =
   return contours.map((ring) => ring.map(([x, y]) => [x + dx, y + dy]));
 }
 
-export function pathsToContours(paths, {height = UNITS_PER_EM} = {}) {
+const CURVE_SEGMENTS = 4;
+
+export function pathsToContours(paths, {height = UNITS_PER_EM, segments = CURVE_SEGMENTS} = {}) {
   const contours = [];
   for (const {x, y, points} of paths) {
     for (const polyline of points) {
       const translated = polyline.map(([px, py]) => [px + x, py + y]);
-      for (const quad of expandPolyline(translated)) {
+      const closed = isClosedPolyline(translated);
+      const smooth = smoothPolyline(translated, {closed, segments});
+      for (const quad of expandPolyline(smooth)) {
         contours.push(quad.map((p) => transformPoint(p, height)));
       }
     }
