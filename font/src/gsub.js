@@ -78,11 +78,13 @@ export function buildFeatureFile(words) {
     lines.push(`} ${name};`, "");
   }
 
-  lines.push("feature liga {");
-  for (const name of lookupNames) {
-    lines.push(`  lookup ${name};`);
+  for (const tag of ["liga", "calt"]) {
+    lines.push(`feature ${tag} {`);
+    for (const name of lookupNames) {
+      lines.push(`  lookup ${name};`);
+    }
+    lines.push(`} ${tag};`, "");
   }
-  lines.push("} liga;", "");
 
   return lines.join("\n");
 }

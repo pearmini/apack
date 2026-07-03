@@ -11,6 +11,14 @@ describe("gsub", () => {
     expect(fea).not.toContain("sub h e l l o period by word_hello;");
     expect(fea).not.toContain("sub h e l l o space by word_hello;");
     expect(fea).toContain("feature liga");
+    expect(fea).toContain("feature calt");
+  });
+
+  test("buildFeatureFile registers the same lookups under liga and calt", () => {
+    const fea = buildFeatureFile(["hello"]);
+    const liga = fea.match(/feature liga \{([\s\S]*?)\} liga;/)[1];
+    const calt = fea.match(/feature calt \{([\s\S]*?)\} calt;/)[1];
+    expect(liga).toBe(calt);
   });
 
   test("buildFeatureFile skips single-character words", () => {
