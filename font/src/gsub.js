@@ -17,7 +17,7 @@ export const DELIMITER_GLYPHS = {
   "]": "bracketright",
 };
 
-export const SPACE_ADVANCE = 250;
+export const SPACE_ADVANCE = 150;
 
 function charName(ch) {
   if (ch === " ") return "space";

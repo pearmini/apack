@@ -22,6 +22,8 @@ describe("build", () => {
     expect(fs.existsSync(path.join(outDir, "features.fea"))).toBe(true);
     expect(words.length).toBeGreaterThan(100);
     expect(glyphs.word_hello).toBeDefined();
+    expect(glyphs.word_hello.advance).toBeLessThan(900);
+    expect(glyphs.word_hello.advance).toBeGreaterThan(700);
 
     for (const ch of FALLBACK_CHARS) {
       expect(glyphs[ch]).toBeDefined();

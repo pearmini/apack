@@ -46,6 +46,52 @@ export function centerInEm(contours, {em = UNITS_PER_EM, width = UNITS_PER_EM} =
   return contours.map((ring) => ring.map(([x, y]) => [x + dx, y + dy]));
 }
 
+export function centerVertically(contours, {em = UNITS_PER_EM} = {}) {
+  const pts = contours.flat();
+  if (!pts.length) return contours;
+
+  const ys = pts.map((p) => p[1]);
+  const cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+  const dy = em / 2 - cy;
+
+  return contours.map((ring) => ring.map(([x, y]) => [x, y + dy]));
+}
+
+export function boundsFromPaths(paths) {
+  let minX = Infinity;
+  let maxX = -Infinity;
+
+  for (const {x, points} of paths) {
+    for (const polyline of points) {
+      for (const [px] of polyline) {
+        const gx = px + x;
+        minX = Math.min(minX, gx);
+        maxX = Math.max(maxX, gx);
+      }
+    }
+  }
+
+  return {minX, maxX};
+}
+
+export function fitGlyphAdvanceFromPaths(
+  contours,
+  paths,
+  {sidePadding = 30, strokeWidth = STROKE_WIDTH, em = UNITS_PER_EM} = {},
+) {
+  const {minX, maxX} = boundsFromPaths(paths);
+  if (!isFinite(minX)) return {contours, advance: em};
+
+  const half = strokeWidth / 2;
+  const inkLeft = minX - half;
+  const inkRight = maxX + half;
+  const advance = Math.ceil(inkRight - inkLeft + 2 * sidePadding);
+  const shiftX = sidePadding - inkLeft;
+  const fitted = contours.map((ring) => ring.map(([x, y]) => [x + shiftX, y]));
+
+  return {contours: fitted, advance};
+}
+
 const CURVE_SEGMENTS = 4;
 
 export function pathsToContours(paths, {height = UNITS_PER_EM, segments = CURVE_SEGMENTS} = {}) {
@@ -63,7 +109,7 @@ export function pathsToContours(paths, {height = UNITS_PER_EM, segments = CURVE_
   return contours;
 }
 
-export function wordContours(word, options = {}) {
+export function packWordGlyphs(word, options = {}) {
   const {
     cellSize = UNITS_PER_EM,
     padding = 0.1,
@@ -72,11 +118,11 @@ export function wordContours(word, options = {}) {
     cursive = false,
   } = options;
 
-  const min = cellSize;
+  const inset = cellSize * padding;
   const {paths} = packWord({
     string: word,
-    x: min * padding,
-    y: min * padding,
+    x: inset,
+    y: inset,
     width: cellSize * (1 - padding),
     height: cellSize * (1 - padding),
     layout,
@@ -84,7 +130,17 @@ export function wordContours(word, options = {}) {
     cursive,
   });
 
-  return centerInEm(pathsToContours(paths, {height: cellSize}), {em: cellSize, width: cellSize});
+  const contours = centerVertically(pathsToContours(paths, {height: cellSize}), {em: cellSize});
+  return {paths, contours};
+}
+
+export function wordContours(word, options = {}) {
+  return packWordGlyphs(word, options).contours;
+}
+
+export function wordGlyph(word, options = {}, advanceOptions = {}) {
+  const {paths, contours} = packWordGlyphs(word, options);
+  return fitGlyphAdvanceFromPaths(contours, paths, advanceOptions);
 }
 
 export function letterContours(ch, options = {}) {

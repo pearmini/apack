@@ -1,4 +1,4 @@
-import {letterContours, UNITS_PER_EM} from "./glyph.js";
+import {wordGlyph} from "./glyph.js";
 
 export const FALLBACK_CHARS = [
   ..."abcdefghijklmnopqrstuvwxyz",
@@ -6,13 +6,10 @@ export const FALLBACK_CHARS = [
   ..."0123456789",
 ];
 
-export function fallbackGlyphs(options = {}) {
+export function fallbackGlyphs(options = {}, advanceOptions = {}) {
   const glyphs = {};
   for (const ch of FALLBACK_CHARS) {
-    glyphs[ch] = {
-      contours: letterContours(ch, options),
-      advance: UNITS_PER_EM,
-    };
+    glyphs[ch] = wordGlyph(ch, options, advanceOptions);
   }
   return glyphs;
 }

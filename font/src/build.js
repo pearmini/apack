@@ -4,7 +4,7 @@ import {fileURLToPath} from "url";
 import {expandCaseVariants, glyphNameForWord, loadCorpus} from "./corpus.js";
 import {fallbackGlyphs} from "./fallback.js";
 import {buildFeatureFile, DELIMITER_GLYPHS, SPACE_ADVANCE} from "./gsub.js";
-import {UNITS_PER_EM, delimiterContours, wordContours} from "./glyph.js";
+import {UNITS_PER_EM, fitGlyphAdvanceFromPaths, packWordGlyphs, wordGlyph} from "./glyph.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -24,24 +24,20 @@ export function buildFontArtifacts({
   };
 
   const glyphOptions = {font, layout, padding};
+  const advanceOptions = {sidePadding: 30};
 
-  const fallback = fallbackGlyphs(glyphOptions);
+  const fallback = fallbackGlyphs(glyphOptions, advanceOptions);
   for (const [ch, data] of Object.entries(fallback)) {
     glyphs[ch] = data;
   }
 
   for (const [ch, name] of Object.entries(DELIMITER_GLYPHS)) {
-    glyphs[name] = {
-      contours: delimiterContours(ch, glyphOptions),
-      advance: UNITS_PER_EM,
-    };
+    const {paths, contours} = packWordGlyphs(ch, glyphOptions);
+    glyphs[name] = fitGlyphAdvanceFromPaths(contours, paths, advanceOptions);
   }
 
   for (const word of words) {
-    glyphs[glyphNameForWord(word)] = {
-      contours: wordContours(word, glyphOptions),
-      advance: UNITS_PER_EM,
-    };
+    glyphs[glyphNameForWord(word)] = wordGlyph(word, glyphOptions, advanceOptions);
   }
 
   const cmap = {};
