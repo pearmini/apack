@@ -4,54 +4,7 @@ import Watch from "./Watch.jsx";
 import {Globe, MapPin} from "lucide-react";
 import {cityNameToTimezone} from "./utils.js";
 import {getFlagEmoji, getCountryCodeFromTimezone} from "./flag.js";
-import * as d3 from "d3";
-import {FONT_FAMILIES} from "apackjs";
-
-const VALID_FONTS = FONT_FAMILIES.filter((font) => font !== "markers");
-
-const interpolators = {
-  Greys: d3.interpolateGreys,
-  Blues: d3.interpolateBlues,
-  Reds: d3.interpolateReds,
-  Greens: d3.interpolateGreens,
-  Oranges: d3.interpolateOranges,
-  Purples: d3.interpolatePurples,
-  Turbo: d3.interpolateTurbo,
-  Viridis: d3.interpolateViridis,
-  Inferno: d3.interpolateInferno,
-  Magma: d3.interpolateMagma,
-  Plasma: d3.interpolatePlasma,
-  Cividis: d3.interpolateCividis,
-  Warm: d3.interpolateWarm,
-  Cool: d3.interpolateCool,
-  Cubehelix: d3.interpolateCubehelixDefault,
-  BuGn: d3.interpolateBuGn,
-  BuPu: d3.interpolateBuPu,
-  GnBu: d3.interpolateGnBu,
-  OrRd: d3.interpolateOrRd,
-  PuBuGn: d3.interpolatePuBuGn,
-  PuBu: d3.interpolatePuBu,
-  PuRd: d3.interpolatePuRd,
-  RdPu: d3.interpolateRdPu,
-  YlGnBu: d3.interpolateYlGnBu,
-  YlGn: d3.interpolateYlGn,
-  YlOrBr: d3.interpolateYlOrBr,
-  YlOrRd: d3.interpolateYlOrRd,
-  BrBG: d3.interpolateBrBG,
-  PRGn: d3.interpolatePRGn,
-  PiYG: d3.interpolatePiYG,
-  PuOr: d3.interpolatePuOr,
-  RdBu: d3.interpolateRdBu,
-  RdGy: d3.interpolateRdGy,
-  RdYlBu: d3.interpolateRdYlBu,
-  RdYlGn: d3.interpolateRdYlGn,
-  Spectral: d3.interpolateSpectral,
-  Rainbow: d3.interpolateRainbow,
-  Sinebow: d3.interpolateSinebow,
-};
-
-const DEFAULT_INTERPOLATOR = "BrBG";
-const DEFAULT_FONT = "futural";
+import {DEFAULT_FONT, DEFAULT_INTERPOLATOR, interpolators, VALID_FONTS} from "./constants.js";
 
 export default function WatchPage({cityName}) {
   const router = useRouter();
@@ -124,27 +77,14 @@ export default function WatchPage({cityName}) {
 
   if (!isValidTimeZone) {
     return (
-      <div className="w-screen h-screen flex flex-col items-center justify-center">
-        <div className="w-full h-full overflow-auto flex flex-col relative">
-          <button
-            onClick={goHome}
-            className="absolute top-4 left-4 z-10 text-gray-700 hover:bg-gray-100 p-2 rounded-md transition-colors cursor-pointer"
-            aria-label="Home"
-          >
-            <Globe className="w-5 h-5" />
+      <div className="aclock-watch-page">
+        <div className="aclock-watch-inner">
+          <button onClick={goHome} className="aclock-icon-button" aria-label="Home">
+            <Globe className="h-5 w-5" />
           </button>
 
           {localTimeZone && (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "100%",
-                paddingTop: "4rem",
-                paddingBottom: "2rem",
-              }}
-            >
+            <div className="aclock-watch-preview">
               <div style={{width: "150px", height: "150px"}}>
                 <Watch
                   key={localTimeZone}
@@ -158,9 +98,9 @@ export default function WatchPage({cityName}) {
             </div>
           )}
 
-          <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">Time zone not found</h1>
-            <button onClick={goHome} className="text-blue-600 hover:underline cursor-pointer">
+          <div className="aclock-watch-error">
+            <h1>Time zone not found</h1>
+            <button type="button" onClick={goHome} className="aclock-text-button">
               Return to home
             </button>
           </div>
@@ -170,40 +110,27 @@ export default function WatchPage({cityName}) {
   }
 
   return (
-    <div className="w-screen h-screen flex flex-col items-center justify-center">
-      <div className="w-full h-full overflow-auto flex flex-col relative">
-        <div className="absolute top-4 left-4 z-10 flex items-center gap-4">
-          <button
-            onClick={goHome}
-            className="text-gray-700 hover:bg-gray-100 p-2 rounded-md transition-colors cursor-pointer"
-            aria-label="Home"
-          >
-            <Globe className="w-5 h-5" />
+    <div className="aclock-watch-page">
+      <div className="aclock-watch-inner">
+        <div className="aclock-watch-header">
+          <button onClick={goHome} className="aclock-icon-button" aria-label="Home">
+            <Globe className="h-5 w-5" />
           </button>
           {countryName && (
             <a
               href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(countryName)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-gray-700 hover:text-gray-900 cursor-pointer transition-colors"
+              className="aclock-watch-location"
             >
               {flagEmoji && <span className="text-2xl">{flagEmoji}</span>}
               <span className="font-medium">{countryName} Time</span>
-              <MapPin className="w-4 h-4" />
+              <MapPin className="h-4 w-4" />
             </a>
           )}
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "100%",
-            height: "100%",
-            minHeight: "150px",
-          }}
-        >
+        <div className="aclock-watch-center">
           <div style={{width: "150px", height: "150px"}}>
             <Watch
               key={selectedTimeZone}

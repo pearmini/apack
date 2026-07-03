@@ -119,3 +119,88 @@
   min-width: 11.25rem;
 }
 
+.aclock-watch-page {
+  min-height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.aclock-watch-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 28rem;
+}
+
+.aclock-watch-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.aclock-watch-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aclock-watch-preview {
+  margin-bottom: 2rem;
+}
+
+.aclock-watch-error {
+  text-align: center;
+}
+
+.aclock-watch-error h1 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.aclock-icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4b5563;
+  padding: 0.25rem;
+  transition: color 0.15s ease;
+}
+
+.aclock-icon-button:hover {
+  color: #1f2937;
+}
+
+.aclock-text-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #2563eb;
+  font-size: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.aclock-text-button:hover {
+  color: #1d4ed8;
+}
+
+.aclock-watch-location {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.aclock-watch-location:hover {
+  color: #374151;
+}
+

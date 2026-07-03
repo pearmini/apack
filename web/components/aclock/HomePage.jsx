@@ -5,55 +5,13 @@ import Toolbar from "./Toolbar.jsx";
 import {timezoneToCityName} from "./utils.js";
 import * as d3 from "d3";
 import * as Plot from "@observablehq/plot";
-import {FONT_FAMILIES} from "apackjs";
-
-const VALID_FONTS = FONT_FAMILIES.filter((font) => font !== "markers");
-
-// Default values
-const DEFAULT_SORT = "random";
-const DEFAULT_INTERPOLATOR = "BrBG";
-const DEFAULT_FONT = "futural";
-
-const interpolators = {
-  Greys: d3.interpolateGreys,
-  Blues: d3.interpolateBlues,
-  Reds: d3.interpolateReds,
-  Greens: d3.interpolateGreens,
-  Oranges: d3.interpolateOranges,
-  Purples: d3.interpolatePurples,
-  Turbo: d3.interpolateTurbo,
-  Viridis: d3.interpolateViridis,
-  Inferno: d3.interpolateInferno,
-  Magma: d3.interpolateMagma,
-  Plasma: d3.interpolatePlasma,
-  Cividis: d3.interpolateCividis,
-  Warm: d3.interpolateWarm,
-  Cool: d3.interpolateCool,
-  Cubehelix: d3.interpolateCubehelixDefault,
-  BuGn: d3.interpolateBuGn,
-  BuPu: d3.interpolateBuPu,
-  GnBu: d3.interpolateGnBu,
-  OrRd: d3.interpolateOrRd,
-  PuBuGn: d3.interpolatePuBuGn,
-  PuBu: d3.interpolatePuBu,
-  PuRd: d3.interpolatePuRd,
-  RdPu: d3.interpolateRdPu,
-  YlGnBu: d3.interpolateYlGnBu,
-  YlGn: d3.interpolateYlGn,
-  YlOrBr: d3.interpolateYlOrBr,
-  YlOrRd: d3.interpolateYlOrRd,
-  BrBG: d3.interpolateBrBG,
-  PRGn: d3.interpolatePRGn,
-  PiYG: d3.interpolatePiYG,
-  PuOr: d3.interpolatePuOr,
-  RdBu: d3.interpolateRdBu,
-  RdGy: d3.interpolateRdGy,
-  RdYlBu: d3.interpolateRdYlBu,
-  RdYlGn: d3.interpolateRdYlGn,
-  Spectral: d3.interpolateSpectral,
-  Rainbow: d3.interpolateRainbow,
-  Sinebow: d3.interpolateSinebow,
-};
+import {
+  DEFAULT_FONT,
+  DEFAULT_INTERPOLATOR,
+  DEFAULT_SORT,
+  interpolators,
+  VALID_FONTS,
+} from "./constants.js";
 
 export default function HomePage() {
   const router = useRouter();
@@ -187,16 +145,6 @@ export default function HomePage() {
     return assignments;
   }, [filteredTimeZones, fontOption]);
 
-  // Get user's local timezone label
-  const localTimeZoneLabel = useMemo(() => {
-    try {
-      return Intl.DateTimeFormat().resolvedOptions().timeZone.split("/").pop().replace(/_/g, " ") || "Local";
-    } catch (e) {
-      return "Local";
-    }
-  }, []);
-
-  // Legend container ref
   const legendRef = useRef(null);
 
   // Render legend
@@ -221,59 +169,56 @@ export default function HomePage() {
   return (
     <div className="min-h-full w-full overflow-auto">
       <h1>
-        <a href="https://github.com/pearmini/apack/tree/main/web" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 transition-colors">
+        <a href="https://github.com/pearmini/apack/tree/main/web" target="_blank" rel="noopener noreferrer">
           World Clocks
         </a>{" "}
         by{" "}
         <a href="/">APack</a>
       </h1>
       <Toolbar
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          interpolatorOption={interpolatorOption}
-          setInterpolatorOption={setInterpolatorOption}
-          fontOption={fontOption}
-          setFontOption={setFontOption}
-          sortOption={sortOption}
-          setSortOption={setSortOption}
-          interpolators={interpolators}
-          validFonts={VALID_FONTS}
-          handleReset={handleReset}
-          legendRef={legendRef}
-        />
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        interpolatorOption={interpolatorOption}
+        setInterpolatorOption={setInterpolatorOption}
+        fontOption={fontOption}
+        setFontOption={setFontOption}
+        sortOption={sortOption}
+        setSortOption={setSortOption}
+        interpolators={interpolators}
+        validFonts={VALID_FONTS}
+        handleReset={handleReset}
+        legendRef={legendRef}
+      />
 
-        <div className="aclock-grid">
-          {/* Local Time watch - always first (only show when not searching) */}
-          {!debouncedSearchQuery.trim() && (
-            <Watch
-              key="local"
-              timeZone={null}
-              interpolator={interpolators[interpolatorOption]}
-              font={fontOption === "random" ? fontAssignments?.["local"] || "futural" : fontOption}
-              onClick={() => router.push("/aclock/local")}
-            />
-          )}
-          {/* UTC watch - always second (only show when not searching) */}
-          {!debouncedSearchQuery.trim() && (
-            <Watch
-              key="UTC"
-              timeZone="UTC"
-              interpolator={interpolators[interpolatorOption]}
-              font={fontOption === "random" ? fontAssignments?.["UTC"] || "futural" : fontOption}
-              onClick={() => router.push("/aclock/utc")}
-            />
-          )}
-          {/* Other timezones */}
-          {filteredTimeZones.map((tz) => (
-            <Watch
-              key={tz}
-              timeZone={tz}
-              interpolator={interpolators[interpolatorOption]}
-              font={fontOption === "random" ? fontAssignments?.[tz] || "futural" : fontOption}
-              onClick={() => router.push(`/aclock/${timezoneToCityName(tz)}`)}
-            />
-          ))}
-        </div>
+      <div className="aclock-grid">
+        {!debouncedSearchQuery.trim() && (
+          <Watch
+            key="local"
+            timeZone={null}
+            interpolator={interpolators[interpolatorOption]}
+            font={fontOption === "random" ? fontAssignments?.["local"] || "futural" : fontOption}
+            onClick={() => router.push("/aclock/local/")}
+          />
+        )}
+        {!debouncedSearchQuery.trim() && (
+          <Watch
+            key="UTC"
+            timeZone="UTC"
+            interpolator={interpolators[interpolatorOption]}
+            font={fontOption === "random" ? fontAssignments?.["UTC"] || "futural" : fontOption}
+            onClick={() => router.push("/aclock/utc/")}
+          />
+        )}
+        {filteredTimeZones.map((tz) => (
+          <Watch
+            key={tz}
+            timeZone={tz}
+            interpolator={interpolators[interpolatorOption]}
+            font={fontOption === "random" ? fontAssignments?.[tz] || "futural" : fontOption}
+            onClick={() => router.push(`/aclock/${timezoneToCityName(tz)}/`)}
+          />
+        ))}
+      </div>
     </div>
   );
 }

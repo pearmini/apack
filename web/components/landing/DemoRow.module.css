@@ -2,6 +2,8 @@
   display: block;
   padding: 1.25rem 0;
   border-bottom: 1px solid var(--apack-border);
+  color: inherit;
+  text-decoration: none;
   transition: opacity 0.15s ease;
 }
 
