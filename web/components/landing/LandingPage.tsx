@@ -18,7 +18,7 @@ const DEMOS = [
   {
     href: "https://www.typecampus.com/fight-for-kindness-gallery-2025?pgid=maasv5d321-b22ea6e7-6be1-4b74-83e0-33c9d3d25d56",
     title: "Stick Together to Make Peace",
-    description: "A submission for Fight for Kindness 2025.",
+    description: "A poster for Fight for Kindness 2025.",
   },
 ];
 
