@@ -1,3 +1,4 @@
+import {Github} from "lucide-react";
 import DemoRow from "./DemoRow";
 import styles from "./LandingPage.module.css";
 
@@ -22,20 +23,32 @@ const DEMOS = [
 
 export default function LandingPage() {
   return (
-    <main className={styles.landing}>
-      <header className={styles.header}>
-        <h1 className={styles.title}>APACK</h1>
-        <p className={styles.tagline}>
-          Alphabet-packing writing system — Latin text composed into Chinese-character-like glyphs.
-          Type, pack, and export stamps, poems, and logos.
-        </p>
-      </header>
+    <div className={styles.page}>
+      <a
+        href="https://github.com/pearmini/apack"
+        target="_blank"
+        rel="noopener noreferrer"
+        className={styles.githubLink}
+        aria-label="View APack on GitHub"
+      >
+        <Github size={22} strokeWidth={1.75} />
+      </a>
 
-      <section className={styles.demos} aria-label="Demos">
-        {DEMOS.map((demo) => (
-          <DemoRow key={demo.href} {...demo} />
-        ))}
-      </section>
-    </main>
+      <main className={styles.landing}>
+        <header className={styles.header}>
+          <h1 className={styles.title}>APACK</h1>
+          <p className={styles.tagline}>
+            Alphabet-packing writing system — Latin text composed into Chinese-character-like glyphs.
+            Type, pack, and export stamps, poems, and logos.
+          </p>
+        </header>
+
+        <section className={styles.demos} aria-label="Demos">
+          {DEMOS.map((demo) => (
+            <DemoRow key={demo.href} {...demo} />
+          ))}
+        </section>
+      </main>
+    </div>
   );
 }
