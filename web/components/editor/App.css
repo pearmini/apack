@@ -151,3 +151,24 @@
 .apack-root:hover .apack-tooltip {
   visibility: visible;
 }
+
+@media (max-width: 768px) {
+  .editor-top-bar {
+    gap: 8px;
+    padding: 8px 12px;
+  }
+
+  .editor-top-bar-brand {
+    gap: 0;
+  }
+
+  .editor-top-bar-tagline,
+  .editor-top-bar-tools {
+    display: none;
+  }
+
+  .editor-top-bar-actions,
+  .editor-top-bar-group {
+    gap: 8px;
+  }
+}

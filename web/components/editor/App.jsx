@@ -589,13 +589,15 @@ function App() {
       <div className="editor-top-bar">
         <div className="editor-top-bar-brand">
           <APack text="APack" cellSize={52} bordered={false} />
-          <div className="editor-top-bar-divider" aria-hidden="true" />
-          <APack text="Write English like Chinese" cellSize={52} bordered={false} />
+          <div className="editor-top-bar-divider editor-top-bar-tagline" aria-hidden="true" />
+          <div className="editor-top-bar-tagline">
+            <APack text="Write English like Chinese" cellSize={52} bordered={false} />
+          </div>
         </div>
 
         <div className="editor-top-bar-actions">
           {!hideConfig && (
-            <div className="editor-top-bar-group">
+            <div className="editor-top-bar-group editor-top-bar-tools">
               <APack text="Config" cellSize={40} onClick={() => setShowConfig(true)} />
               <APack text="Save" cellSize={40} onClick={onSave} />
               <APack text="New" cellSize={40} onClick={onNew} />
@@ -609,7 +611,9 @@ function App() {
               )}
             </div>
           )}
-          {!hideConfig && <div className="editor-top-bar-divider" aria-hidden="true" />}
+          {!hideConfig && (
+            <div className="editor-top-bar-divider editor-top-bar-tools" aria-hidden="true" />
+          )}
           <div className="editor-top-bar-group">
             <APack text="Example" cellSize={40} onClick={() => setShowShowcase(true)} />
             {!hideConfig && <APack text="Github" cellSize={40} onClick={onOpenGithub} />}
