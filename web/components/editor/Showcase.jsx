@@ -1,17 +1,25 @@
 import {useRef, useEffect} from "react";
 import {templates} from "./templates";
-import {APack} from "./APack";
 import {FiX} from "react-icons/fi";
 import {paragraph} from "./paragraph";
 import {splitWordsWithNewlines, positionWords} from "./text";
 import "./Showcase.css";
 
 const EXTERNAL_EXAMPLES = [
-  {text: "Tree", href: "https://tree.bairui.dev/"},
-  {text: "AClock", href: "/aclock/"},
   {
-    text: "Sticker",
+    title: "Name to Tree",
+    image: "/examples/name-to-tree.png",
+    href: "https://tree.bairui.dev/",
+  },
+  {
+    title: "Fight for Kindness",
+    image: "/examples/fight-for-kindness.png",
     href: "https://www.typecampus.com/fight-for-kindness-gallery-2025?pgid=maasv5d321-b22ea6e7-6be1-4b74-83e0-33c9d3d25d56",
+  },
+  {
+    title: "World Clocks",
+    image: "/examples/world-clocks.png",
+    href: "/aclock/",
   },
 ];
 
@@ -71,12 +79,19 @@ export function Showcase({onClose, updateTemplate}) {
             <h2 className="showcase-section-title">Made with APack</h2>
             <div className="showcase-external-grid">
               {EXTERNAL_EXAMPLES.map((project) => (
-                <APack
-                  key={project.text}
-                  text={project.text}
-                  cellSize={40}
+                <button
+                  key={project.title}
+                  type="button"
+                  className="showcase-example-card"
                   onClick={() => onOpenProject(project.href)}
-                />
+                >
+                  <img
+                    className="showcase-example-preview"
+                    src={project.image}
+                    alt={project.title}
+                  />
+                  <span className="showcase-example-title">{project.title}</span>
+                </button>
               ))}
             </div>
           </section>
