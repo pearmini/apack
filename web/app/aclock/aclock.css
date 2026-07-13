@@ -24,6 +24,7 @@
 }
 
 .aclock-root:has(.aclock-watch-page) {
+  position: relative;
   height: 100vh;
   height: 100dvh;
   min-height: 0;
@@ -499,23 +500,37 @@
   overflow: hidden;
 }
 
+.aclock-watch-home {
+  position: absolute;
+  top: 1.25rem;
+  left: 1.25rem;
+  z-index: 1;
+}
+
+@media (min-width: 768px) {
+  .aclock-watch-home {
+    top: 1.5rem;
+    left: 1.5rem;
+  }
+}
+
 .aclock-watch-detail {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: center;
   width: 100%;
   max-width: 28rem;
 }
 
 @media (min-width: 768px) {
   .aclock-watch-detail {
-    gap: 1.25rem;
     max-width: 32rem;
   }
 }
 
 .aclock-watch-detail-card {
   flex: 1;
+  width: 100%;
   min-width: 0;
 }
 

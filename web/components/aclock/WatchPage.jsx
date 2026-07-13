@@ -51,10 +51,10 @@ export default function WatchPage({cityName}) {
 
   return (
     <div className="aclock-watch-page">
+      <button type="button" onClick={goHome} className="aclock-icon-button aclock-watch-home" aria-label="Back to world clocks">
+        <Globe className="h-5 w-5" />
+      </button>
       <div className="aclock-watch-detail">
-        <button type="button" onClick={goHome} className="aclock-icon-button" aria-label="Back to world clocks">
-          <Globe className="h-5 w-5" />
-        </button>
         {isValidTimeZone ? (
           <div className="aclock-watch-detail-card">
             <Watch
