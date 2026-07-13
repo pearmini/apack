@@ -4,26 +4,52 @@
 
 /* Scoped to /aclock only — plain CSS so it wins over global resets */
 .aclock-root {
+  --aclock-cream: #fbf7f0;
+  --aclock-ink: #2c2416;
+  --aclock-muted: #8a7f70;
+  --aclock-card: #fefcf8;
+  --aclock-border: #e4ddd2;
+  --aclock-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --aclock-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+
   box-sizing: border-box;
   min-height: 100vh;
   width: 100%;
-  background: #fff;
-  color: #1b1e23;
-  padding: 2rem 2.5rem 4rem;
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Helvetica, Arial, sans-serif;
+  background: var(--aclock-cream);
+  color: var(--aclock-ink);
+  padding: 2.75rem 1.5rem 4rem;
+  font-family: var(--aclock-sans);
   -webkit-font-smoothing: antialiased;
+}
+
+.aclock-root:has(.aclock-watch-page) {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
 @media (min-width: 768px) {
   .aclock-root {
-    padding: 2.5rem 3.5rem 4rem;
+    padding: 3.25rem 2.5rem 4rem;
+  }
+
+  .aclock-root:has(.aclock-watch-page) {
+    padding: 2rem 2.5rem;
   }
 }
 
 @media (min-width: 1024px) {
   .aclock-root {
-    padding: 3rem 4rem 5rem;
+    padding: 3.75rem 3.5rem 5rem;
+  }
+
+  .aclock-root:has(.aclock-watch-page) {
+    padding: 2rem 3.5rem;
   }
 }
 
@@ -31,34 +57,88 @@
   color: inherit;
 }
 
-.aclock-root h1 a {
-  text-decoration: underline;
-  text-underline-offset: 2px;
+.aclock-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+  text-align: left;
+  margin-bottom: 2.25rem;
 }
 
-.aclock-root h1 a:hover {
-  color: #374151;
+@media (min-width: 768px) {
+  .aclock-header {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 2.75rem;
+  }
+}
+
+.aclock-header-copy {
+  min-width: 0;
+}
+
+.aclock-eyebrow {
+  display: block;
+  margin: 0 0 0.85rem;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--aclock-muted);
 }
 
 .aclock-root h1 {
-  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  margin-bottom: 1.25rem;
-  text-align: center;
-  font-size: 1.5rem;
+  font-family: var(--aclock-serif);
+  margin: 0;
+  text-align: left;
+  font-size: 2.25rem;
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--aclock-ink);
+}
+
+.aclock-root h1 .aclock-title-by {
   font-weight: 400;
+  font-style: normal;
+  color: #6b6358;
+}
+
+.aclock-root h1 a {
+  text-decoration: none;
+}
+
+.aclock-root h1 a:hover {
+  opacity: 0.75;
 }
 
 @media (min-width: 768px) {
   .aclock-root h1 {
-    margin-bottom: 1.5rem;
-    font-size: 1.875rem;
+    font-size: 2.75rem;
   }
 }
 
 @media (min-width: 1024px) {
   .aclock-root h1 {
-    margin-bottom: 1.75rem;
-    font-size: 2.25rem;
+    font-size: 3.25rem;
+  }
+}
+
+.aclock-legend {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .aclock-legend {
+    justify-content: flex-end;
+    padding-top: 0.25rem;
   }
 }
 
@@ -68,21 +148,89 @@
 
 @media (min-width: 768px) {
   .aclock-toolbar {
-    margin-bottom: 2.25rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .aclock-toolbar {
     margin-bottom: 2.5rem;
   }
 }
 
-.aclock-grid {
-  display: grid;
-  width: 100%;
+.aclock-toolbar-inner {
+  display: flex;
+  flex-direction: column;
   gap: 0.875rem;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  align-items: stretch;
+}
+
+@media (min-width: 768px) {
+  .aclock-toolbar-inner {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.875rem 1.25rem;
+  }
+}
+
+.aclock-toolbar-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.125rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.aclock-toolbar-menu {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--aclock-ink);
+  padding: 0.25rem;
+}
+
+.aclock-toolbar-menu:hover {
+  opacity: 0.7;
+}
+
+@media (max-width: 767px) {
+  .aclock-toolbar-menu {
+    display: block;
+    align-self: flex-start;
+  }
+
+  .aclock-toolbar-controls {
+    display: none;
+    width: 100%;
+  }
+
+  .aclock-toolbar-controls.is-open {
+    display: flex;
+  }
+}
+
+.aclock-zone-count {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--aclock-muted);
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+.aclock-toolbar-rule {
+  margin-top: 1.35rem;
+  border: none;
+  border-top: 1px solid var(--aclock-border);
+  height: 0;
+}
+
+.aclock-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .aclock-field {
@@ -90,106 +238,339 @@
   flex-direction: column;
 }
 
+.aclock-field-search {
+  flex: 1 1 14rem;
+  min-width: 12rem;
+  max-width: 22rem;
+}
+
+.aclock-field-inline {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .aclock-field label {
-  margin-bottom: 0.25rem;
-  font-size: 0.75rem;
-  color: #4b5563;
+  margin-bottom: 0.35rem;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--aclock-muted);
+  white-space: nowrap;
+}
+
+.aclock-field-inline label {
+  margin-bottom: 0;
 }
 
 .aclock-input,
 .aclock-select {
   box-sizing: border-box;
-  padding: 0.375rem 0.75rem;
+  padding: 0.5rem 0.975rem;
   font-size: 0.875rem;
   line-height: 1.25;
-  color: #1f2937;
-  background: #fff;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  min-height: 2rem;
+  color: var(--aclock-ink);
+  background: var(--aclock-card);
+  border: 1px solid var(--aclock-border);
+  border-radius: 9999px;
+  min-height: 2.35rem;
+}
+
+.aclock-input::placeholder {
+  color: #b0a79a;
 }
 
 .aclock-input:focus,
 .aclock-select:focus {
   outline: none;
-  box-shadow: 0 0 0 2px #3b82f6;
+  border-color: #c4b8a8;
+  box-shadow: 0 0 0 2px rgba(44, 36, 22, 0.08);
 }
 
 .aclock-search {
-  min-width: 11.25rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.aclock-featured-row {
+  display: grid;
+  width: 100%;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .aclock-featured-row {
+    gap: 1.25rem;
+    margin-bottom: 1.75rem;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 1024px) {
+  .aclock-featured-row {
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+}
+
+.aclock-grid {
+  display: grid;
+  width: 100%;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+}
+
+@media (min-width: 640px) {
+  .aclock-grid {
+    gap: 1.125rem;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .aclock-grid {
+    gap: 1.25rem;
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+.aclock-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 1.25rem 1rem 1.125rem;
+  background: var(--aclock-card);
+  border: 1px solid var(--aclock-border);
+  border-radius: 1.25rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.aclock-card:hover {
+  border-color: #d4c9ba;
+  box-shadow: 0 4px 16px rgba(44, 36, 22, 0.06);
+}
+
+.aclock-card.is-static {
+  cursor: default;
+}
+
+.aclock-card.is-featured {
+  flex-direction: row;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  min-height: 10rem;
+}
+
+.aclock-card-face {
+  width: 100%;
+  max-width: 9rem;
+  position: relative;
+  padding-top: 100%;
+  border-radius: 0.65rem;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.aclock-card.is-featured .aclock-card-face {
+  width: 7rem;
+  max-width: 7rem;
+  padding-top: 7rem;
+}
+
+@media (min-width: 768px) {
+  .aclock-card.is-featured .aclock-card-face {
+    width: 8.5rem;
+    max-width: 8.5rem;
+    padding-top: 8.5rem;
+  }
+}
+
+.aclock-card-face-inner {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.aclock-card-face.is-fixed {
+  padding-top: 0;
+  width: var(--aclock-face-size, 150px);
+  height: var(--aclock-face-size, 150px);
+  max-width: none;
+}
+
+.aclock-card-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 1rem;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.aclock-card-meta-featured {
+  align-items: flex-start;
+  margin-top: 0;
+  gap: 0.35rem;
+  flex: 1;
+}
+
+.aclock-card-eyebrow {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--aclock-muted);
+}
+
+.aclock-card-name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: var(--aclock-serif);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--aclock-ink);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.aclock-card-flag {
+  flex-shrink: 0;
+  font-style: normal;
+  font-family: var(--aclock-sans);
+  line-height: 1;
+}
+
+.aclock-card-meta-featured .aclock-card-name {
+  justify-content: flex-start;
+  text-align: left;
+  font-size: 1.25rem;
+  font-weight: 600;
+  white-space: normal;
+}
+
+@media (min-width: 768px) {
+  .aclock-card-meta-featured .aclock-card-name {
+    font-size: 1.375rem;
+  }
+}
+
+.aclock-card-name:hover {
+  opacity: 0.75;
+}
+
+.aclock-card-offset {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--aclock-muted);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.aclock-card-meta-featured .aclock-card-offset {
+  text-align: left;
+  font-size: 0.8125rem;
 }
 
 .aclock-watch-page {
-  min-height: 100%;
+  flex: 1;
   width: 100%;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
-.aclock-watch-inner {
+.aclock-watch-detail {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  gap: 1rem;
   width: 100%;
   max-width: 28rem;
 }
 
-.aclock-watch-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: 2rem;
+@media (min-width: 768px) {
+  .aclock-watch-detail {
+    gap: 1.25rem;
+    max-width: 32rem;
+  }
 }
 
-.aclock-watch-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.aclock-watch-detail-card {
+  flex: 1;
+  min-width: 0;
 }
 
-.aclock-watch-preview {
-  margin-bottom: 2rem;
+.aclock-watch-detail-card .aclock-card {
+  cursor: default;
+}
+
+.aclock-watch-detail-card .aclock-card.is-featured {
+  min-height: 9rem;
 }
 
 .aclock-watch-error {
-  text-align: center;
+  text-align: left;
 }
 
 .aclock-watch-error h1 {
-  margin-bottom: 1rem;
+  margin: 0 0 0.75rem;
   font-size: 1.5rem;
   font-weight: 600;
+  font-style: normal;
 }
 
 .aclock-icon-button {
   background: none;
   border: none;
   cursor: pointer;
-  color: #4b5563;
-  padding: 0.25rem;
+  color: var(--aclock-muted);
+  padding: 0.35rem;
+  flex-shrink: 0;
   transition: color 0.15s ease;
 }
 
 .aclock-icon-button:hover {
-  color: #1f2937;
+  color: var(--aclock-ink);
 }
 
 .aclock-text-button {
   background: none;
   border: none;
   cursor: pointer;
-  color: #2563eb;
+  color: var(--aclock-ink);
   font-size: inherit;
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 .aclock-text-button:hover {
-  color: #1d4ed8;
+  opacity: 0.75;
 }
 
 .aclock-watch-location {
@@ -198,9 +579,10 @@
   gap: 0.5rem;
   color: inherit;
   text-decoration: none;
+  font-family: var(--aclock-serif);
+  font-weight: 700;
 }
 
 .aclock-watch-location:hover {
-  color: #374151;
+  opacity: 0.75;
 }
-
