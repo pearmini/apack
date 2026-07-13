@@ -52,8 +52,8 @@ export function Showcase({onClose, updateTemplate}) {
 
   return (
     <div className="showcase-modal-backdrop" onClick={onBackdropClick}>
-      <div className="showcase-modal" role="dialog" aria-modal="true" aria-label="Example">
-        <button onClick={onClose} className="showcase-modal-close" aria-label="Close example">
+      <div className="showcase-modal" role="dialog" aria-modal="true" aria-label="Examples">
+        <button onClick={onClose} className="showcase-modal-close" aria-label="Close examples">
           <FiX size={22} color="#000" />
         </button>
 
