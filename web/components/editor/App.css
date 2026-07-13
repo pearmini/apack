@@ -1,9 +1,11 @@
 .editor-app {
   overflow: hidden;
+  width: 100%;
   height: 100vh;
   display: flex;
   flex-direction: column;
   background-color: #fefaf1;
+  font-family: monospace;
 }
 
 .editor-top-bar {

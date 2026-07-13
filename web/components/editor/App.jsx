@@ -590,7 +590,7 @@ function App() {
         <div className="editor-top-bar-brand">
           <APack text="APack" cellSize={52} bordered={false} />
           <div className="editor-top-bar-divider" aria-hidden="true" />
-          <APack text="Write English like Chinese." cellSize={52} bordered={false} />
+          <APack text="Write English like Chinese" cellSize={52} bordered={false} />
         </div>
 
         <div className="editor-top-bar-actions">

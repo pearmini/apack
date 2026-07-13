@@ -6,15 +6,6 @@
   padding: 0;
 }
 
-:root {
-  --apack-cream: #f5f2eb;
-  --apack-orange: #e85d04;
-  --apack-teal: #2a9d8f;
-  --apack-text: #1a1a1a;
-  --apack-muted: #6b6b6b;
-  --apack-border: #d8d4cb;
-}
-
 html,
 body {
   min-height: 100%;
