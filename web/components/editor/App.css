@@ -2,9 +2,58 @@
   overflow: hidden;
   height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   background-color: #fefaf1;
+}
+
+.editor-top-bar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  min-height: 0;
+  padding: 8px 20px;
+  box-sizing: border-box;
+  background-color: #fefaf1;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  z-index: 1000;
+}
+
+.editor-top-bar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.editor-top-bar-actions,
+.editor-top-bar-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.editor-top-bar-actions {
+  margin-left: auto;
+}
+
+.editor-top-bar-divider {
+  width: 1px;
+  align-self: stretch;
+  min-height: 40px;
+  background-color: rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
+}
+
+.editor-body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .editor {
@@ -14,32 +63,10 @@
 }
 
 .editor-container {
-  height: 100vh;
+  height: 100%;
   overflow: auto;
-}
-
-.config-button {
-  position: fixed;
-  top: 0px;
-  left: 20px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  color: #666;
-  transition: color 0.2s;
-  z-index: 1000;
-  display: flex;
-  gap: 12px;
-  background-color: #fefaf1;
-  width: 100%;
-  height: 100px;
-}
-
-.config-button:hover {
-  color: #333;
+  flex: 1;
+  min-width: 0;
 }
 
 .canvas {

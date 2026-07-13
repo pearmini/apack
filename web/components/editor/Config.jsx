@@ -3,8 +3,7 @@ import {FONT_FAMILIES} from "apackjs";
 import {SketchPicker} from "react-color";
 import {useState, useRef, useEffect} from "react";
 import {templates} from "./templates";
-import {APack} from "./APack";
-import {FiX, FiSave, FiFile, FiUpload, FiDownload} from "react-icons/fi";
+import {FiX} from "react-icons/fi";
 
 const templateSchema = {
   key: "template",
@@ -125,20 +124,11 @@ export function Config({
   getValue,
   updateTemplate,
   getTemplate,
-  onSave,
-  onNew,
-  onUpload,
-  onDownload,
 }) {
-  const onGithub = () => {
-    window.open("https://github.com/pearmini/apack", "_blank");
-  };
-
   return (
     <div style={style} className="config-panel">
       <div className="config-panel-header">
-        <APack text="APack" cellSize={40} onClick={onGithub} />
-        <button onClick={onClose} className="icon-button">
+        <button onClick={onClose} className="icon-button" aria-label="Close config">
           <FiX size={22} color="#000" />
         </button>
       </div>
@@ -166,21 +156,6 @@ export function Config({
             />
           </div>
         ))}
-      </div>
-
-      <div className="config-panel-toolbar">
-        <button onClick={onSave} className="icon-button">
-          <FiSave size={22} color="#000" />
-        </button>
-        <button onClick={onNew} className="icon-button">
-          <FiFile size={22} color="#000" />
-        </button>
-        <button onClick={onUpload} className="icon-button">
-          <FiUpload size={22} color="#000" />
-        </button>
-        <button onClick={onDownload} className="icon-button">
-          <FiDownload size={22} color="#000" />
-        </button>
       </div>
     </div>
   );

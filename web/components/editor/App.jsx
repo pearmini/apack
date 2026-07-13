@@ -3,7 +3,7 @@ import {measureText, splitWordsWithNewlines, uid, positionWords} from "./text";
 import {logEditor} from "./log";
 import {templates} from "./templates";
 import {Config} from "./Config";
-import {Example} from "./Example";
+import {Showcase} from "./Showcase";
 import {APack} from "./APack";
 import {paragraph} from "./paragraph";
 import {downloadPNG, downloadSVG} from "./download";
@@ -92,7 +92,7 @@ function App() {
   const editorContainerRef = useRef(null);
 
   const [showConfig, setShowConfig] = useState(false);
-  const [showExample, setShowExample] = useState(false);
+  const [showShowcase, setShowShowcase] = useState(false);
   const [template, setTemplate] = useState("None");
   const [config, setConfig] = useState(getConfig());
   const [containerWidth, setContainerWidth] = useState(Infinity);
@@ -329,7 +329,6 @@ function App() {
     historyIndexRef.current = 0;
   };
 
-  // Save the current config to the local storage.
   const onSave = () => {
     const text = joinWords(words);
     const configString = JSON.stringify({...config, text});
@@ -564,10 +563,6 @@ function App() {
     downloadPNG(`apack-${time}`, svg);
   };
 
-  const onOpenTree = () => {
-    window.open("https://tree.bairui.dev/", "_blank");
-  };
-
   const onDownloadSVG = () => {
     const svg = canvasRef.current.querySelector("svg");
     const time = new Date().toISOString().replace(/[-:Z]/g, "");
@@ -582,79 +577,92 @@ function App() {
 
   return (
     <div className="editor-app">
-      {showConfig ? (
-        <Config
-          style={{width: panelWidth, height: "100vh"}}
-          onClose={() => setShowConfig(false)}
-          updateValue={updateConfig}
-          getValue={getValue}
-          onSave={onSave}
-          onNew={onNew}
-          onUpload={onUpload}
-          onDownload={onDownload}
-          updateTemplate={updateTemplate}
-          getTemplate={getTemplate}
-        />
-      ) : showExample ? (
-        <Example onClose={() => setShowExample(false)} updateTemplate={updateTemplate} jump={!hideConfig} />
-      ) : (
-        <div className="config-button">
-          {!hideConfig && <APack text="Config" cellSize={40} onClick={() => setShowConfig(true)} />}
-          <APack text="Example" cellSize={40} onClick={() => setShowExample(true)} />
-          {!hideConfig && (
-            <>
-              <APack text="Github" cellSize={40} onClick={onOpenGithub} />
-              <APack text="Tree" cellSize={40} onClick={onOpenTree} />
-            </>
-          )}
-          {!hideConfig && textareaValue && (
-            <>
-              <APack text="PNG" cellSize={40} onClick={onDownloadPNG} />
-              <APack text="SVG" cellSize={40} onClick={onDownloadSVG} />
-            </>
-          )}
+      <div className="editor-top-bar">
+        <div className="editor-top-bar-brand">
+          <APack text="APack" cellSize={52} bordered={false} />
+          <div className="editor-top-bar-divider" aria-hidden="true" />
+          <APack text="Write English like Chinese." cellSize={52} bordered={false} />
         </div>
-      )}
-      <div
-        className="editor-container"
-        ref={editorContainerRef}
-        style={{width: `calc(100% - ${showConfig ? panelWidth : 0}px)`}}
-        onClick={onClickEditorContainer}
-      >
-        <div className="editor" ref={editorRef}>
-          <div className="canvas" ref={canvasRef}></div>
-          <textarea
-            className="input"
-            style={{
-              ...style,
-              lineHeight: `${cellHeight}px`,
-              padding: 0,
-              transform: `scale(1, ${scale})`,
-            }}
-            value={textareaValue}
-            ref={textareaRef}
-            onChange={onTextareaChange}
-            onKeyDown={onTextareaKeyDown}
-          ></textarea>
-          {words.map((d, i) => (
-            <input
-              key={d.id}
-              className="grid-input"
-              style={{
-                width: cellWidth,
-                height: gridInputHeight,
-                top: d.y * cellWidth + cellWidth,
-                left: d.x * cellWidth,
-              }}
-              ref={gridRef}
-              value={d.ch}
-              onKeyDown={(e) => onGridInputKeyDown(e, d, i)}
-              onChange={(e) => onGridInputChange(e, d, i)}
-              onBlur={(e) => onGridInputBlur(e, d, i)}
-            ></input>
-          ))}
+
+        <div className="editor-top-bar-actions">
+          {!hideConfig && (
+            <div className="editor-top-bar-group">
+              <APack text="Config" cellSize={40} onClick={() => setShowConfig(true)} />
+              <APack text="Save" cellSize={40} onClick={onSave} />
+              <APack text="New" cellSize={40} onClick={onNew} />
+              <APack text="Upload" cellSize={40} onClick={onUpload} />
+              <APack text="Download" cellSize={40} onClick={onDownload} />
+              {textareaValue && (
+                <>
+                  <APack text="PNG" cellSize={40} onClick={onDownloadPNG} />
+                  <APack text="SVG" cellSize={40} onClick={onDownloadSVG} />
+                </>
+              )}
+            </div>
+          )}
+          {!hideConfig && <div className="editor-top-bar-divider" aria-hidden="true" />}
+          <div className="editor-top-bar-group">
+            <APack text="Example" cellSize={40} onClick={() => setShowShowcase(true)} />
+            {!hideConfig && <APack text="Github" cellSize={40} onClick={onOpenGithub} />}
+          </div>
         </div>
       </div>
+
+      <div className="editor-body">
+        {showConfig && (
+          <Config
+            style={{width: panelWidth, height: "100%"}}
+            onClose={() => setShowConfig(false)}
+            updateValue={updateConfig}
+            getValue={getValue}
+            updateTemplate={updateTemplate}
+            getTemplate={getTemplate}
+          />
+        )}
+        <div
+          className="editor-container"
+          ref={editorContainerRef}
+          onClick={onClickEditorContainer}
+        >
+          <div className="editor" ref={editorRef}>
+            <div className="canvas" ref={canvasRef}></div>
+            <textarea
+              className="input"
+              style={{
+                ...style,
+                lineHeight: `${cellHeight}px`,
+                padding: 0,
+                transform: `scale(1, ${scale})`,
+              }}
+              value={textareaValue}
+              ref={textareaRef}
+              onChange={onTextareaChange}
+              onKeyDown={onTextareaKeyDown}
+            ></textarea>
+            {words.map((d, i) => (
+              <input
+                key={d.id}
+                className="grid-input"
+                style={{
+                  width: cellWidth,
+                  height: gridInputHeight,
+                  top: d.y * cellWidth + cellWidth,
+                  left: d.x * cellWidth,
+                }}
+                ref={gridRef}
+                value={d.ch}
+                onKeyDown={(e) => onGridInputKeyDown(e, d, i)}
+                onChange={(e) => onGridInputChange(e, d, i)}
+                onBlur={(e) => onGridInputBlur(e, d, i)}
+              ></input>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {showShowcase && (
+        <Showcase onClose={() => setShowShowcase(false)} updateTemplate={updateTemplate} />
+      )}
     </div>
   );
 }

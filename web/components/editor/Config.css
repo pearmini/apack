@@ -1,27 +1,19 @@
 .config-panel {
   background: #fbf7eb;
-  box-shadow: rgba(0, 0, 0, 0.024) -1px 0px 0px 0px inset;
-  padding: 20px;
-  height: 100vh;
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 12px 20px 20px;
+  height: 100%;
   position: relative;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  overflow: auto;
 }
 
 .config-panel-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 20px;
-  margin-bottom: 30px;
-}
-
-.config-panel-toolbar {
-  display: flex;
+  justify-content: flex-start;
   align-items: center;
-  gap: 8px;
-  height: 20px;
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
+  margin-bottom: 12px;
 }
 
 .config-panel-body {
