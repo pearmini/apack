@@ -144,11 +144,10 @@
   line-height: 1.2;
   white-space: nowrap;
   pointer-events: none;
-  opacity: 0;
+  visibility: hidden;
   z-index: 1100;
 }
 
-.apack-root:hover .apack-tooltip,
-.apack-root:focus-within .apack-tooltip {
-  opacity: 1;
+.apack-root:hover .apack-tooltip {
+  visibility: visible;
 }
