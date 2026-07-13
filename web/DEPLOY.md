@@ -14,8 +14,7 @@ Output: `web/out/`
 
 | URL | Description |
 |-----|-------------|
-| `/` | Landing page with demo list |
-| `/editor/` | APack editor |
+| `/` | APack editor |
 | `/aclock/` | World clocks home |
 | `/aclock/local/`, `/aclock/utc/`, `/aclock/{city}/` | Individual clock views |
 
@@ -24,8 +23,6 @@ Output: `web/out/`
 When serving `web/out/` as static files, configure the host so client-side routes work on refresh:
 
 ```
-/editor      → /editor/index.html
-/editor/*    → /editor/index.html
 /aclock      → /aclock/index.html
 /aclock/*    → /aclock/index.html
 ```
@@ -33,10 +30,6 @@ When serving `web/out/` as static files, configure the host so client-side route
 ### Nginx example
 
 ```nginx
-location /editor {
-  try_files $uri $uri/ /editor/index.html;
-}
-
 location /aclock {
   try_files $uri $uri/ /aclock/index.html;
 }
@@ -47,7 +40,6 @@ location /aclock {
 Add a `_redirects` or `_routes.json` rule:
 
 ```
-/editor/*  /editor/index.html  200
 /aclock/*  /aclock/index.html  200
 ```
 

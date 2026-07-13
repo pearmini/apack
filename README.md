@@ -11,11 +11,11 @@ APack is an alphabet-packing writing system that writes Latin text in the visual
 
 It began as an assignment for Allison Parrish's [Computational Letterforms and Layout](https://cll.decontextualize.com/) class at ITP, first prototyped in [Observable](https://observablehq.com/d/3d4704d5b7d5ac6f), then expanded into an online editor, JavaScript package, Python notebook helper, Name2Tree stamp system, and a field of world clocks.
 
-**You are welcome here.** Open the [live editor](https://apack.bairui.dev/editor/), type a name, poem, slogan, or stray phrase, and tune the layout until the alphabet turns into something you can recognize and something you have to look at twice.
+**You are welcome here.** Open the [live editor](https://apack.bairui.dev/), type a name, poem, slogan, or stray phrase, and tune the layout until the alphabet turns into something you can recognize and something you have to look at twice.
 
 > *Writing can be a line of text. It can also be a small architecture.*
 
-[**Try the editor →**](https://apack.bairui.dev/editor/) · [**Read the story →**](https://bairui.dev/apack) · [**See world clocks →**](https://apack.bairui.dev/aclock/)
+[**Try the editor →**](https://apack.bairui.dev/) · [**Read the story →**](https://bairui.dev/apack) · [**See world clocks →**](https://apack.bairui.dev/aclock/)
 
 ## What it does
 
@@ -228,8 +228,8 @@ apack/
 │   ├── treemap.js        # D3 treemap layout
 │   └── hersheytext.json  # Vector font paths
 ├── web/
-│   ├── app/              # Next.js routes (/, /editor, /aclock)
-│   └── components/       # Editor, clocks, landing page
+│   ├── app/              # Next.js routes (/, /aclock)
+│   └── components/       # Editor, clocks
 ├── python/
 │   └── pyapack/          # Notebook wrapper
 ├── test/
@@ -242,8 +242,7 @@ apack/
 
 ## Related work
 
-- [apack.bairui.dev](https://apack.bairui.dev/): demo hub (landing, editor, clocks)
-- [apack.bairui.dev/editor](https://apack.bairui.dev/editor/): live editor
+- [apack.bairui.dev](https://apack.bairui.dev/): live editor
 - [apack.bairui.dev/aclock](https://apack.bairui.dev/aclock/): world clocks made from APack digits
 - [bairui.dev/apack](https://bairui.dev/apack): full story, ITP photos, process, style explorations, and future directions
 - [tree.bairui.dev](https://tree.bairui.dev/): Name2Tree uses APack stamps as authorship marks

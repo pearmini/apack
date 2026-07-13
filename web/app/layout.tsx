@@ -2,9 +2,8 @@ import type {Metadata} from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "APack",
-  description:
-    "Alphabet-packing writing system — Latin text composed into Chinese-character-like glyphs.",
+  title: "Editor — APack",
+  description: "Canvas-like writing surface for packing Latin text into glyphs.",
 };
 
 export default function RootLayout({children}: {children: React.ReactNode}) {

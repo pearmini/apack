@@ -1,5 +1,10 @@
-import LandingPage from "@/components/landing/LandingPage";
+import "./editor.css";
+import EditorPageClient from "@/components/editor/EditorPageClient";
 
 export default function Home() {
-  return <LandingPage />;
+  return (
+    <div className="editor-root">
+      <EditorPageClient />
+    </div>
+  );
 }
