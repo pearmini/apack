@@ -93,7 +93,6 @@ function App() {
 
   const [showConfig, setShowConfig] = useState(false);
   const [showShowcase, setShowShowcase] = useState(false);
-  const [template, setTemplate] = useState("None");
   const [config, setConfig] = useState(getConfig());
   const [containerWidth, setContainerWidth] = useState(Infinity);
 
@@ -219,6 +218,16 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.key !== "Escape") return;
+      if (showShowcase) setShowShowcase(false);
+      else if (showConfig) setShowConfig(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [showShowcase, showConfig]);
+
+  useEffect(() => {
     if (textareaRef.current) {
       const isEmpty = words.length === 0;
       const W = isEmpty ? placeholderWords : words;
@@ -297,15 +306,9 @@ function App() {
     }
   };
 
-  const getTemplate = () => {
-    return template;
-  };
-
   const updateTemplate = (value) => {
-    setTemplate(value);
-    if (value !== "None") {
-      const template = templates[value];
-      loadConfig(template);
+    if (value !== "None" && templates[value]) {
+      loadConfig(templates[value]);
     }
   };
 
@@ -345,10 +348,14 @@ function App() {
     input.type = "file";
     input.accept = ".json";
     input.onchange = (e) => {
-      const file = e.target.files[0];
+      const file = e.target.files?.[0];
+      if (!file) return;
       file.text().then((text) => {
-        const config = JSON.parse(text);
-        loadConfig(config);
+        try {
+          loadConfig(JSON.parse(text));
+        } catch {
+          // Ignore invalid JSON uploads.
+        }
       });
     };
     input.click();
@@ -558,13 +565,15 @@ function App() {
   };
 
   const onDownloadPNG = () => {
-    const svg = canvasRef.current.querySelector("svg");
+    const svg = canvasRef.current?.querySelector("svg");
+    if (!svg) return;
     const time = new Date().toISOString().replace(/[-:Z]/g, "");
     downloadPNG(`apack-${time}`, svg);
   };
 
   const onDownloadSVG = () => {
-    const svg = canvasRef.current.querySelector("svg");
+    const svg = canvasRef.current?.querySelector("svg");
+    if (!svg) return;
     const time = new Date().toISOString().replace(/[-:Z]/g, "");
     downloadSVG(`apack-${time}`, svg);
   };
@@ -615,8 +624,6 @@ function App() {
             onClose={() => setShowConfig(false)}
             updateValue={updateConfig}
             getValue={getValue}
-            updateTemplate={updateTemplate}
-            getTemplate={getTemplate}
           />
         )}
         <div

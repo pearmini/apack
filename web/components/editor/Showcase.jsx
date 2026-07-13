@@ -1,4 +1,3 @@
-import "./Config.css";
 import {useRef, useEffect} from "react";
 import {templates} from "./templates";
 import {APack} from "./APack";
@@ -29,7 +28,7 @@ function Item({config, onClick}) {
       const height = svg.getAttribute("height");
       svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
       svg.style.width = "100%";
-      svg.style.height = "100%";
+      svg.style.height = "auto";
       ref.current.appendChild(svg);
     }
   }, [config]);
@@ -53,9 +52,9 @@ export function Showcase({onClose, updateTemplate}) {
 
   return (
     <div className="showcase-modal-backdrop" onClick={onBackdropClick}>
-      <div className="showcase-modal" role="dialog" aria-label="Example">
+      <div className="showcase-modal" role="dialog" aria-modal="true" aria-label="Example">
         <div className="showcase-modal-header">
-          <APack text="Example" cellSize={40} style={{cursor: "default"}} />
+          <APack text="Example" cellSize={40} bordered={false} />
           <button onClick={onClose} className="icon-button" aria-label="Close example">
             <FiX size={22} color="#000" />
           </button>
