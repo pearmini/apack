@@ -129,3 +129,25 @@
 .icon-button:hover {
   color: #333;
 }
+
+.apack-tooltip {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 4px;
+  padding: 4px 8px;
+  background: #000;
+  color: #fff;
+  font-family: monospace;
+  font-size: 12px;
+  line-height: 1.2;
+  white-space: nowrap;
+  pointer-events: none;
+  visibility: hidden;
+  z-index: 1100;
+}
+
+.apack-root:hover .apack-tooltip {
+  visibility: visible;
+}

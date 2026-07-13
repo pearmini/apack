@@ -10,8 +10,10 @@ export function APack({
   bordered = true,
   style = {},
   className = "",
+  tooltip,
 }) {
   const ref = useRef(null);
+  const label = tooltip === false ? null : tooltip ?? text;
 
   useEffect(() => {
     if (ref.current) {
@@ -29,13 +31,19 @@ export function APack({
         cursor: onClick ? "pointer" : "default",
         border: bordered ? "1.5px solid black" : "none",
         ...style,
+        ...(label ? {position: "relative"} : null),
       }}
-      className={className}
+      className={["apack-root", className].filter(Boolean).join(" ")}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
       <span ref={ref}></span>
+      {label && (
+        <span className="apack-tooltip" role="tooltip">
+          {label}
+        </span>
+      )}
     </div>
   );
 }

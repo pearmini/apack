@@ -11,6 +11,7 @@
 }
 
 .showcase-modal {
+  position: relative;
   background: #fbf7eb;
   width: min(960px, 100%);
   max-height: min(90vh, 860px);
@@ -20,14 +21,11 @@
   border: 1.5px solid #000;
 }
 
-.showcase-modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 28px;
-}
-
-.showcase-modal-header .icon-button {
+.showcase-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
   background: none;
   border: none;
   cursor: pointer;
@@ -38,7 +36,7 @@
   padding: 0;
 }
 
-.showcase-modal-header .icon-button:hover {
+.showcase-modal-close:hover {
   color: #333;
 }
 
