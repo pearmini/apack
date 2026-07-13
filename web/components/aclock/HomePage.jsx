@@ -204,7 +204,7 @@ export default function HomePage() {
             timeZone={null}
             featured
             interpolator={interpolators[interpolatorOption]}
-            font={fontOption === "random" ? fontAssignments?.["local"] || "futural" : fontOption}
+            font={fontOption === "random" ? fontAssignments["local"] : fontOption}
             onClick={() => router.push("/aclock/local/")}
           />
           <Watch
@@ -212,7 +212,7 @@ export default function HomePage() {
             timeZone="UTC"
             featured
             interpolator={interpolators[interpolatorOption]}
-            font={fontOption === "random" ? fontAssignments?.["UTC"] || "futural" : fontOption}
+            font={fontOption === "random" ? fontAssignments["UTC"] : fontOption}
             onClick={() => router.push("/aclock/utc/")}
           />
         </div>
@@ -224,7 +224,7 @@ export default function HomePage() {
             key={tz}
             timeZone={tz}
             interpolator={interpolators[interpolatorOption]}
-            font={fontOption === "random" ? fontAssignments?.[tz] || "futural" : fontOption}
+            font={fontOption === "random" ? fontAssignments[tz] : fontOption}
             onClick={() => router.push(`/aclock/${timezoneToCityName(tz)}/`)}
           />
         ))}

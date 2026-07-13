@@ -400,13 +400,6 @@
   height: 100%;
 }
 
-.aclock-card-face.is-fixed {
-  padding-top: 0;
-  width: var(--aclock-face-size, 150px);
-  height: var(--aclock-face-size, 150px);
-  max-width: none;
-}
-
 .aclock-card-meta {
   display: flex;
   flex-direction: column;
@@ -570,19 +563,5 @@
 }
 
 .aclock-text-button:hover {
-  opacity: 0.75;
-}
-
-.aclock-watch-location {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: inherit;
-  text-decoration: none;
-  font-family: var(--aclock-serif);
-  font-weight: 700;
-}
-
-.aclock-watch-location:hover {
   opacity: 0.75;
 }

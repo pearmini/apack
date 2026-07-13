@@ -1,13 +1,5 @@
 import {useState} from "react";
 
-const SORT_LABELS = {
-  random: "Random",
-  "alphabet-asc": "A–Z",
-  "alphabet-desc": "Z–A",
-  "time-asc": "By time",
-  "time-desc": "By time ↓",
-};
-
 export default function Toolbar({
   searchQuery,
   setSearchQuery,
@@ -71,14 +63,10 @@ export default function Toolbar({
               value={sortOption}
               onChange={(e) => {
                 const value = e.target.value;
-                if (value === "reset") {
-                  handleReset();
-                } else {
-                  setSortOption(value);
-                }
+                if (value === "reset") handleReset();
+                else setSortOption(value);
               }}
               className="aclock-select"
-              aria-label={`Sort: ${SORT_LABELS[sortOption] || sortOption}`}
             >
               <option value="time-asc">By time</option>
               <option value="time-desc">By time ↓</option>
@@ -96,11 +84,8 @@ export default function Toolbar({
               value={fontOption}
               onChange={(e) => {
                 const value = e.target.value;
-                if (value === "reset") {
-                  handleReset();
-                } else {
-                  setFontOption(value);
-                }
+                if (value === "reset") handleReset();
+                else setFontOption(value);
               }}
               className="aclock-select"
             >
@@ -121,11 +106,8 @@ export default function Toolbar({
               value={interpolatorOption}
               onChange={(e) => {
                 const value = e.target.value;
-                if (value === "reset") {
-                  handleReset();
-                } else {
-                  setInterpolatorOption(value);
-                }
+                if (value === "reset") handleReset();
+                else setInterpolatorOption(value);
               }}
               className="aclock-select"
             >
@@ -141,11 +123,9 @@ export default function Toolbar({
           </div>
         </div>
 
-        {typeof zoneCount === "number" && (
-          <p className="aclock-zone-count">
-            {zoneCount} time zone{zoneCount === 1 ? "" : "s"}
-          </p>
-        )}
+        <p className="aclock-zone-count">
+          {zoneCount} time zone{zoneCount === 1 ? "" : "s"}
+        </p>
       </div>
       <div className="aclock-toolbar-rule" aria-hidden="true" />
     </div>
