@@ -1,10 +1,11 @@
-import "./editor.css";
-import EditorPageClient from "@/components/editor/EditorPageClient";
+"use client";
+
+import dynamic from "next/dynamic";
+
+const EditorApp = dynamic(() => import("@/components/editor/App"), {
+  ssr: false,
+});
 
 export default function Home() {
-  return (
-    <div className="editor-root">
-      <EditorPageClient />
-    </div>
-  );
+  return <EditorApp />;
 }

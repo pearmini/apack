@@ -2,7 +2,7 @@ import type {Metadata} from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Editor — APack",
+  title: "APack",
   description: "Canvas-like writing surface for packing Latin text into glyphs.",
 };
 
