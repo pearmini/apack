@@ -32,7 +32,9 @@
 }
 
 .editor-top-bar-actions,
-.editor-top-bar-group {
+.editor-top-bar-group,
+.editor-top-bar-tagline,
+.editor-top-bar-tools {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -150,4 +152,21 @@
 
 .apack-root:hover .apack-tooltip {
   visibility: visible;
+}
+
+@media (max-width: 768px) {
+  .editor-top-bar {
+    gap: 8px;
+    padding: 8px 12px;
+  }
+
+  .editor-top-bar-tagline,
+  .editor-top-bar-tools {
+    display: none;
+  }
+
+  .editor-top-bar-actions,
+  .editor-top-bar-group {
+    gap: 8px;
+  }
 }

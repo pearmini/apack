@@ -52,14 +52,14 @@ export function Showcase({onClose, updateTemplate}) {
 
   return (
     <div className="showcase-modal-backdrop" onClick={onBackdropClick}>
-      <div className="showcase-modal" role="dialog" aria-modal="true" aria-label="Example">
-        <button onClick={onClose} className="showcase-modal-close" aria-label="Close example">
+      <div className="showcase-modal" role="dialog" aria-modal="true" aria-label="Examples">
+        <button onClick={onClose} className="showcase-modal-close" aria-label="Close examples">
           <FiX size={22} color="#000" />
         </button>
 
         <div className="showcase-modal-body">
           <section className="showcase-section">
-            <h2 className="showcase-section-title">Editor examples</h2>
+            <h2 className="showcase-section-title">Templates</h2>
             <div className="showcase-editor-grid">
               {Object.entries(templates).map(([key, template]) => (
                 <Item key={key} config={template} onClick={() => onSelectTemplate(key)} />
@@ -68,7 +68,7 @@ export function Showcase({onClose, updateTemplate}) {
           </section>
 
           <section className="showcase-section">
-            <h2 className="showcase-section-title">External examples</h2>
+            <h2 className="showcase-section-title">Made with APack</h2>
             <div className="showcase-external-grid">
               {EXTERNAL_EXAMPLES.map((project) => (
                 <APack

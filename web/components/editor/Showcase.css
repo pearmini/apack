@@ -87,3 +87,22 @@
   flex-wrap: wrap;
   gap: 12px;
 }
+
+@media (max-width: 768px) {
+  .showcase-modal-backdrop {
+    padding: 12px;
+  }
+
+  .showcase-modal {
+    padding: 16px;
+    max-height: 92vh;
+  }
+
+  .showcase-modal-body {
+    gap: 24px;
+  }
+
+  .showcase-editor-grid {
+    grid-template-columns: 1fr;
+  }
+}
