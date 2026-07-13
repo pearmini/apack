@@ -588,9 +588,14 @@ function App() {
     <div className="editor-app">
       <div className="editor-top-bar">
         <div className="editor-top-bar-brand">
-          <APack text="APack" cellSize={52} bordered={false} />
+          <APack text="APack" cellSize={52} bordered={false} tooltip="APack" />
           <div className="editor-top-bar-divider" aria-hidden="true" />
-          <APack text="Write English like Chinese" cellSize={52} bordered={false} />
+          <APack
+            text="Write English like Chinese"
+            cellSize={52}
+            bordered={false}
+            tooltip="Write English like Chinese"
+          />
         </div>
 
         <div className="editor-top-bar-actions">

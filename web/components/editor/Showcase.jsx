@@ -54,7 +54,6 @@ export function Showcase({onClose, updateTemplate}) {
     <div className="showcase-modal-backdrop" onClick={onBackdropClick}>
       <div className="showcase-modal" role="dialog" aria-modal="true" aria-label="Example">
         <div className="showcase-modal-header">
-          <APack text="Example" cellSize={40} bordered={false} />
           <button onClick={onClose} className="icon-button" aria-label="Close example">
             <FiX size={22} color="#000" />
           </button>
