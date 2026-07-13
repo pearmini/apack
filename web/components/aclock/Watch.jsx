@@ -1,23 +1,16 @@
-import {useRef, useEffect, useState} from "react";
+import {useRef, useEffect, useState, useMemo} from "react";
 import * as apack from "apackjs";
 import * as d3 from "d3";
-import {MapPin} from "lucide-react";
 import {getFlagEmoji, getCountryCodeFromTimezone} from "./flag.js";
 
 function renderWatch(parent, timeZone = null, interpolator = d3.interpolateGreys, font = "futural", size = 150) {
   let timer;
   const strokeWidth = 3;
-  const strokeRadius = strokeWidth * 0;
+  const strokeRadius = Math.max(8, size * 0.08);
+  const colorScale = d3.scaleSequential(interpolator).domain([0, 24]);
 
-  // Create a sequential color scale: earlier = lighter, later = darker
-  // Maps 0-24 hours to light-dark colors
-  const colorScale = d3.scaleSequential(interpolator).domain([0, 24]); // 0 hours = light, 24 hours = dark
-
-  // Calculate relative luminance of a color (0-1, where 0 is black and 1 is white)
   function getLuminance(color) {
-    // Parse RGB from color string (e.g., "rgb(128, 128, 128)" or "#808080")
     const rgb = d3.rgb(color);
-    // Relative luminance formula
     return 0.2126 * (rgb.r / 255) + 0.7152 * (rgb.g / 255) + 0.0722 * (rgb.b / 255);
   }
 
@@ -26,21 +19,23 @@ function renderWatch(parent, timeZone = null, interpolator = d3.interpolateGreys
   }
 
   function update() {
-    let hours, minutes, seconds;
+    let hours;
+    let minutes;
+    let seconds;
     let hoursNum;
+
     if (timeZone) {
-      const formatter = new Intl.DateTimeFormat("en-US", {
+      const parts = new Intl.DateTimeFormat("en-US", {
         timeZone,
         hour: "2-digit",
         minute: "2-digit",
         second: "2-digit",
         hour12: false,
-      });
-      const parts = formatter.formatToParts(new Date());
-      hoursNum = parseInt(parts.find((p) => p.type === "hour").value);
+      }).formatToParts(new Date());
+      hoursNum = parseInt(parts.find((p) => p.type === "hour").value, 10) % 24;
       hours = formatDigit(hoursNum);
-      minutes = formatDigit(parseInt(parts.find((p) => p.type === "minute").value));
-      seconds = formatDigit(parseInt(parts.find((p) => p.type === "second").value));
+      minutes = formatDigit(parseInt(parts.find((p) => p.type === "minute").value, 10));
+      seconds = formatDigit(parseInt(parts.find((p) => p.type === "second").value, 10));
     } else {
       const now = new Date();
       hoursNum = now.getHours();
@@ -49,14 +44,9 @@ function renderWatch(parent, timeZone = null, interpolator = d3.interpolateGreys
       seconds = formatDigit(now.getSeconds());
     }
 
-    // Calculate time as decimal hours (including minutes and seconds for smooth transition)
-    const timeDecimal = hoursNum + parseInt(minutes) / 60 + parseInt(seconds) / 3600;
+    const timeDecimal = hoursNum + parseInt(minutes, 10) / 60 + parseInt(seconds, 10) / 3600;
     const fillColor = colorScale(timeDecimal);
-
-    // Determine stroke color based on background brightness
-    const luminance = getLuminance(fillColor);
-    const strokeColor = luminance < 0.5 ? "white" : "black";
-    const rectStrokeColor = "black";
+    const strokeColor = getLuminance(fillColor) < 0.5 ? "white" : "black";
 
     const digits = apack
       .text(`${hours}${minutes}${seconds}`, {
@@ -83,13 +73,10 @@ function renderWatch(parent, timeZone = null, interpolator = d3.interpolateGreys
       .attr("width", size - strokeWidth * 2)
       .attr("height", size - strokeWidth * 2)
       .attr("fill", fillColor)
-      // .attr("stroke", rectStrokeColor)
       .attr("rx", strokeRadius)
-      .attr("ry", strokeRadius)
-      .attr("stroke-width", strokeWidth);
+      .attr("ry", strokeRadius);
 
     svg.node().appendChild(digits);
-
     parent.innerHTML = "";
     parent.appendChild(svg.node());
   }
@@ -106,10 +93,69 @@ function renderWatch(parent, timeZone = null, interpolator = d3.interpolateGreys
     }
   }
 
-  return {
-    start,
-    stop,
-  };
+  return {start, stop};
+}
+
+function resolveTimeZone(timeZone) {
+  if (timeZone) return timeZone;
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  } catch {
+    return "UTC";
+  }
+}
+
+function cityLabelFromTimeZone(timeZone) {
+  return timeZone.split("/").pop().replace(/_/g, " ");
+}
+
+function formatUtcOffset(timeZone) {
+  const resolved = resolveTimeZone(timeZone);
+
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: resolved,
+      timeZoneName: "shortOffset",
+    }).formatToParts(new Date());
+    const raw = parts.find((p) => p.type === "timeZoneName")?.value;
+    if (raw) {
+      const normalized = raw.replace(/^GMT/i, "UTC").replace(/^UTC$/i, "UTC+0");
+      return normalized.replace(/UTC([+-])0*(\d+)(?::(\d+))?$/, (_, sign, hours, mins) => {
+        if (mins && mins !== "00") return `UTC${sign}${parseInt(hours, 10)}:${mins}`;
+        return `UTC${sign}${parseInt(hours, 10)}`;
+      });
+    }
+  } catch {
+    // fall through to manual offset
+  }
+
+  try {
+    const now = new Date();
+    const utc = new Date(now.toLocaleString("en-US", {timeZone: "UTC"}));
+    const local = new Date(now.toLocaleString("en-US", {timeZone: resolved}));
+    const offsetMin = Math.round((local - utc) / 60000);
+    const sign = offsetMin >= 0 ? "+" : "-";
+    const abs = Math.abs(offsetMin);
+    const hours = Math.floor(abs / 60);
+    const mins = abs % 60;
+    return mins ? `UTC${sign}${hours}:${String(mins).padStart(2, "0")}` : `UTC${sign}${hours}`;
+  } catch {
+    return "";
+  }
+}
+
+function formatDateLabel(timeZone) {
+  const resolved = resolveTimeZone(timeZone);
+  try {
+    return new Intl.DateTimeFormat("en-GB", {
+      timeZone: resolved,
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+    }).format(new Date());
+  } catch {
+    return "";
+  }
 }
 
 export default function Watch({
@@ -117,132 +163,97 @@ export default function Watch({
   interpolator = d3.interpolateGreys,
   font = "futural",
   onClick,
-  fixedSize,
-  hideLabel = false,
+  featured = false,
 }) {
   const containerRef = useRef(null);
   const watchRef = useRef(null);
-  const [size, setSize] = useState(fixedSize || 150);
-  const [isHovered, setIsHovered] = useState(false);
+  const [size, setSize] = useState(150);
 
-  // If fixedSize is provided, use it directly; otherwise use ResizeObserver
   useEffect(() => {
-    if (fixedSize !== undefined) {
-      setSize(fixedSize);
-      return;
-    }
-
     if (!containerRef.current) return;
 
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        const width = entry.contentRect.width;
-        setSize(width);
+        setSize(entry.contentRect.width);
       }
     });
 
     resizeObserver.observe(containerRef.current);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [fixedSize]);
+    return () => resizeObserver.disconnect();
+  }, []);
 
   useEffect(() => {
-    if (watchRef.current && size > 0) {
-      watchRef.current.innerHTML = "";
-      const {start, stop} = renderWatch(watchRef.current, timeZone, interpolator, font, size);
-      start();
-      return () => stop();
-    }
+    if (!watchRef.current || size <= 0) return;
+    watchRef.current.innerHTML = "";
+    const {start, stop} = renderWatch(watchRef.current, timeZone, interpolator, font, size);
+    start();
+    return () => stop();
   }, [timeZone, interpolator, font, size]);
 
-  const timeZoneLabel = timeZone 
-    ? timeZone === "UTC" 
-      ? "UTC" 
-      : timeZone.split("/").pop().replace(/_/g, " ")
-    : "Local";
-  const countryCode = timeZone ? getCountryCodeFromTimezone(timeZone) : null;
-  const flagEmoji = countryCode ? getFlagEmoji(countryCode) : "";
+  const isLocal = !timeZone;
+  const isUtc = timeZone === "UTC";
+
+  const timeZoneLabel = useMemo(() => {
+    if (featured && isLocal) return "Local time";
+    if (featured && isUtc) return "Coordinated Universal";
+    if (isUtc) return "UTC";
+    if (isLocal) return "Local";
+    return cityLabelFromTimeZone(timeZone);
+  }, [featured, isLocal, isUtc, timeZone]);
+
+  const eyebrowLabel = isLocal ? "Local" : isUtc ? "UTC" : null;
+
+  const mapsQuery = useMemo(() => {
+    if (isLocal) {
+      try {
+        return cityLabelFromTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone);
+      } catch {
+        return "Local";
+      }
+    }
+    if (isUtc) return "UTC";
+    return cityLabelFromTimeZone(timeZone);
+  }, [isLocal, isUtc, timeZone]);
+
+  const utcOffset = useMemo(() => formatUtcOffset(timeZone), [timeZone]);
+  const dateLabel = useMemo(() => formatDateLabel(timeZone), [timeZone]);
+  const metaText = featured && dateLabel ? `${dateLabel} · ${utcOffset}` : utcOffset || dateLabel;
+
+  const flagTimezone = useMemo(() => {
+    if (isUtc) return null;
+    return timeZone || resolveTimeZone(null);
+  }, [isUtc, timeZone]);
+  const flagEmoji = flagTimezone
+    ? getFlagEmoji(getCountryCodeFromTimezone(flagTimezone))
+    : "";
+
+  const cardClassName = [
+    "aclock-card",
+    featured ? "is-featured" : "",
+    !onClick ? "is-static" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <div
-      onClick={onClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      style={{
-        display: "inline-flex",
-        flexDirection: "column",
-        alignItems: "start",
-        width: "100%",
-        cursor: onClick ? "pointer" : "default",
-      }}
-    >
-      <div
-        ref={fixedSize ? null : containerRef}
-        style={{
-          width: fixedSize ? `${fixedSize}px` : "100%",
-          height: fixedSize ? `${fixedSize}px` : "auto",
-          paddingTop: fixedSize ? 0 : "100%",
-          position: "relative",
-        }}
-      >
-        <div
-          ref={watchRef}
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-          }}
-        ></div>
+    <div className={cardClassName} onClick={onClick}>
+      <div ref={containerRef} className="aclock-card-face">
+        <div ref={watchRef} className="aclock-card-face-inner" />
       </div>
-      {timeZoneLabel && !hideLabel && (
+      <div className={`aclock-card-meta${featured ? " aclock-card-meta-featured" : ""}`}>
+        {featured && eyebrowLabel ? <p className="aclock-card-eyebrow">{eyebrowLabel}</p> : null}
         <a
-          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(timeZoneLabel)}`}
+          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapsQuery)}`}
           target="_blank"
           rel="noopener noreferrer"
+          className="aclock-card-name"
           onClick={(e) => e.stopPropagation()}
-          style={{
-            width: "100%",
-            whiteSpace: "nowrap",
-            textOverflow: "ellipsis",
-            overflow: "hidden",
-            textAlign: "center",
-            marginTop: "0.5rem",
-            fontSize: "0.875rem",
-            color: "#1b1e23",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "0.25rem",
-            cursor: "pointer",
-            textDecoration: timeZoneLabel === "Local" || timeZoneLabel === "UTC" ? "underline" : "none",
-          }}
-          onMouseEnter={(e) => {
-            setIsHovered(true);
-            e.stopPropagation();
-          }}
-          onMouseLeave={(e) => {
-            setIsHovered(false);
-            e.stopPropagation();
-          }}
         >
-          {isHovered && flagEmoji ? <span>{flagEmoji} </span> : ""}
+          {flagEmoji ? <span className="aclock-card-flag">{flagEmoji}</span> : null}
           <span>{timeZoneLabel}</span>
-          {isHovered && (
-            <MapPin
-              className="inline-block"
-              style={{
-                width: "0.875rem",
-                height: "0.875rem",
-                flexShrink: 0,
-              }}
-            />
-          )}
         </a>
-      )}
+        {metaText ? <p className="aclock-card-offset">{metaText}</p> : null}
+      </div>
     </div>
   );
 }
