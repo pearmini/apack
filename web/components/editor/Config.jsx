@@ -2,16 +2,7 @@ import "./Config.css";
 import {FONT_FAMILIES} from "apackjs";
 import {SketchPicker} from "react-color";
 import {useState, useRef, useEffect} from "react";
-import {templates} from "./templates";
-import {APack} from "./APack";
-import {FiX, FiSave, FiFile, FiUpload, FiDownload} from "react-icons/fi";
-
-const templateSchema = {
-  key: "template",
-  name: "Template",
-  type: "select",
-  options: ["None", ...Object.keys(templates)],
-};
+import {FiX} from "react-icons/fi";
 
 const schemas = [
   {
@@ -118,69 +109,27 @@ function Input({type, value, onChange, options}) {
   return <input type={type} value={value} onChange={(e) => onChange(e.target.value)} />;
 }
 
-export function Config({
-  style,
-  onClose,
-  updateValue,
-  getValue,
-  updateTemplate,
-  getTemplate,
-  onSave,
-  onNew,
-  onUpload,
-  onDownload,
-}) {
-  const onGithub = () => {
-    window.open("https://github.com/pearmini/apack", "_blank");
-  };
-
+export function Config({style, onClose, updateValue, getValue}) {
   return (
     <div style={style} className="config-panel">
       <div className="config-panel-header">
-        <APack text="APack" cellSize={40} onClick={onGithub} />
-        <button onClick={onClose} className="icon-button">
+        <button onClick={onClose} className="icon-button" aria-label="Close config">
           <FiX size={22} color="#000" />
         </button>
       </div>
 
       <div className="config-panel-body">
-        {/* <div className="config-panel-item">
-          <span>{templateSchema.name}</span>
-          <Input
-            type={templateSchema.type}
-            key={templateSchema.key}
-            options={templateSchema.options}
-            value={getTemplate()}
-            onChange={(value) => updateTemplate(value)}
-          />
-        </div> */}
         {schemas.map((schema) => (
           <div key={schema.key} className="config-panel-item">
             <span>{schema.name}</span>
             <Input
               type={schema.type}
-              key={schema.key}
               value={getValue(schema.key)}
               onChange={(value) => updateValue(schema.key, value)}
               options={schema.options}
             />
           </div>
         ))}
-      </div>
-
-      <div className="config-panel-toolbar">
-        <button onClick={onSave} className="icon-button">
-          <FiSave size={22} color="#000" />
-        </button>
-        <button onClick={onNew} className="icon-button">
-          <FiFile size={22} color="#000" />
-        </button>
-        <button onClick={onUpload} className="icon-button">
-          <FiUpload size={22} color="#000" />
-        </button>
-        <button onClick={onDownload} className="icon-button">
-          <FiDownload size={22} color="#000" />
-        </button>
       </div>
     </div>
   );
