@@ -140,20 +140,29 @@ function App() {
     const W = isEmpty ? placeholderWords : words;
     if (W.length === 0) return;
 
-    const maxX = Math.max(...W.map((d) => d.x));
-    const maxY = Math.max(...W.map((d) => d.y));
+    // Match paragraph.js: ignore empty words / newlines so centering uses the
+    // painted SVG bounds. Counting \n cells made examples look left and high.
+    const content = W.filter((d) => d.ch.trim() !== "");
+    const bounds = content.length > 0 ? content : W;
+    const maxX = Math.max(...bounds.map((d) => d.x));
+    const maxY = Math.max(...bounds.map((d) => d.y));
     const lastWord = W[W.length - 1];
     const offset = lastWord && lastWord.ch === "\n" ? 1 : 0;
 
-    const width = (maxX + 1) * cellWidth;
-    const height = (maxY + 1 + offset) * cellHeight * scale;
+    const visualWidth = (maxX + 1) * cellWidth;
+    const visualHeight = (maxY + 1) * cellHeight * scale;
+    // Extra row for the caret after a trailing newline (not part of the SVG).
+    const height = visualHeight + (offset ? cellHeight * scale : 0);
 
     const container = editorContainerRef.current;
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
 
-    const marginLeft = width < containerWidth ? (containerWidth - width) / 2 : 10;
-    const marginTop = Math.max(height < containerHeight ? (containerHeight - height) / 2 : 100, 100);
+    const marginLeft = visualWidth < containerWidth ? (containerWidth - visualWidth) / 2 : 10;
+    const marginTop = Math.max(
+      visualHeight < containerHeight ? (containerHeight - visualHeight) / 2 : 100,
+      100,
+    );
 
     editorRef.current.style.top = "0px";
     editorRef.current.style.left = "0px";
@@ -161,7 +170,7 @@ function App() {
     editorRef.current.style.marginTop = marginTop + "px";
     editorRef.current.style.marginBottom = "200px";
     editorRef.current.style.marginRight = "200px";
-    editorRef.current.style.width = width + "px";
+    editorRef.current.style.width = visualWidth + "px";
     editorRef.current.style.height = height + "px";
   };
 
